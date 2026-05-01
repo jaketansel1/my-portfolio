@@ -45,7 +45,7 @@ export default function LickLibraryPage() {
       <SiteHeader variant="dark" />
 
       <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10">
-        <section className="mx-auto max-w-5xl pb-24 pt-28 text-center sm:pb-32 sm:pt-36 lg:pb-36 lg:pt-44">
+        <section className="page-hero case-study-hero mx-auto max-w-5xl text-center">
           <div className="mb-7 flex justify-center">
             <Image
               src="/licklibrary-logo.png"
@@ -60,7 +60,7 @@ export default function LickLibraryPage() {
           <p className="mb-5 text-sm font-medium text-white/38">
             Guitar Learning Platform
           </p>
-          <h1 className="text-5xl font-semibold leading-[1.08] text-white sm:text-6xl lg:text-7xl">
+          <h1 className="heading-xl text-white">
             LickLibrary Redesign
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-xl leading-8 text-white/68 sm:text-2xl sm:leading-9">

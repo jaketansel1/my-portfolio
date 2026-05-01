@@ -17,3 +17,25 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
+.heading-xl {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.page-hero {
+  padding-top: clamp(4rem, 6vw, 5.5rem);
+}
+
+.home-hero {
+  padding-bottom: clamp(4rem, 6vw, 6.5rem);
+}
+
+.standard-hero {
+  padding-bottom: clamp(4rem, 7vw, 6rem);
+}
+
+.case-study-hero {
+  padding-bottom: clamp(5rem, 8vw, 8rem);
+}

@@ -44,7 +44,7 @@ export default function AboutPage() {
       <SiteHeader />
 
       <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10">
-        <section className="grid items-center gap-10 pb-20 pt-24 sm:pb-24 sm:pt-32 md:grid-cols-[280px_1fr] lg:gap-16">
+        <section className="page-hero standard-hero grid items-center gap-10 md:grid-cols-[280px_1fr] lg:gap-16">
           <div className="mx-auto h-56 w-56 overflow-hidden rounded-full border border-black/8 bg-white shadow-[0_18px_45px_rgba(0,0,0,0.08)] md:h-64 md:w-64">
             <Image
               src="/about-jake.png"
@@ -57,17 +57,16 @@ export default function AboutPage() {
           </div>
 
           <div className="text-center md:text-left">
-            <h1 className="max-w-4xl text-5xl font-semibold leading-[1.04] tracking-[-0.01em] sm:text-6xl">
-              Designing products used by millions of users
+            <h1 className="heading-xl max-w-4xl">
+              Hi, I&rsquo;m Jake
             </h1>
             <p className="mt-6 max-w-2xl text-xl leading-8 text-black/68">
-              I’m a Product Designer with 8+ years of experience designing
-              digital products across sports, learning platforms and AI-assisted
-              workflows. I’m currently designing at LickLibrary and building new
-              digital products.
+              I&rsquo;m a Product Designer working across sports, learning
+              platforms and AI tools &mdash; turning ideas into simple, usable
+              products.
             </p>
             <p className="mt-5 text-sm font-medium text-black/42">
-              Product Designer · London · 8+ years experience
+              Product Designer &middot; London &middot; 8+ years experience
             </p>
           </div>
         </section>

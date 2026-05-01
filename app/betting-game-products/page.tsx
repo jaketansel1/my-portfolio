@@ -167,12 +167,12 @@ export default function BettingGameProductsPage() {
       <SiteHeader variant="dark" />
 
       <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
-        <section className="pb-16 pt-24 sm:pb-24 sm:pt-32 lg:pt-40">
+        <section className="page-hero standard-hero">
           <div className="max-w-5xl">
             <p className="mb-5 text-sm font-medium text-white/52">
               Betting Game Products
             </p>
-            <h1 className="max-w-5xl text-5xl font-semibold leading-[1.04] tracking-[-0.01em] sm:text-6xl lg:text-7xl">
+            <h1 className="heading-xl max-w-5xl">
               Designing betting game products across mobile and web
             </h1>
             <p className="mt-6 max-w-2xl text-xl leading-8 text-white/80 sm:text-2xl sm:leading-9">

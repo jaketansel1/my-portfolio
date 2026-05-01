@@ -42,12 +42,12 @@ export const projects: Project[] = [
     image: "/maison-augustin-homepage3.jpg",
   },
   {
-    title: "Padel League",
+    title: "Personal Health Hub",
     description:
-      "A side project for organising matches, tracking results and managing league performance.",
+      "A simple, visual dashboard to track workouts, BJJ sessions, runs, and daily activity in one place.",
     tone: "bg-[#dcecff]",
     label: "Coming soon",
-    image: "/padel-homepage.jpg",
-    overlay: "bg-[#0e56b3]/28",
+    image: "/personal-health-hub.jpg",
+    overlay: "bg-black/12",
   },
 ];

@@ -147,12 +147,12 @@ export default function FanzinePage() {
       <SiteHeader variant="dark" />
 
       <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
-        <section className="pb-20 pt-24 sm:pb-28 sm:pt-32 lg:pb-32 lg:pt-40">
+        <section className="page-hero case-study-hero">
           <div className="max-w-5xl">
             <p className="mb-5 text-sm font-medium text-white/44">
               Fanzine App Platform
             </p>
-            <h1 className="max-w-4xl text-5xl font-semibold leading-[1.04] sm:text-6xl lg:text-7xl">
+            <h1 className="heading-xl max-w-4xl">
               Designing a platform powering 50+ football apps
             </h1>
             <p className="mt-6 max-w-2xl text-xl leading-8 text-white/68 sm:text-2xl sm:leading-9">

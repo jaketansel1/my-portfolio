@@ -8,9 +8,9 @@ export default function WorkPage() {
       <SiteHeader />
 
       <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10">
-        <section className="pb-16 pt-24 sm:pb-20 sm:pt-32 lg:pb-24">
+        <section className="page-hero standard-hero">
           <div className="max-w-3xl">
-            <h1 className="text-5xl font-semibold leading-[1.04] tracking-[-0.01em] text-[#111111] sm:text-6xl lg:text-7xl">
+            <h1 className="heading-xl text-[#111111]">
               Selected work
             </h1>
             <p className="mt-6 max-w-2xl text-xl leading-8 text-black/64 sm:text-2xl sm:leading-9">

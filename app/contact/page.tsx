@@ -80,8 +80,8 @@ export default function ContactPage() {
       <SiteHeader />
 
       <div className="mx-auto w-full max-w-[800px] px-5 sm:px-8">
-        <section className="pb-16 pt-24 text-center sm:pb-20 sm:pt-32">
-          <h1 className="text-5xl font-semibold leading-[1.04] tracking-[-0.01em] sm:text-6xl">
+        <section className="page-hero standard-hero text-center">
+          <h1 className="heading-xl">
             Get in touch
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-xl leading-8 text-black/64">
