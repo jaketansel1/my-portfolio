@@ -42,12 +42,12 @@ export const projects: Project[] = [
     image: "/maison-augustin-homepage3.jpg",
   },
   {
-    title: "Personal Health Hub",
+    title: "Inspect Design",
     description:
-      "A simple, visual dashboard to track workouts, BJJ sessions, runs, and daily activity in one place.",
+      "Upload any screenshot and receive a structured breakdown of layout, typography, spacing, and UX patterns.",
     tone: "bg-[#dcecff]",
     label: "Coming soon",
-    image: "/personal-health-hub.jpg",
+    image: "/inspect-design.png",
     overlay: "bg-black/12",
   },
 ];

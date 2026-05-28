@@ -25,26 +25,25 @@ const currentlyBuilding = [
     ],
   },
   {
-    title: "Personal Health Hub",
-    tag: "Health + Training",
-    description:
-      "A simple, visual dashboard to track workouts, BJJ sessions, runs, and daily activity - all in one place.",
-    details: [
-      {
-        label: "Problem",
-        value: "Notes and scattered apps make training hard to track consistently",
-      },
-      {
-        label: "Focus",
-        value:
-          "A clean interface that makes training feel motivating and effortless",
-      },
-      {
-        label: "Status",
-        value: "V1 launching this month",
-      },
-    ],
-  },
+  title: "InspectDesign.com",
+  tag: "Design + AI",
+  description:
+    "Upload any screenshot and receive a structured breakdown of layout, typography, spacing, and UX patterns.",
+  details: [
+    {
+      label: "Problem",
+      value: "Designers lack a fast, structured way to analyse and learn from existing interfaces",
+    },
+    {
+      label: "Focus",
+      value: "Upload flow, AI analysis, structured pattern breakdowns",
+    },
+    {
+      label: "Status",
+      value: "MVP in progress",
+    },
+  ],
+},
 ];
 
 export default function Home() {
@@ -79,7 +78,7 @@ export default function Home() {
                   Currently building
                 </p>
                 <h2 className="max-w-2xl text-4xl font-semibold leading-[1.08] text-[#111111] sm:text-5xl">
-                  What I&rsquo;m building right now
+                  What I'm building right now
                 </h2>
               </div>
               <p className="max-w-xl text-base leading-7 text-black/58 sm:text-lg sm:leading-8 md:justify-self-end">
