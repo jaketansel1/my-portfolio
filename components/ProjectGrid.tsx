@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "../data/projects";
+import type { Project } from "../app/data/projects";
 
 type ProjectGridProps = {
   projects: Project[];

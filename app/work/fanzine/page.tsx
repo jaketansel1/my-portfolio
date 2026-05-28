@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, type CSSProperties } from "react";
-import SiteHeader from "../components/SiteHeader";
+import SiteHeader from "../../../components/SiteHeader";
 
 const clubs = [
   {

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import SiteHeader from "../components/SiteHeader";
+import SiteHeader from "../../../components/SiteHeader";
 
 export default function LickLibraryPage() {
   const featureNav = [

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import SiteHeader from "../components/SiteHeader";
+import SiteHeader from "../../../components/SiteHeader";
 
 const products = [
   {
@@ -331,7 +331,7 @@ export default function BettingGameProductsPage() {
             Back to work
           </Link>
           <Link
-            href="/fanzine"
+            href="/work/fanzine"
             className="inline-flex h-11 items-center justify-center rounded-full bg-[#E94E1A] px-5 font-medium text-white transition-colors hover:bg-[#f26535]"
           >
             Next project

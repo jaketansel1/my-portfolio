@@ -15,7 +15,7 @@ export const projects: Project[] = [
     description:
       "Redesigning a legacy guitar learning platform to improve onboarding, discovery and the overall user experience.",
     tone: "bg-[#e9edf1]",
-    link: "/licklibrary",
+    link: "/work/licklibrary",
     image: "/licklibrary-homepage4.jpg",
   },
   {
@@ -23,7 +23,7 @@ export const projects: Project[] = [
     description:
       "Scaling 50+ football club apps to millions of fans through a unified product system.",
     tone: "bg-[#ece8df]",
-    link: "/fanzine",
+    link: "/work/fanzine",
     image: "/fanzine-homepage.jpg",
   },
   {
@@ -31,7 +31,7 @@ export const projects: Project[] = [
     description:
       "Designing betting game products across mobile and web, turning complex rules into clear user experiences.",
     tone: "bg-[#e8ece7]",
-    link: "/betting-game-products",
+    link: "/work/betting-game-products",
     image: "/sportskins2-homepage.jpg",
   },
   {

@@ -1,5 +1,5 @@
-import ProjectGrid from "../components/ProjectGrid";
-import SiteHeader from "../components/SiteHeader";
+import ProjectGrid from "../../components/ProjectGrid";
+import SiteHeader from "../../components/SiteHeader";
 import { projects } from "../data/projects";
 
 export default function WorkPage() {
