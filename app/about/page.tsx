@@ -47,7 +47,7 @@ export default function AboutPage() {
         <section className="page-hero standard-hero grid items-center gap-10 md:grid-cols-[280px_1fr] lg:gap-16">
           <div className="mx-auto h-56 w-56 overflow-hidden rounded-full border border-black/8 bg-white shadow-[0_18px_45px_rgba(0,0,0,0.08)] md:h-64 md:w-64">
             <Image
-              src="/about-jake.png"
+              src="/about.jpg"
               alt="Jake Tansel"
               width={280}
               height={280}

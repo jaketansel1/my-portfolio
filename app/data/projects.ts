@@ -16,7 +16,7 @@ export const projects: Project[] = [
       "Redesigning a legacy guitar learning platform to improve onboarding, discovery and the overall user experience.",
     tone: "bg-[#e9edf1]",
     link: "/work/licklibrary",
-    image: "/licklibrary-homepage4.jpg",
+    image: "/licklibrary-homepage5.jpg",
   },
   {
     title: "Fanzine",

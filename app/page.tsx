@@ -52,9 +52,9 @@ export default function Home() {
       <SiteHeader />
       <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10">
         <section id="about" className="page-hero home-hero">
-          <div className="max-w-[780px]">
+          <div className="max-w-[880px]">
             <h1 className="heading-xl text-[#111111]">
-              Product Designer building and launching digital products
+              Designing, prototyping and building digital products
             </h1>
             <p className="mt-6 max-w-2xl text-xl leading-8 text-black/72 sm:text-2xl sm:leading-9">
               From idea to live product &mdash; across sports, learning
