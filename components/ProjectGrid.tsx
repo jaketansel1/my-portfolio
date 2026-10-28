@@ -5,11 +5,13 @@ import type { Project } from "../app/data/projects";
 type ProjectGridProps = {
   projects: Project[];
   featuredFirst?: boolean;
+  startIndex?: number;
 };
 
 export default function ProjectGrid({
   projects,
   featuredFirst = true,
+  startIndex = 0,
 }: ProjectGridProps) {
   return (
     <div className="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:gap-x-10">
@@ -111,7 +113,7 @@ export default function ProjectGrid({
                   project.visual === "gym" ? "text-white/34" : "text-black/32"
                 }`}
               >
-                0{index + 1}
+                0{startIndex + index + 1}
               </span>
             </div>
             <div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ProjectGrid from "../components/ProjectGrid";
 import SiteHeader from "../components/SiteHeader";
+import LickLibraryFeature from "../components/featured/LickLibraryFeature";
 import { projects } from "./data/projects";
 
 const currentlyBuilding = [
@@ -46,6 +47,9 @@ const currentlyBuilding = [
 },
 ];
 
+// LickLibrary has its own art-directed section above the grid
+const gridProjects = projects.filter((project) => project.title !== "LickLibrary");
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#faf9f6] text-[#171717]">
@@ -65,9 +69,13 @@ export default function Home() {
             </p>
           </div>
         </section>
+      </div>
 
-        <section id="work" className="pb-24 sm:pb-32">
-          <ProjectGrid projects={projects} />
+      <LickLibraryFeature />
+
+      <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10">
+        <section className="pb-24 pt-20 sm:pb-32 sm:pt-28">
+          <ProjectGrid projects={gridProjects} featuredFirst={false} startIndex={1} />
         </section>
 
         <section className="pb-24 sm:pb-32">
