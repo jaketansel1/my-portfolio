@@ -40,11 +40,11 @@ export const projects: Project[] = [
     tags: ["Product Design", "UX/UI", "Front-end"],
     period: "2025–now",
     showcase: {
-      image: "/licklibrary-homepage4.jpg",
+      image: "/licklibrary/showcase-banner.webp",
       background: "#0b0b0c",
       theme: "dark",
       position: "center",
-      fade: "78%",
+      fade: "45%",
     },
   },
   {
@@ -56,10 +56,10 @@ export const projects: Project[] = [
     category: "eCommerce, brand",
     tags: ["Product Design", "eCommerce", "Brand"],
     showcase: {
-      image: "/placeholders/crumble-and-co.jpg",
+      image: "/crumble-and-co/showcase-banner.webp",
       background: "#d9c6ad",
       theme: "light",
-      position: "30% center",
+      position: "center",
     },
   },
   {
