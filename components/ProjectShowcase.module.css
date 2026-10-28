@@ -28,6 +28,8 @@
   position: absolute;
   inset: 0 0 0 28%;
   z-index: -1;
+  /* Keep the hover zoom inside the fade; otherwise it spills left past the gradient. */
+  overflow: hidden;
 }
 .visual::after {
   position: absolute;
@@ -142,6 +144,63 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
     padding: 0 24px 28px;
   }
   .title { font-size: clamp(34px, 9vw, 56px); }
+}
+
+/*
+ * Immersive (homepage, desktop): projects become full-screen panels stacked edge to edge.
+ * The first is clipped back to its normal 16:7 card size and opens to full screen as it
+ * reaches the centre; the last closes back to card size as it leaves. Middle panels stay full.
+ * Content is padded by the card-size inset so text sits where it does on the normal card.
+ * --w0 uses cqw, so the parent must be a size container (HomeWork's list items are).
+ * Without scroll-timeline support or with reduced motion, the normal card is used.
+ */
+@media (min-width: 1100px) and (min-height: 620px) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .card[data-immersive] {
+      --breathing: clamp(32px, 7vh, 80px);
+      --pad: clamp(28px, 3.6vw, 56px);
+      --w0: min(100cqw, (100svh - var(--breathing) * 2) * 16 / 7);
+      --ix: calc((100vw - var(--w0)) / 2);
+      --iy: calc((100svh - var(--w0) * 7 / 16) / 2);
+      width: 100vw;
+      height: 100svh;
+      min-height: 0;
+      aspect-ratio: auto;
+      margin-inline: calc(50% - 50vw);
+    }
+    .card[data-immersive="first"],
+    .card[data-immersive="last"] {
+      animation: immersive-in linear both;
+      animation-timeline: view();
+    }
+    .card[data-immersive="last"] {
+      animation-name: immersive-out;
+    }
+    .card[data-immersive] .visual {
+      left: calc(var(--ix) + var(--w0) * 0.28);
+    }
+    .card[data-immersive] .content {
+      width: calc(var(--ix) + min(var(--w0) * 0.46, 600px));
+      padding: calc(var(--iy) + var(--pad)) var(--pad) calc(var(--iy) + var(--pad)) calc(var(--ix) + var(--pad));
+    }
+  }
+}
+
+/* view() progress: 50% = panel exactly filling the viewport. */
+@keyframes immersive-in {
+  0%, 30% {
+    clip-path: inset(var(--iy) var(--ix));
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  50%, 100% { clip-path: inset(0 0); }
+}
+
+@keyframes immersive-out {
+  0%, 50% {
+    clip-path: inset(0 0);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  70%, 100% { clip-path: inset(var(--iy) var(--ix)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

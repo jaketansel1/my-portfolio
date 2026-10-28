@@ -11,6 +11,8 @@ type ProjectShowcaseProps = {
   priority?: boolean;
   /** Title level, so cards nest correctly under a section heading. */
   headingLevel?: "h2" | "h3";
+  /** Desktop full-screen showcase position: the first grows in, the last shrinks out. */
+  immersive?: "first" | "middle" | "last";
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -24,6 +26,7 @@ export default function ProjectShowcase({
   index,
   priority = false,
   headingLevel: Heading = "h2",
+  immersive,
 }: ProjectShowcaseProps) {
   const showcase = project.showcase;
   const src = showcase?.image ?? project.cover ?? project.image;
@@ -80,11 +83,11 @@ export default function ProjectShowcase({
   );
 
   return project.link ? (
-    <Link href={project.link} className={styles.card} data-theme={showcase?.theme ?? "dark"} style={style}>
+    <Link href={project.link} className={styles.card} data-theme={showcase?.theme ?? "dark"} data-immersive={immersive} style={style}>
       {content}
     </Link>
   ) : (
-    <div className={styles.card} data-theme={showcase?.theme ?? "dark"} style={style}>
+    <div className={styles.card} data-theme={showcase?.theme ?? "dark"} data-immersive={immersive} style={style}>
       {content}
     </div>
   );

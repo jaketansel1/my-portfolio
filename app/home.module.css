@@ -185,6 +185,56 @@
   from { opacity: 0; transform: translateY(12px); }
 }
 
+/*
+ * Desktop showcase: each project gets its own viewport-tall slot, card centred,
+ * with gentle proximity snapping. Gated on width AND height so short laptops
+ * and tablets keep the natural stacked list.
+ */
+@media (min-width: 1100px) and (min-height: 620px) {
+  :global(html):has(.workList) {
+    scroll-snap-type: y proximity;
+  }
+
+  .workHeader {
+    scroll-snap-align: start;
+    scroll-margin-top: 24px;
+  }
+
+  .workList {
+    --showcase-breathing: clamp(32px, 7vh, 80px);
+    gap: 0;
+  }
+
+  .workList > li {
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    scroll-snap-align: center;
+    /* Lets immersive cards size their small state from the list width (cqw). */
+    container-type: inline-size;
+  }
+
+  /* Immersive cards open out to the full viewport width; don't let that add a horizontal scrollbar. */
+  .home {
+    overflow-x: clip;
+  }
+
+  /* Card keeps its 16:7 shape; scale it down if the viewport is too short to fit it. */
+  .workList > li > * {
+    width: min(100%, calc((100svh - var(--showcase-breathing) * 2) * 16 / 7));
+    height: auto;
+  }
+
+  .allWork {
+    margin-top: 0;
+  }
+
+  /* Resting point at the very bottom, so nothing pulls the reader back up past the last project. */
+  .work {
+    scroll-snap-align: end;
+  }
+}
+
 @media (max-width: 900px) {
   .factList { grid-column: 1 / -1; }
   .actions {

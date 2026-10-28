@@ -22,6 +22,7 @@ export default function HomeWork({ projects }: HomeWorkProps) {
               project={project}
               index={index}
               headingLevel="h3"
+              immersive={index === 0 ? "first" : index === projects.length - 1 ? "last" : "middle"}
             />
           </li>
         ))}
