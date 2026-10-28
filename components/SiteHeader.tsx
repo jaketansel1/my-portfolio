@@ -1,15 +1,41 @@
 import Link from "next/link";
+import styles from "./SiteHeader.module.css";
 
 type SiteHeaderProps = {
   variant?: "light" | "dark";
+  editorial?: boolean;
+  current?: "work" | "about" | "contact";
 };
 
-export default function SiteHeader({ variant = "light" }: SiteHeaderProps) {
+const editorialLinks = [
+  { key: "work", href: "/work", label: "Work" },
+  { key: "about", href: "/about", label: "About" },
+  { key: "contact", href: "/contact", label: "Contact" },
+] as const;
+
+export default function SiteHeader({ variant = "light", editorial = false, current }: SiteHeaderProps) {
   const isDark = variant === "dark";
   const linkClass = isDark
     ? "transition-colors hover:text-white"
     : "transition-colors hover:text-black";
   const navColor = isDark ? "text-white/58" : "text-black/55";
+
+  if (editorial) {
+    return (
+      <header className={styles.header}>
+        <Link href="/" className={styles.wordmark} aria-label="Jake Tansel, home">
+          Jake Tansel
+        </Link>
+        <nav aria-label="Main navigation" className={styles.navigation}>
+          {editorialLinks.map((link) => (
+            <Link key={link.key} href={link.href} aria-current={current === link.key ? "page" : undefined}>
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </header>
+    );
+  }
 
   return (
     <header className="relative z-10">
@@ -20,7 +46,7 @@ export default function SiteHeader({ variant = "light" }: SiteHeaderProps) {
         >
           Jake Tansel
         </Link>
-        <div className={`flex items-center gap-7 text-[13px] ${navColor}`}>
+        <nav aria-label="Main navigation" className={`flex items-center gap-7 text-[13px] ${navColor}`}>
           <Link href="/work" className={linkClass}>
             Work
           </Link>
@@ -30,7 +56,7 @@ export default function SiteHeader({ variant = "light" }: SiteHeaderProps) {
           <Link href="/contact" className={linkClass}>
             Contact
           </Link>
-        </div>
+        </nav>
       </div>
     </header>
   );

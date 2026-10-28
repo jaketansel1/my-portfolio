@@ -1,0 +1,77 @@
+/* Tokens come from home.module.css (.home). Project cards come from ProjectShowcase. */
+
+/* Intro: deliberately small — the work is the hero on this page. */
+
+.intro {
+  padding-block: clamp(16px, 2.2vw, 32px) clamp(28px, 3vw, 40px);
+  animation: fade 900ms var(--home-ease) both;
+}
+.title {
+  font-size: clamp(30px, 2.6vw, 40px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+.lede {
+  max-width: 64ch;
+  margin-top: 12px;
+  color: var(--home-muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.meta {
+  margin-top: 16px;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Project showcases */
+
+.showcases {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: clamp(20px, 2.2vw, 32px);
+  padding-bottom: clamp(80px, 9vw, 160px);
+  list-style: none;
+}
+.showcases > li { scroll-margin-top: 24px; }
+
+/* Closing */
+
+.closing {
+  padding-block: clamp(80px, 9vw, 160px) clamp(64px, 7vw, 120px);
+  background: var(--home-night);
+  color: var(--home-paper);
+}
+.closingHeading {
+  font-size: clamp(44px, 6.4vw, 120px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+.closingLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: clamp(56px, 7vw, 120px);
+  padding-top: 32px;
+  border-top: 1px solid var(--home-night-rule);
+  font-size: clamp(28px, 3.6vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.closingLink span:last-child { transition: transform 400ms var(--home-ease); }
+.closingLink:hover span:last-child { transform: translateX(8px); }
+.closingLink:focus-visible { outline: 2px solid currentColor; outline-offset: 6px; }
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro { animation: none; }
+  .closingLink span:last-child { transition: none; }
+}
