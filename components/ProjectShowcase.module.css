@@ -174,6 +174,226 @@
   object-position: left center;
 }
 
+/*
+ * Product artwork: one large desktop browser, the dominant visual, sized in the visual's own
+ * units (cqw/cqh) so it rescales with the panel. --shot is the screenshot's width/height
+ * (set inline from the data), so any screenshot works. Height = bw / shot + the bar
+ * (2.6em at 0.017 × bw = 0.044 × bw); the width is capped so that height stays within ~78% of
+ * the panel, and starting half of it above 50cqh centres it vertically.
+ */
+.artworkVisual {
+  container-type: size;
+}
+.artworkVisual::after { content: none; }
+.artwork {
+  position: absolute;
+  inset: 0;
+}
+.artBrowser {
+  --shot: 1.6;
+  --bh-ratio: calc(1 / var(--shot) + 0.044);
+  --bw: min(72cqw, 78cqh / var(--bh-ratio));
+  position: absolute;
+  top: calc(50cqh - var(--bw) * var(--bh-ratio) / 2);
+  right: 3cqw;
+  width: var(--bw);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: calc(var(--bw) * 0.016);
+  background: #161616;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.3),
+    0 40px 80px -32px rgb(0 0 0 / 0.75);
+  font-size: calc(var(--bw) * 0.017);
+  transition: transform 500ms var(--ease);
+}
+.artBrowser .browserBar {
+  height: 2.6em;
+  border-bottom-color: rgb(255 255 255 / 0.06);
+}
+.artBrowser .browserUrl {
+  background: rgb(255 255 255 / 0.06);
+  color: rgb(255 255 255 / 0.5);
+}
+/* Screenshots are shown whole, at their own proportions. */
+.artScreen {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/*
+ * Ghost: a large faded cut-out across the whole panel, painted first so the devices and text sit
+ * over it. Sized and placed in the panel's own proportions; the image is 3:2.
+ */
+.ghost {
+  position: absolute;
+  z-index: -1;
+  top: 3%;
+  left: 3%;
+  width: auto;
+  height: 90%;
+  opacity: var(--ghost-opacity, 0.25);
+  pointer-events: none;
+}
+
+.videoScreen {
+  position: relative;
+  aspect-ratio: var(--shot);
+  background: #0f0f0e;
+}
+.videoScreen video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Any crop comes off the right, where screen recordings carry a scrollbar. */
+  object-position: left center;
+}
+
+/* Light cards get light browser chrome. */
+.card[data-theme="light"] .artBrowser {
+  border-color: rgb(59 38 32 / 0.1);
+  background: #fbf7f3;
+  box-shadow:
+    0 1px 2px rgb(80 50 40 / 0.06),
+    0 44px 90px -36px rgb(110 70 55 / 0.38);
+}
+.card[data-theme="light"] .artBrowser .browserBar { border-bottom-color: rgb(59 38 32 / 0.07); }
+.card[data-theme="light"] .artBrowser .browserUrl {
+  background: rgb(59 38 32 / 0.05);
+  color: rgb(59 38 32 / 0.55);
+}
+
+/*
+ * Browser + phone: the browser matches the browser-only width (72cqw), and the phone overlaps its
+ * lower right, hanging a little below it. The pair spans ~0.76 × bw in height, so starting the
+ * browser 0.38 × bw above 50cqh centres the group; the height cap keeps that within ~88cqh.
+ */
+.artwork[data-with-mobile] {
+  --bw: min(72cqw, 116cqh);
+}
+.artwork[data-with-mobile] .artBrowser {
+  --bw: inherit;
+  top: calc(50cqh - var(--bw) * 0.38);
+  right: calc(1.5cqw + var(--bw) * 0.06);
+}
+
+/* Minimal phone: thin dark frame, the screenshot flush inside (it carries its own status bar). */
+.artPhone,
+.familyPhone,
+.scenePhone {
+  position: absolute;
+  width: var(--pw);
+  padding: calc(var(--pw) * 0.028);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: calc(var(--pw) * 0.15);
+  background: #0b0d12;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.35),
+    0 40px 70px -28px rgb(0 0 0 / 0.8);
+  font-size: calc(var(--pw) * 0.05);
+  transition: translate 500ms var(--ease);
+}
+.phoneScreen {
+  overflow: hidden;
+  aspect-ratio: 0.465;
+  border-radius: calc(var(--pw) * 0.125);
+  background: var(--fill, #0b0d12);
+}
+.artPhone {
+  --pw: calc(var(--bw) * 0.23);
+  top: calc(50cqh - var(--bw) * 0.14);
+  right: 1.5cqw;
+}
+.card[data-theme="light"] .artPhone,
+.card[data-theme="light"] .scenePhone {
+  border-color: rgb(59 38 32 / 0.2);
+  background: #1c1512;
+  box-shadow:
+    0 1px 2px rgb(80 50 40 / 0.12),
+    0 36px 70px -26px rgb(90 55 40 / 0.5);
+}
+
+/*
+ * Phone family (scale): three phones fanned around a shared centre, the middle one raised and in
+ * front. Offsets are in units of the phone width, so the group scales as one. Phone height ≈ 2.2 × --pw.
+ */
+.phoneFamily {
+  --pw: min(25cqw, 34cqh);
+  --ph: calc(var(--pw) * 2.2);
+}
+.familyPhone {
+  top: calc(50cqh - var(--ph) / 2 + var(--dy, 0px));
+  left: calc(50cqw - var(--pw) / 2 + var(--dx, 0px));
+  rotate: var(--r, 0deg);
+}
+.familyPhone[data-slot="0"] { --dx: calc(var(--pw) * -0.84); --dy: 3cqh; --r: -5deg; z-index: 2; }
+.familyPhone[data-slot="1"] { --dy: -3cqh; z-index: 3; }
+.familyPhone[data-slot="2"] { --dx: calc(var(--pw) * 0.84); --dy: 3cqh; --r: 5deg; z-index: 2; }
+.familyPhone:nth-child(n + 4) { display: none; }
+
+/* Scene phone (regular card): small, tucked into the browser's lower right. */
+.scenePhone {
+  --pw: min(12cqw, 24cqh);
+  right: 1.5cqw;
+  bottom: 7cqh;
+}
+
+/* Placeholder page for devices without a screenshot yet: quiet editorial wireframe. */
+.placeholderScreen {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 1.4em 2.4em;
+  aspect-ratio: var(--shot);
+  padding: 2.4em 3em 3em;
+  background: linear-gradient(180deg, #fcf8f4, #f5e9e0);
+  color: #3b2620;
+}
+.placeholderNav {
+  grid-column: 1 / -1;
+  width: 28%;
+  height: 0.5em;
+  border-radius: 99px;
+  background: rgb(59 38 32 / 0.16);
+}
+.placeholderTitle {
+  align-self: end;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 3.4em;
+  font-style: italic;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.placeholderLine {
+  width: 55%;
+  height: 0.5em;
+  border-radius: 99px;
+  background: rgb(59 38 32 / 0.12);
+}
+.placeholderImage {
+  grid-column: 2;
+  grid-row: 2 / 4;
+  border-radius: 0.5em;
+  background:
+    radial-gradient(ellipse 70% 60% at 35% 30%, rgb(246 222 208 / 0.9), rgb(246 222 208 / 0) 100%),
+    linear-gradient(160deg, #e7c3b1, #c99581 60%, #a9705c);
+}
+.placeholderScreen[data-kind="mobile"] {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto 1fr;
+  gap: 0.9em;
+  height: 100%;
+  aspect-ratio: auto;
+  padding: 26% 9% 9%;
+}
+.placeholderScreen[data-kind="mobile"] .placeholderTitle { font-size: 2.6em; }
+.placeholderScreen[data-kind="mobile"] .placeholderImage {
+  grid-column: 1;
+  grid-row: 4;
+}
+
 .content {
   display: flex;
   flex-direction: column;
@@ -239,6 +459,19 @@ div.card .cta { color: var(--fg-muted); font-weight: 400; }
 
 a.card:hover .image { transform: scale(1.035) translateX(-1%); }
 a.card:hover .browser { transform: translateY(-4px) scale(1.01); }
+a.card:hover .artBrowser { transform: translateY(-4px); }
+a.card:hover .artPhone,
+a.card:hover .familyPhone[data-slot="1"] { translate: 0 -6px; }
+a.card:hover .familyPhone[data-slot="0"],
+a.card:hover .familyPhone[data-slot="2"] { translate: 0 -3px; }
+
+/* Artwork and scene cards: the text sits as one centred group, so the CTA stays with the details. */
+@media (min-width: 901px) {
+  .card[data-layout="artwork"] .content {
+    justify-content: center;
+    gap: clamp(36px, 6vh, 64px);
+  }
+}
 a.card:hover .arrow { transform: translateX(6px); }
 a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offset: 4px; }
 
@@ -285,16 +518,35 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
     bottom: 22cqh;
     border-radius: 10px;
   }
+
+  .ghost { display: none; }
+
+  /* Stacked: browser + phone keeps just the browser. */
+  .phoneFamily { --pw: min(25cqw, 36cqh); }
+  .artwork[data-with-mobile] { --bw: min(84cqw, 125cqh); }
+  .artwork[data-with-mobile] .artBrowser {
+    top: calc(50cqh - var(--bw) * 0.33);
+    right: 8cqw;
+  }
+  .artPhone,
+  .scenePhone { display: none; }
 }
 
 /*
  * Immersive (homepage, desktop): projects become full-screen panels stacked edge to edge.
  * The first is clipped back to its normal 16:7 card size and opens to full screen as it
  * reaches the centre; the last closes back to card size as it leaves. Middle panels stay full.
- * Content is padded by the card-size inset so text sits where it does on the normal card.
+ * Full screen, text aligns with the page gutter (--ix). At card size it also gets the card's own
+ * padding, so it never touches the card edge; --open (0 = card, 1 = full) blends between the two.
  * --w0 uses cqw, so the parent must be a size container (HomeWork's list items are).
  * Without scroll-timeline support or with reduced motion, the normal card is used.
  */
+@property --open {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
 @media (min-width: 1100px) and (min-height: 620px) and (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .card[data-immersive] {
@@ -323,23 +575,39 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
       animation-timeline: view();
       animation-range: cover 0% cover 45%;
     }
+    /*
+     * Full screen: the focal point (e.g. a face) lands --ghost-at across the panel. --ghost-anchor is
+     * how far into the image it sits, as a multiple of the image height (defaults: the guitarist,
+     * whose head is ~46% into the 3:2 image, i.e. 0.69 × its height, placed 37% across).
+     */
+    .card[data-immersive] .ghost {
+      top: 3svh;
+      left: calc(var(--ghost-at, 0.37) * 100vw - 90svh * var(--ghost-anchor, 0.69));
+      height: 90svh;
+    }
     .card[data-immersive] .visual {
       left: calc(var(--ix) + var(--w0) * 0.28);
     }
     .card[data-immersive] .content {
       width: calc(var(--ix) + min(var(--w0) * 0.46, 600px));
-      padding: calc(var(--iy) + var(--pad)) var(--pad) calc(var(--iy) + var(--pad)) calc(var(--ix) + var(--pad));
+      padding: calc(var(--iy) + var(--pad)) var(--pad) calc(var(--iy) + var(--pad))
+        calc(var(--ix) + var(--pad) * (1 - var(--open)));
     }
-    /* Full-screen scene: the subject bridges into the text column, the browser overlaps its far ear. */
+    /*
+     * Full-screen scene: the subject bridges into the text column, the browser overlaps its far ear.
+     * Offsets put the pair's centre at ~48cqh (a touch above true centre, and clear of the floating
+     * launcher bottom-right). The header scrolls away, so the panel is the whole viewport. Both
+     * offsets move together, so the dog/browser relationship is unchanged.
+     */
     .card[data-immersive] .sceneSubject {
-      bottom: 11cqh;
+      bottom: 19cqh;
       left: -6cqw;
       height: 65cqh;
     }
     .card[data-immersive] .browser {
-      --bw: min(60cqw, 97cqh);
+      --bw: min(65cqw, 105cqh);
       right: 3.5cqw;
-      bottom: 20cqh;
+      bottom: 26.5cqh;
     }
   }
 }
@@ -358,9 +626,13 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
 @keyframes immersive-in {
   0%, 30% {
     clip-path: inset(var(--iy) var(--ix));
+    --open: 0;
     animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
-  50%, 100% { clip-path: inset(0 0); }
+  50%, 100% {
+    clip-path: inset(0 0);
+    --open: 1;
+  }
 }
 
 @keyframes immersive-settle {
@@ -379,12 +651,18 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
 @keyframes immersive-out {
   0%, 50% {
     clip-path: inset(0 0);
+    --open: 1;
     animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
-  70%, 100% { clip-path: inset(var(--iy) var(--ix)); }
+  70%, 100% {
+    clip-path: inset(var(--iy) var(--ix));
+    --open: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .image, .arrow, .browser { transition: none; }
-  a.card:hover .image, a.card:hover .arrow, a.card:hover .browser { transform: none; }
+  .image, .arrow, .browser, .artBrowser, .artPhone, .familyPhone, .scenePhone { transition: none; }
+  a.card:hover .image, a.card:hover .arrow, a.card:hover .browser,
+  a.card:hover .artBrowser { transform: none; }
+  a.card:hover .artPhone, a.card:hover .familyPhone { translate: none; }
 }
