@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import type { Project } from "../app/data/projects";
+import type { Project, ShowcaseScene } from "../app/data/projects";
+import ShowcaseVideo from "./ShowcaseVideo";
 import styles from "./ProjectShowcase.module.css";
 
 type ProjectShowcaseProps = {
@@ -16,6 +17,39 @@ type ProjectShowcaseProps = {
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+/** Backdrop → subject (with grounding shadow) → browser, positioned in ProjectShowcase.module.css. */
+function Scene({ scene, priority }: { scene: ShowcaseScene; priority: boolean }) {
+  const { subject, browser } = scene;
+  return (
+    <>
+      <div className={styles.sceneSubject} style={{ aspectRatio: `${subject.width} / ${subject.height}` }}>
+        <Image src={subject.src} alt="" fill sizes="(min-width: 900px) 34vw, 50vw" className={styles.sceneContain} preload={priority} />
+      </div>
+      <div className={styles.browser}>
+        <div className={styles.browserBar}>
+          <span className={styles.browserDots}>
+            <span />
+            <span />
+            <span />
+          </span>
+          <span className={styles.browserNav}>
+            <svg viewBox="0 0 16 16"><path d="M10 3.5 5.5 8l4.5 4.5" /></svg>
+            <svg viewBox="0 0 16 16"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+          </span>
+          <span className={styles.browserUrl}>{browser.url}</span>
+        </div>
+        <div className={styles.browserScreen}>
+          {browser.video ? (
+            <ShowcaseVideo src={browser.video} poster={browser.poster} className={styles.sceneFill} />
+          ) : (
+            <Image src={browser.poster} alt="" fill sizes="(min-width: 900px) 50vw, 60vw" className={styles.sceneFill} preload={priority} />
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
 
 /**
  * Cinematic work card: one shared layout, art-directed per project through `project.showcase`
@@ -33,12 +67,16 @@ export default function ProjectShowcase({
   const style = {
     "--card-bg": showcase?.background ?? "#0f0f0e",
     ...(showcase?.fade ? { "--fade": showcase.fade } : {}),
+    ...(showcase?.ink ? { "--fg": showcase.ink } : {}),
+    ...(showcase?.scene ? { background: `${showcase.scene.backdrop}, var(--card-bg)` } : {}),
   } as CSSProperties;
 
   const content: ReactNode = (
     <>
-      <div className={styles.visual}>
-        {src ? (
+      <div className={showcase?.scene ? `${styles.visual} ${styles.sceneVisual}` : styles.visual}>
+        {showcase?.scene ? (
+          <Scene scene={showcase.scene} priority={priority} />
+        ) : src ? (
           <Image
             src={src}
             alt=""
@@ -56,7 +94,7 @@ export default function ProjectShowcase({
 
         <div>
           <Heading className={styles.title}>{project.title}</Heading>
-          <p className={styles.description}>{project.description}</p>
+          {project.description ? <p className={styles.description}>{project.description}</p> : null}
           <div className={styles.meta}>
             {project.tags?.length ? (
               <ul className={styles.tags} aria-label="Disciplines">

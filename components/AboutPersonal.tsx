@@ -81,7 +81,16 @@ export default function AboutPersonal({ chapters }: AboutPersonalProps) {
                 onClick={() => goTo(index)}
                 aria-current={index === active ? "step" : undefined}
               >
-                {chapter.kicker}
+                <span className={styles.thumb} aria-hidden="true">
+                  <Image
+                    src={chapter.image}
+                    alt=""
+                    fill
+                    sizes="120px"
+                    style={{ objectFit: "cover", objectPosition: chapter.position }}
+                  />
+                </span>
+                <span className={styles.thumbLabel}>{chapter.kicker}</span>
               </button>
             </li>
           ))}

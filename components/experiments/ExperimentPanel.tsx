@@ -145,31 +145,28 @@ export default function ExperimentPanel({ open, onClose }: ExperimentPanelProps)
           <ActiveView onBack={showMenu} onNavigate={closeForNavigation} />
         ) : (
           <div className={styles.menu}>
-            <p className={styles.intro}>There&rsquo;s more than one way to explore my work.</p>
+            <p className={styles.intro}>Explore my work a little differently.</p>
             <ol className={styles.options}>
               {experiments.map((experiment) => {
                 const available = experiment.status === "available" && views[experiment.id];
                 const content = (
                   <>
-                    <ExperimentVisual id={experiment.id} />
-                    <span className={styles.optionBody}>
-                      <span className={styles.optionMeta}>
-                        <span className={styles.optionNumber}>{experiment.number}</span>
-                        <span className={available ? styles.optionLive : styles.optionSoon}>
-                          {available ? "Available now" : "Coming soon"}
-                        </span>
+                    <span className={styles.optionMeta}>
+                      <span className={styles.optionNumber}>{experiment.number}</span>
+                      <span className={available ? styles.optionLive : styles.optionSoon}>
+                        {available ? "Available now" : "Coming soon"}
                       </span>
-                      <span className={styles.optionTitle}>
-                        <span className={styles.optionSymbol} aria-hidden="true">{experiment.symbol}</span>
-                        {experiment.title}
-                      </span>
-                      <span className={styles.optionText}>{experiment.description}</span>
-                      {available && (
-                        <span className={styles.optionAction}>
-                          {experiment.action} <span aria-hidden="true">&rarr;</span>
-                        </span>
-                      )}
                     </span>
+                    <ExperimentVisual id={experiment.id} symbol={experiment.symbol} />
+                    <span className={styles.optionBody}>
+                      <span className={styles.optionTitle}>{experiment.title}</span>
+                      <span className={styles.optionText}>{experiment.description}</span>
+                    </span>
+                    {available && (
+                      <span className={styles.optionAction}>
+                        {experiment.action} <span aria-hidden="true">&rarr;</span>
+                      </span>
+                    )}
                   </>
                 );
 
@@ -180,12 +177,13 @@ export default function ExperimentPanel({ open, onClose }: ExperimentPanelProps)
                         type="button"
                         className={styles.optionInner}
                         data-experiment={experiment.id}
+                        data-tone={experiment.id}
                         onClick={() => setActive(experiment.id)}
                       >
                         {content}
                       </button>
                     ) : (
-                      <div className={styles.optionInner} data-soon>
+                      <div className={styles.optionInner} data-soon data-tone={experiment.id}>
                         {content}
                       </div>
                     )}

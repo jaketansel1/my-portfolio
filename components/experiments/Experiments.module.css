@@ -125,12 +125,12 @@
   line-height: 1.45;
 }
 
-/* Options */
+/* Options: three tool cards. The symbol and a small hover preview are the visual, not imagery. */
 
 .options {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(12px, 1.6vw, 20px);
+  gap: clamp(12px, 1.4vw, 18px);
   margin-top: clamp(32px, 4vw, 44px);
 }
 
@@ -142,31 +142,39 @@
 .option:nth-child(3) { animation-delay: 180ms; }
 
 .optionInner {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
+  min-height: clamp(380px, 50svh, 460px);
+  padding: clamp(20px, 2.2vw, 28px);
+  border: 1px solid var(--x-rule);
+  color: var(--x-ink);
   text-align: left;
+  transition:
+    background-color 300ms var(--x-ease),
+    border-color 300ms var(--x-ease),
+    box-shadow 500ms var(--x-ease),
+    transform 500ms var(--x-ease);
 }
 button.optionInner { cursor: pointer; }
 
-.optionBody {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* Surprise Me is the live one: filled with the launcher blue. */
+.optionInner[data-tone="surprise"] {
+  border-color: var(--x-blue);
+  background: var(--x-blue);
+  color: #fff;
 }
 
 .optionMeta {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--x-rule);
   font-size: 12px;
 }
 .optionNumber {
   color: var(--x-quiet);
+  font-family: var(--font-geist-mono), monospace;
   font-variant-numeric: tabular-nums;
 }
 .optionSoon { color: var(--x-quiet); }
@@ -174,7 +182,6 @@ button.optionInner { cursor: pointer; }
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  color: var(--x-blue);
   font-weight: 500;
 }
 .optionLive::before {
@@ -184,144 +191,153 @@ button.optionInner { cursor: pointer; }
   border-radius: 50%;
   background: currentColor;
 }
+[data-tone="surprise"] .optionNumber { color: rgba(255, 255, 255, 0.66); }
 
-.optionTitle {
-  display: flex;
-  align-items: baseline;
-  gap: 9px;
-  margin-top: 4px;
-  font-size: clamp(19px, 1.9vw, 22px);
-  font-weight: 500;
-  letter-spacing: -0.025em;
+/* Stage: oversized symbol, with the interaction preview pinned to its foot. */
+.stage {
+  position: relative;
+  display: block;
+  flex: 1;
+  min-height: 150px;
+  margin-block: 24px 20px;
 }
-.optionSymbol {
-  width: 0.9em;
+.stageSymbol {
+  display: inline-block;
   color: var(--x-quiet);
-  font-size: 0.72em;
+  font-size: clamp(64px, 7vw, 92px);
+  line-height: 1;
+  transform-origin: center;
+  transition: transform 800ms var(--x-ease), color 300ms ease;
 }
-button.optionInner .optionSymbol { color: var(--x-blue); }
-[data-soon] .optionTitle { color: rgba(18, 18, 17, 0.62); }
+[data-tone="surprise"] .stageSymbol { color: #fff; }
+/* Unavailable features get a quieter symbol so the title leads. */
+[data-soon] .stageSymbol {
+  color: rgba(18, 18, 17, 0.28);
+  font-size: clamp(44px, 4.6vw, 60px);
+}
 
+/* Ask: an input line that types a sample question on hover. */
+.askField {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  border-bottom: 1px solid var(--x-rule);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.askPlaceholder {
+  color: var(--x-quiet);
+}
+.askTyped {
+  display: none;
+  max-width: 0;
+  overflow: hidden;
+  color: var(--x-ink);
+}
+.caret {
+  display: inline-block;
+  flex: none;
+  width: 1.5px;
+  height: 1.15em;
+  margin-left: 2px;
+  background: var(--x-blue);
+  animation: blink 1.1s steps(1) infinite;
+}
+
+/* Play: an A/B decision that slides in, then B gets picked. */
+.choices {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid var(--x-rule);
+  border-radius: 999px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 400ms var(--x-ease),
+    translate 500ms var(--x-ease),
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease;
+}
+.choice + .choice { transition-delay: 80ms, 80ms, 0ms, 0ms, 0ms; }
+.choiceKey {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.optionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.optionTitle {
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+[data-soon] .optionTitle { color: rgba(18, 18, 17, 0.62); }
 .optionText {
   color: var(--x-muted);
   font-size: 14px;
   line-height: 1.45;
 }
+[data-tone="surprise"] .optionText { color: rgba(255, 255, 255, 0.78); }
 
 .optionAction {
   display: inline-flex;
   gap: 10px;
-  margin-top: auto;
-  padding-top: 10px;
-  color: var(--x-blue);
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--x-rule);
+  color: var(--x-quiet);
   font-size: 14px;
+}
+[data-tone="surprise"] .optionAction {
+  border-top-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
   font-weight: 500;
 }
 .optionAction span { transition: transform 400ms var(--x-ease); }
+.optionInner[data-tone="surprise"]:focus-visible { outline-color: var(--x-ink); }
 
-/* Card visuals. Sized in container units so they scale with the card. */
-
-.visual {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  aspect-ratio: 4 / 3.4;
-  container-type: inline-size;
-}
-.visualGlyph {
-  position: absolute;
-  top: 7cqw;
-  left: 7cqw;
-  font-size: max(13px, 6cqw);
-  line-height: 1;
+/* Touch screens can't hover: show the previews in their finished state. */
+@media (hover: none) {
+  .askPlaceholder { display: none; }
+  .askTyped { display: inline-block; max-width: none; }
+  .choice { opacity: 1; translate: 0 0; }
+  .choice[data-picked] {
+    border-color: var(--x-ink);
+    background: var(--x-ink);
+    color: var(--x-paper);
+  }
 }
 
-.askVisual {
-  background: var(--x-ink);
-  color: var(--x-paper);
+@keyframes type {
+  to { max-width: calc(var(--chars) * 1ch); }
 }
-.askVisual .visualGlyph { color: rgba(243, 242, 238, 0.5); }
-.askPrompt {
-  position: absolute;
-  right: 7cqw;
-  bottom: 7cqw;
-  left: 7cqw;
-  font-size: 8.4cqw;
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
-}
-.caret {
-  display: inline-block;
-  width: 0.07em;
-  height: 0.9em;
-  margin-left: 0.08em;
-  vertical-align: -0.1em;
-  background: var(--x-blue);
-  animation: blink 1.1s steps(1) infinite;
-}
-
-.playVisual { background: #e5e3dc; }
-.playStack {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3cqw;
-  padding: 0 9cqw;
-}
-.choice {
-  display: flex;
-  align-items: center;
-  gap: 4.5cqw;
-  padding: 4.5cqw 5cqw;
-  border: 1px solid rgba(18, 18, 17, 0.16);
-  background: var(--x-paper);
-  font-size: 6.2cqw;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-}
-.choice:last-child {
-  border-color: var(--x-ink);
-  background: var(--x-ink);
-  color: var(--x-paper);
-}
-.choiceKey {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 1.6em;
-  height: 1.6em;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  font-size: 0.72em;
-}
-.choiceOr {
-  align-self: center;
-  color: var(--x-quiet);
-  font-size: 4.6cqw;
-}
-
-.surpriseVisual {
-  background: var(--x-blue);
-  color: #fff;
-}
-.stackCard {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 46%;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  background: var(--x-blue-deep);
-  box-shadow: 0 18px 40px -16px rgba(5, 12, 60, 0.6);
-  transition: transform 600ms var(--x-ease);
-}
-.stackCard:nth-of-type(2) { transform: translate(-92%, -46%) rotate(-9deg); }
-.stackCard:nth-of-type(3) { transform: translate(-8%, -46%) rotate(9deg); }
-.stackCard:nth-of-type(4) { z-index: 1; transform: translate(-50%, -52%); }
 
 /* Surprise Me */
 
@@ -486,10 +502,34 @@ button.optionInner .optionSymbol { color: var(--x-blue); }
   }
   .quietButton:hover { color: var(--x-ink); }
   button.optionInner:hover .optionAction span { transform: translateX(5px); }
-  /* The stack fans out as an invitation to pick one. */
-  button.optionInner:hover .stackCard:nth-of-type(2) { transform: translate(-112%, -44%) rotate(-15deg); }
-  button.optionInner:hover .stackCard:nth-of-type(3) { transform: translate(12%, -44%) rotate(15deg); }
-  button.optionInner:hover .stackCard:nth-of-type(4) { transform: translate(-50%, -58%) rotate(-2deg); }
+
+  /* Coming-soon cards wake up a little and preview what they'll do. */
+  [data-soon]:hover {
+    border-color: rgba(18, 18, 17, 0.24);
+    background: rgba(18, 18, 17, 0.025);
+  }
+  [data-soon]:hover .stageSymbol { color: var(--x-ink); }
+  [data-tone="ask"]:hover .stageSymbol { transform: rotate(90deg); }
+  [data-tone="ask"]:hover .askPlaceholder { display: none; }
+  [data-tone="ask"]:hover .askTyped {
+    display: inline-block;
+    animation: type 1500ms 150ms steps(var(--chars)) forwards;
+  }
+  [data-tone="play"]:hover .stageSymbol { transform: translateX(8px); }
+  [data-tone="play"]:hover .choice {
+    opacity: 1;
+    translate: 0 0;
+  }
+  [data-tone="play"]:hover .choice[data-picked] {
+    border-color: var(--x-ink);
+    background: var(--x-ink);
+    color: var(--x-paper);
+    transition-delay: 80ms, 80ms, 750ms, 750ms, 750ms;
+  }
+
+  /* Surprise Me: a slight scale, the diamond turns a little, the arrow moves on. */
+  button.optionInner[data-tone="surprise"]:hover { transform: scale(1.01); }
+  [data-tone="surprise"]:hover .stageSymbol { transform: rotate(20deg); }
   .primaryButton:hover { background: #2b2b29; }
   .primaryButton:hover > span[aria-hidden] { transform: translateX(4px); }
   .againButton:hover .againLabel { text-decoration-color: currentColor; }
@@ -521,67 +561,24 @@ button.optionInner .optionSymbol { color: var(--x-blue); }
   }
   .topBar { margin: -8px 0 28px; }
 
-  /* Cards become rows with a square thumbnail. */
+  /* Cards stack; the stage shrinks so all three fit without much scrolling. */
   .options {
     grid-template-columns: minmax(0, 1fr);
-    gap: 0;
+    gap: 10px;
     margin-top: 24px;
-    border-top: 1px solid var(--x-rule);
   }
-  .option { border-bottom: 1px solid var(--x-rule); }
   .optionInner {
-    grid-template-columns: 96px minmax(0, 1fr);
-    grid-template-rows: none;
-    align-items: start;
-    gap: 16px;
-    padding: 16px 0;
+    min-height: 0;
+    padding: 18px;
   }
-  .optionMeta {
-    padding-bottom: 0;
-    border-bottom: 0;
+  .stage {
+    min-height: 104px;
+    margin-block: 16px 14px;
   }
-  .optionTitle { margin-top: 0; font-size: 18px; }
-  .optionAction { padding-top: 2px; }
-
-  .visual { aspect-ratio: 1; }
-  .askPrompt,
-  .choiceText,
-  .choiceOr,
-  .askVisual .visualGlyph,
-  .surpriseVisual .visualGlyph { display: none; }
-  .askVisual::after {
-    content: "✦";
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    font-size: 30px;
-  }
-  .playStack {
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 0;
-  }
-  .choice,
-  .choice:last-child {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--x-ink);
-  }
-  .choiceKey {
-    width: 34px;
-    height: 34px;
-    font-size: 14px;
-  }
-  .choice:last-child .choiceKey {
-    border-color: var(--x-ink);
-    background: var(--x-ink);
-    color: var(--x-paper);
-  }
-  .stackCard { width: 50%; }
+  .stageSymbol { font-size: 48px; }
+  [data-soon] .stageSymbol { font-size: 36px; }
+  .optionTitle { font-size: 22px; }
+  .optionAction { margin-top: 16px; padding-top: 12px; }
 
   .reveal {
     grid-template-columns: minmax(0, 1fr);
@@ -613,10 +610,16 @@ button.optionInner .optionSymbol { color: var(--x-blue); }
   .revealMediaGlyph,
   .caret,
   .againIcon { animation: none !important; }
-  .stackCard { transition: none; }
+  /* The ask preview appears complete instead of typing. */
+  .askTyped { animation: none !important; max-width: none; }
   .launcher,
   .launcherSymbol,
+  .optionInner,
+  .stageSymbol,
+  .choice,
   .optionAction span,
-  .primaryButton > span { transition: none; }
-  .launcher:hover { transform: none; }
+  .primaryButton > span { transition: none !important; }
+  .launcher:hover,
+  .optionInner:hover,
+  .optionInner:hover .stageSymbol { transform: none !important; }
 }

@@ -1,10 +1,12 @@
-// Placeholder details — replace before launch. Optional entries are hidden on the Contact page when unset.
+// Placeholder details — replace before launch.
 export const contact = {
   email: "hello@example.com",
-  phone: undefined as string | undefined,
   linkedin: "https://www.linkedin.com",
-  cv: undefined as string | undefined,
-  location: "London, UK",
+  location: "near London, UK",
+  /** Hero photograph (portrait, workspace or candid). Unset shows a placeholder frame. */
+  image: undefined as string | undefined,
+  /** CSS object-position for the hero photograph's crop. */
+  imagePosition: undefined as string | undefined,
 };
 
-export const topics = ["Hiring", "A project", "Just saying hello"] as const;
+export const availability = ["Freelance / Contract", "Product roles", "Collaborations"];

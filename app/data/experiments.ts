@@ -36,7 +36,7 @@ export const experiments: Experiment[] = [
   {
     id: "surprise",
     number: "03",
-    symbol: "◈",
+    symbol: "◇",
     title: "Surprise Me",
     description: "Take me somewhere interesting.",
     status: "available",

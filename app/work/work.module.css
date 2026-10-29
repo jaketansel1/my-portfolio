@@ -1,31 +1,68 @@
 /* Tokens come from home.module.css (.home). Project cards come from ProjectShowcase. */
 
-/* Intro: deliberately small — the work is the hero on this page. */
+/* Intro: an editorial lead-in to the work; metadata sits right of the headline on desktop. */
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 .intro {
-  padding-block: clamp(16px, 2.2vw, 32px) clamp(28px, 3vw, 40px);
-  animation: fade 900ms var(--home-ease) both;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(16px, 2vw, 32px);
+  align-items: end;
+  padding-block: clamp(40px, 7vh, 96px) clamp(48px, 5vw, 88px);
 }
-.title {
-  font-size: clamp(30px, 2.6vw, 40px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
-.lede {
-  max-width: 64ch;
-  margin-top: 12px;
-  color: var(--home-muted);
-  font-size: 16px;
-  line-height: 1.5;
-}
-.meta {
-  margin-top: 16px;
+.eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: 28px;
   color: var(--home-muted);
   font-family: var(--font-geist-mono), monospace;
   font-size: 12px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+.headline {
+  grid-column: 1 / 10;
+  font-size: clamp(40px, 5vw, 96px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.headline > span > span { text-wrap: balance; }
+.meta {
+  grid-column: 10 / -1;
+  justify-self: end;
+  padding-bottom: 0.4em;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  letter-spacing: 0.06em;
+  text-align: right;
+  text-transform: uppercase;
+  animation: fade 1100ms 250ms var(--home-ease) both;
+}
+
+@media (max-width: 900px) {
+  .headline, .meta { grid-column: 1 / -1; }
+  .meta {
+    display: flex;
+    gap: 20px;
+    justify-self: start;
+    margin-top: 28px;
+    padding-bottom: 0;
+    text-align: left;
+  }
+}
+
+@media (max-width: 600px) {
+  .headline { font-size: 11.6vw; line-height: 1; }
 }
 
 /* Project showcases */
@@ -72,6 +109,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro { animation: none; }
+  .meta { animation: none; }
   .closingLink span:last-child { transition: none; }
 }

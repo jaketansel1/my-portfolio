@@ -16,10 +16,10 @@
   font-weight: 400;
 }
 
-/* Intro */
+/* Career story, after the visual opening */
 
 .intro {
-  padding-top: clamp(48px, 10vh, 136px);
+  padding-top: clamp(112px, 12vw, 200px);
 }
 
 .headline {
@@ -61,7 +61,9 @@
   text-wrap: pretty;
 }
 
-/* Path, experience, capabilities */
+/* How I got here: the career progression */
+
+.path { padding-top: clamp(96px, 10vw, 176px); }
 
 .journey {
   display: grid;
@@ -73,8 +75,9 @@
   padding-top: 20px;
   border-top: 1px solid var(--home-ink);
 }
-.intro + section { padding-top: clamp(80px, 9vw, 160px); }
 .journeyMeta {
+  display: flex;
+  align-items: center;
   color: var(--home-muted);
   font-family: var(--font-geist-mono), monospace;
   font-size: 12px;
@@ -84,6 +87,13 @@
 .journeyMeta span {
   margin-right: 14px;
   color: var(--home-ink);
+}
+.journeyMeta .journeyArrow {
+  margin: 0 0 0 auto;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0;
 }
 .journeyTitle {
   margin-block: clamp(32px, 4vw, 64px) 14px;
@@ -99,14 +109,18 @@
   line-height: 1.6;
 }
 
-.detail {
+/* Where I've worked, what I can do */
+
+/* Same label/body grid as the intro story, so the columns line up down the page. */
+.detail { padding-block: clamp(96px, 10vw, 176px) clamp(112px, 12vw, 200px); }
+.detail > div {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: clamp(16px, 2vw, 32px);
-  padding-block: clamp(80px, 9vw, 160px);
 }
-.detail > div:first-child { grid-column: 1 / 8; }
-.detail > div:last-child { grid-column: 9 / -1; }
+.detail > div + div { margin-top: clamp(72px, 7vw, 112px); }
+.detail .sectionLabel { grid-column: 1 / 5; }
+.detail ul { grid-column: 5 / -1; }
 
 .experience,
 .capabilities { list-style: none; }
@@ -135,16 +149,31 @@
   font-size: 15px;
   line-height: 1.5;
 }
+.capabilities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(16px, 2vw, 32px);
+}
 .capabilities li {
-  padding-block: 12px;
+  padding-block: 18px;
   border-top: 1px solid var(--home-rule);
   font-size: 16px;
+  line-height: 1.35;
+}
+.capabilities li:nth-last-child(2) { border-bottom: 1px solid var(--home-rule); }
+
+/* Opening: a visual biography. Sticky photograph, scroll-driven chapters, contact-sheet index. */
+
+/* The header sits on the dark opening; remap the tokens it reads. */
+.night {
+  --home-ink: var(--home-paper);
+  --home-muted: var(--home-night-muted);
+  background: var(--home-night);
+  color: var(--home-paper);
 }
 
-/* Personal: sticky photograph, scroll-driven chapters */
-
 .personal {
-  padding-block: clamp(80px, 9vw, 160px) clamp(48px, 6vw, 96px);
+  padding-block: clamp(48px, 10vh, 136px) clamp(48px, 6vw, 96px);
   background: var(--home-night);
   color: var(--home-paper);
 }
@@ -154,6 +183,12 @@
 }
 .personal .eyebrow { color: var(--home-night-muted); }
 .personalHeader { margin-bottom: clamp(24px, 3vw, 48px); }
+.personalIntro {
+  margin-top: clamp(20px, 2vw, 28px);
+  color: var(--home-night-muted);
+  font-size: clamp(17px, 1.4vw, 21px);
+  line-height: 1.4;
+}
 .personalHeading {
   font-size: clamp(44px, 6.4vw, 120px);
   font-weight: 500;
@@ -209,7 +244,7 @@
   font-family: var(--font-geist-mono), monospace;
   font-size: 12px;
   letter-spacing: 0.04em;
-  mix-blend-mode: difference;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
 }
 .frameCounter span { color: var(--home-paper); }
 
@@ -220,11 +255,13 @@
 }
 .stageIndex li { flex: 1; }
 .stageIndex button {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
   min-height: 40px;
-  padding-top: 12px;
+  padding: 0;
   border: 0;
-  border-top: 1px solid var(--home-night-rule);
   background: none;
   color: var(--home-night-muted);
   font: inherit;
@@ -234,9 +271,29 @@
   transition: color 300ms var(--home-ease), border-color 300ms var(--home-ease);
 }
 .stageIndex button:hover { color: var(--home-paper); }
-.stageIndex button[aria-current] {
-  border-top-color: var(--home-paper);
-  color: var(--home-paper);
+.stageIndex button[aria-current] { color: var(--home-paper); }
+
+/* Contact-sheet thumbnails: the active frame is lit, the rest sit back. */
+.thumb {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #1c1c1a;
+  opacity: 0.38;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: opacity 400ms var(--home-ease), outline-color 400ms var(--home-ease);
+}
+.stageIndex button:hover .thumb { opacity: 0.75; }
+.stageIndex button[aria-current] .thumb {
+  opacity: 1;
+  outline-color: var(--home-paper);
+}
+.thumbLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .stageIndex button:focus-visible {
   outline: 2px solid var(--home-paper);
@@ -248,13 +305,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 100svh;
+  min-height: 80svh;
   opacity: 0.22;
   transition: opacity 700ms var(--home-ease);
 }
 .chapter[data-active="true"] { opacity: 1; }
 .chapterKicker {
   margin-bottom: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--home-night-rule);
   color: var(--home-night-muted);
   font-family: var(--font-geist-mono), monospace;
   font-size: 12px;
@@ -278,18 +337,24 @@
 
 .stageCaption { display: none; }
 
-/* Closing */
+/* Closing: hands the reader back to the work */
 
-.closing { padding-block: clamp(96px, 12vw, 200px); }
+.closing { padding-block: clamp(112px, 13vw, 220px); }
 .closingStatement {
-  max-width: 24ch;
-  font-size: clamp(32px, 4.2vw, 76px);
+  max-width: 18ch;
+  font-size: clamp(40px, 5.4vw, 104px);
   font-weight: 500;
   line-height: 1.04;
   letter-spacing: -0.04em;
   text-wrap: balance;
 }
-.closingStatement span { color: var(--home-quiet); }
+.closingText {
+  margin-top: clamp(20px, 2vw, 28px);
+  color: var(--home-muted);
+  font-size: clamp(18px, 1.6vw, 24px);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
 .closingActions {
   display: flex;
   align-items: center;
@@ -307,9 +372,9 @@
   .storyLabel { margin-bottom: 20px; }
   .journey { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
   .journeyTitle { margin-top: 24px; }
-  .detail > div:first-child,
-  .detail > div:last-child { grid-column: 1 / -1; }
-  .detail > div:last-child { margin-top: 72px; }
+  .journeyMeta .journeyArrow { transform: rotate(90deg); }
+  .detail .sectionLabel,
+  .detail ul { grid-column: 1 / -1; }
 
   /* Mobile pins the whole scene; chapters become invisible scroll steps (still read by screen readers). */
   .personalLayout { display: block; }
@@ -321,7 +386,14 @@
   }
   .frame { min-height: 0; }
   .stageIndex { gap: 6px; }
-  .stageIndex button { padding-top: 10px; font-size: 11px; }
+  .thumb { aspect-ratio: 1; outline-offset: 2px; }
+  .thumbLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
   .stageCaption {
     display: block;
     min-height: 168px;
@@ -341,10 +413,13 @@
 
 @media (max-width: 600px) {
   .experience li { grid-template-columns: 6.5em minmax(0, 1fr); row-gap: 4px; }
+  .capabilities { grid-template-columns: minmax(0, 1fr); }
+  .capabilities li { padding-block: 14px; }
+  .capabilities li:nth-last-child(2) { border-bottom: 0; }
   .note { grid-column: 2; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .story, .stageCaption { animation: none; }
-  .slide, .slideImage, .chapter { transition: none; }
+  .slide, .slideImage, .chapter, .thumb { transition: none; }
 }

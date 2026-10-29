@@ -23,7 +23,7 @@ export type PersonalChapter = {
 export const journey: JourneyStep[] = [
   {
     period: "Where it started",
-    title: "Social and eCommerce",
+    title: "Social & eCommerce",
     body: "Learning what makes people stop, click, buy and come back, and how much the small details move the numbers.",
   },
   {
@@ -33,7 +33,7 @@ export const journey: JourneyStep[] = [
   },
   {
     period: "Now",
-    title: "Design and build",
+    title: "Design & build",
     body: "Designing and shipping end to end. Front-end code and AI-assisted workflows get ideas to real users faster.",
   },
 ];
@@ -55,7 +55,8 @@ export const capabilities = [
   "Admin and CMS tooling",
 ];
 
-// Draft copy and placeholder photography (see public/placeholders/CREDITS.md) — swap in real photos and words.
+// One visual biography: work and life mixed, in no fixed category order.
+// Personal copy is draft and some photography is placeholder (see public/placeholders/CREDITS.md) — swap in real photos and words.
 export const personalChapters: PersonalChapter[] = [
   {
     kicker: "Me",
@@ -66,6 +67,13 @@ export const personalChapters: PersonalChapter[] = [
     position: "center 25%",
   },
   {
+    kicker: "LickLibrary",
+    title: "Rebuilding a guitar platform.",
+    text: "Redesigning a 30+ year old guitar learning platform: onboarding, discovery and the whole experience.",
+    image: "/licklibrary/showcase-banner.webp",
+    alt: "LickLibrary redesign screens",
+  },
+  {
     kicker: "Football",
     title: "Football, always.",
     text: "Playing it, watching it, and eight years designing for the fans who live for it.",
@@ -73,11 +81,26 @@ export const personalChapters: PersonalChapter[] = [
     alt: "",
   },
   {
+    kicker: "Fanzine",
+    title: "Apps for millions of fans.",
+    text: "50+ football club apps, scaled through one product system.",
+    image: "/fanzine-homepage.jpg",
+    alt: "Fanzine club app screens",
+    position: "30% center",
+  },
+  {
     kicker: "Training",
     title: "Gym and Jiu-Jitsu.",
     text: "Brazilian Jiu-Jitsu keeps me humble. Small adjustments, big outcomes. A lot like design.",
     image: "/personal-health-hub.jpg",
     alt: "",
+  },
+  {
+    kicker: "Crumble & Co",
+    title: "A shop for dog lovers.",
+    text: "An eCommerce brand combining beautiful design with a seamless shopping experience.",
+    image: "/crumble-and-co/showcase-hero.webp",
+    alt: "Crumble & Co shop design",
   },
   {
     kicker: "Travel",

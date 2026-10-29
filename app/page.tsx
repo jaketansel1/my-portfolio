@@ -20,7 +20,7 @@ export default function Home() {
       </div>
       <main id="main-content">
         <HomeHero />
-        <HomeWork projects={projects} />
+        <HomeWork projects={projects.filter((project) => project.featured)} />
       </main>
     </div>
   );

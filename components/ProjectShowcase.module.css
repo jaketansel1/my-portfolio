@@ -16,10 +16,11 @@
   --chip: rgba(243, 242, 238, 0.24);
   color: var(--fg);
 }
+/* --fg can be overridden per project (showcase.ink); the muted tones follow it. */
 .card[data-theme="light"] {
   --fg: #121211;
-  --fg-muted: rgba(18, 18, 17, 0.66);
-  --chip: rgba(18, 18, 17, 0.2);
+  --fg-muted: color-mix(in srgb, var(--fg) 66%, transparent);
+  --chip: color-mix(in srgb, var(--fg) 20%, transparent);
   color: var(--fg);
 }
 
@@ -45,6 +46,132 @@
 .image {
   object-fit: cover;
   transition: transform 1200ms var(--ease);
+}
+
+/*
+ * Scene variant: subject and browser laid out in the visual's own units (cqw/cqh),
+ * so the composition rescales with the panel instead of cropping. The subject may reach left
+ * past the visual into the text column; it sits behind the text and the card clips it.
+ */
+.sceneVisual {
+  container-type: size;
+  overflow: visible;
+}
+.sceneVisual::after { content: none; }
+.sceneFill { object-fit: cover; }
+.sceneContain { object-fit: contain; }
+
+/* 16:7 card: the panel is short, so the subject takes more of its height and starts clear of the text. */
+.sceneSubject {
+  position: absolute;
+  bottom: 9cqh;
+  left: 3cqw;
+  isolation: isolate;
+  height: 77cqh;
+}
+/* Grounding shadows: soft ellipses on the floor, not a drop-shadow halo round the silhouette. */
+.sceneSubject::before,
+.sceneSubject::after {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  content: "";
+}
+.sceneSubject::before {
+  bottom: -3%;
+  left: 24%;
+  width: 76%;
+  height: 7%;
+  background: rgb(96 66 38 / 0.18);
+  filter: blur(24px);
+}
+.sceneSubject::after {
+  bottom: -1%;
+  left: 50%;
+  width: 50%;
+  height: 3%;
+  background: rgb(80 54 30 / 0.24);
+  filter: blur(9px);
+}
+
+/* Minimal browser window: slim bar, video flush beneath. Chrome scales with --bw via font-size. */
+.browser {
+  --bw: min(57cqw, 90cqh);
+  position: absolute;
+  right: 2.5cqw;
+  bottom: 20cqh;
+  width: var(--bw);
+  overflow: hidden;
+  border: 1px solid rgb(61 35 20 / 0.1);
+  border-radius: 14px;
+  background: #fbf8f3;
+  box-shadow:
+    0 1px 2px rgb(61 35 20 / 0.05),
+    0 30px 60px -24px rgb(61 35 20 / 0.28);
+  font-size: calc(var(--bw) * 0.017);
+  transition: transform 500ms var(--ease);
+}
+.browserBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.4em;
+  height: 3em;
+  padding-inline: 1.2em;
+  border-bottom: 1px solid rgb(61 35 20 / 0.07);
+}
+.browserDots {
+  display: flex;
+  gap: 0.5em;
+}
+.browserDots span {
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 50%;
+  background: #ff5f57;
+}
+.browserDots span:nth-child(2) { background: #febc2e; }
+.browserDots span:nth-child(3) { background: #28c840; }
+.browserNav {
+  display: flex;
+  gap: 0.5em;
+  color: rgb(61 35 20 / 0.32);
+}
+.browserNav svg {
+  width: 1.2em;
+  height: 1.2em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.browserNav svg + svg { opacity: 0.5; }
+.browserUrl {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  min-width: 34%;
+  padding: 0.35em 1.2em;
+  border-radius: 0.6em;
+  background: rgb(61 35 20 / 0.045);
+  color: rgb(61 35 20 / 0.6);
+  font-size: 0.95em;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+/* Just under 16:9 with the crop taken from the right, which trims the recording's scrollbar. */
+.browserScreen {
+  position: relative;
+  aspect-ratio: 1.76;
+  background: #0f0f0e;
+}
+.browserScreen video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-position: left center;
 }
 
 .content {
@@ -111,6 +238,7 @@ div.card .cta { color: var(--fg-muted); font-weight: 400; }
 .arrow { transition: transform 400ms var(--ease); }
 
 a.card:hover .image { transform: scale(1.035) translateX(-1%); }
+a.card:hover .browser { transform: translateY(-4px) scale(1.01); }
 a.card:hover .arrow { transform: translateX(6px); }
 a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offset: 4px; }
 
@@ -144,6 +272,19 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
     padding: 0 24px 28px;
   }
   .title { font-size: clamp(34px, 9vw, 56px); }
+
+  /* Stacked: the scene gets its own box, so the subject stays inside it. */
+  .sceneSubject {
+    bottom: 12cqh;
+    left: 3cqw;
+    height: 73cqh;
+  }
+  .browser {
+    --bw: 55cqw;
+    right: 3cqw;
+    bottom: 22cqh;
+    border-radius: 10px;
+  }
 }
 
 /*
@@ -176,12 +317,39 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
     .card[data-immersive="last"] {
       animation-name: immersive-out;
     }
+    /* Middle panels settle forward as one object while scrolling in; at rest they are untouched. */
+    .card[data-immersive="middle"] {
+      animation: immersive-settle var(--ease) both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 45%;
+    }
     .card[data-immersive] .visual {
       left: calc(var(--ix) + var(--w0) * 0.28);
     }
     .card[data-immersive] .content {
       width: calc(var(--ix) + min(var(--w0) * 0.46, 600px));
       padding: calc(var(--iy) + var(--pad)) var(--pad) calc(var(--iy) + var(--pad)) calc(var(--ix) + var(--pad));
+    }
+    /* Full-screen scene: the subject bridges into the text column, the browser overlaps its far ear. */
+    .card[data-immersive] .sceneSubject {
+      bottom: 11cqh;
+      left: -6cqw;
+      height: 65cqh;
+    }
+    .card[data-immersive] .browser {
+      --bw: min(60cqw, 97cqh);
+      right: 3.5cqw;
+      bottom: 20cqh;
+    }
+  }
+}
+
+/* Laptop widths: the text column is proportionally wider, so the subject starts at the visual's edge. */
+@media (min-width: 1100px) and (max-width: 1279px) and (min-height: 620px) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .card[data-immersive] .sceneSubject {
+      left: -1cqw;
+      height: 61cqh;
     }
   }
 }
@@ -195,6 +363,19 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
   50%, 100% { clip-path: inset(0 0); }
 }
 
+@keyframes immersive-settle {
+  from {
+    scale: 0.965;
+    translate: 0 26px;
+    opacity: 0.6;
+  }
+  to {
+    scale: 1;
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
 @keyframes immersive-out {
   0%, 50% {
     clip-path: inset(0 0);
@@ -204,6 +385,6 @@ a.card:focus-visible { outline: 2px solid var(--home-ink, #121211); outline-offs
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .image, .arrow { transition: none; }
-  a.card:hover .image, a.card:hover .arrow { transform: none; }
+  .image, .arrow, .browser { transition: none; }
+  a.card:hover .image, a.card:hover .arrow, a.card:hover .browser { transform: none; }
 }

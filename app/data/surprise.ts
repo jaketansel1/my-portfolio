@@ -46,7 +46,7 @@ export const surpriseItems: SurpriseItem[] = [
     project: "Crumble & Co",
     discipline: "Prototyping",
     href: "/work/crumble-and-co#direction",
-    image: "/placeholders/crumble-and-co.jpg",
+    image: "/crumble-and-co/showcase-hero.webp",
     position: "30% center",
   },
   {

@@ -12,11 +12,10 @@ export const metadata: Metadata = {
     "Selected product design, UX/UI and front-end work by Jake Tansel across sport, music education, property and AI.",
 };
 
-const pad = (n: number) => String(n).padStart(2, "0");
 const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 // Earliest start year across projects through to the present.
-const SPAN = `${Math.min(...projects.flatMap((p) => (p.period ? [Number.parseInt(p.period, 10)] : [])))}–now`;
+const SPAN = `${Math.min(...projects.flatMap((p) => (p.period ? [Number.parseInt(p.period, 10)] : [])))}—now`;
 
 export default function WorkPage() {
   return (
@@ -28,11 +27,25 @@ export default function WorkPage() {
 
       <main id="main-content">
         <section className={`${home.container} ${styles.intro}`} aria-labelledby="work-heading">
-          <h1 id="work-heading" className={styles.title}>Work</h1>
-          <p className={styles.lede}>Selected products and experiences I&rsquo;ve designed, built and shipped.</p>
-          <p className={styles.meta}>
-            {pad(projects.length)} projects &middot; {SPAN}
-          </p>
+          <p className={styles.eyebrow}>Selected work</p>
+          <h1 id="work-heading" className={styles.headline}>
+            <span className={home.line}>
+              <span>Products I&rsquo;ve designed,</span>
+            </span>
+            <span className={`${home.line} ${home.lineMuted}`}>
+              <span>built and shipped.</span>
+            </span>
+          </h1>
+          <dl className={styles.meta}>
+            <div>
+              <dt className={styles.visuallyHidden}>Projects</dt>
+              <dd>{projects.length} projects</dd>
+            </div>
+            <div>
+              <dt className={styles.visuallyHidden}>Years</dt>
+              <dd>{SPAN}</dd>
+            </div>
+          </dl>
         </section>
 
         <section className={home.container} aria-label="Projects">

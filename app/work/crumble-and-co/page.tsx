@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 // Stand-in photography until real Crumble & Co assets are supplied (see public/placeholders/CREDITS.md).
 const PHOTO = {
-  hero: "/placeholders/crumble-and-co.jpg",
+  hero: "/crumble-and-co/showcase-hero.webp",
   blanket: "/placeholders/crumble-pug-blanket.jpg",
   puppy: "/placeholders/crumble-puppy.jpg",
   bulldog: "/placeholders/crumble-bulldog.jpg",
