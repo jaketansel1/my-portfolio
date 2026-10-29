@@ -1,4 +1,4 @@
-/* Mirrors the tokens in app/home.module.css; the launcher lives in the root layout, outside .home. */
+/* Mirrors the tokens in app/home.module.css; the panel opens in the top layer, outside .home. */
 .launcher,
 .dialog {
   --x-paper: #f3f2ee;
@@ -13,30 +13,27 @@
 
 /* Entry point */
 
+/*
+ * Secondary hero action: same size and type as "Selected work", but outlined and quiet.
+ * The electric blue only arrives on hover, as a small surprise.
+ */
 .launcher {
-  position: fixed;
-  z-index: 30;
-  right: clamp(20px, 2.5vw, 40px);
-  bottom: clamp(20px, 2.5vw, 36px);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 42px;
-  padding-inline: 16px 18px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--x-blue);
-  color: #fff;
-  box-shadow: 0 14px 34px -12px rgba(37, 71, 244, 0.55);
-  font-size: 13px;
+  gap: 12px;
+  min-height: 48px;
+  padding-inline: 20px 22px;
+  border: 1px solid rgba(18, 18, 17, 0.22);
+  background: transparent;
+  color: var(--x-ink);
+  font: inherit;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: -0.01em;
   cursor: pointer;
   transition:
     background-color 250ms var(--x-ease),
-    transform 400ms var(--x-ease);
-  /* Arrives after the page has settled, so it's discovered rather than announced. */
-  animation: launcherIn 700ms 1400ms var(--x-ease) both;
+    border-color 250ms var(--x-ease),
+    color 250ms var(--x-ease);
 }
 .launcher:focus-visible {
   outline: 2px solid var(--x-ink);
@@ -44,7 +41,7 @@
 }
 .launcherSymbol {
   display: inline-block;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--x-blue);
   transition:
     transform 600ms var(--x-ease),
     color 250ms ease;
@@ -463,9 +460,6 @@ button.optionInner { cursor: pointer; }
   white-space: nowrap;
 }
 
-@keyframes launcherIn {
-  from { opacity: 0; transform: translateY(12px); }
-}
 @keyframes panelIn {
   from { opacity: 0; transform: translateY(18px); }
 }
@@ -493,8 +487,9 @@ button.optionInner { cursor: pointer; }
 
 @media (hover: hover) {
   .launcher:hover {
-    background: var(--x-blue-deep);
-    transform: translateY(-2px);
+    border-color: var(--x-blue);
+    background: var(--x-blue);
+    color: #fff;
   }
   .launcher:hover .launcherSymbol {
     color: #fff;
@@ -537,14 +532,6 @@ button.optionInner { cursor: pointer; }
 
 /* Mobile: compact entry point and a bottom sheet. */
 @media (max-width: 600px) {
-  .launcher {
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    min-height: 40px;
-    padding-inline: 14px 15px;
-    gap: 8px;
-    font-size: 12.5px;
-  }
 
   .dialog {
     width: 100%;
@@ -600,7 +587,6 @@ button.optionInner { cursor: pointer; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .launcher,
   .dialog,
   .dialog::backdrop,
   .option,
@@ -619,7 +605,7 @@ button.optionInner { cursor: pointer; }
   .choice,
   .optionAction span,
   .primaryButton > span { transition: none !important; }
-  .launcher:hover,
+  .launcher:hover .launcherSymbol,
   .optionInner:hover,
   .optionInner:hover .stageSymbol { transform: none !important; }
 }

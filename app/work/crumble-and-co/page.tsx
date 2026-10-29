@@ -45,7 +45,6 @@ const chapters = [
 export default function CrumbleCaseStudy() {
   return (
     <div className={home.home}>
-      <a className={home.skipLink} href="#main-content">Skip to content</a>
       <div className={home.container}>
         <SiteHeader editorial current="work" />
       </div>

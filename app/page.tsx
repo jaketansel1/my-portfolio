@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className={styles.home}>
-      <a className={styles.skipLink} href="#main-content">Skip to content</a>
       <div className={styles.container}>
         <SiteHeader editorial />
       </div>

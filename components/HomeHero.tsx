@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ExperimentLauncher from "./experiments/ExperimentLauncher";
 import styles from "../app/home.module.css";
 
 const facts = [
@@ -33,6 +34,7 @@ export default function HomeHero() {
             Selected work
             <span aria-hidden="true">&darr;</span>
           </a>
+          <ExperimentLauncher />
           <Link href="/contact" className={styles.textLink}>
             Get in touch
           </Link>

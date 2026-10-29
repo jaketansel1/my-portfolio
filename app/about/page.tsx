@@ -17,7 +17,6 @@ const pad = (n: number) => String(n).padStart(2, "0");
 export default function AboutPage() {
   return (
     <div className={home.home}>
-      <a className={home.skipLink} href="#main-content">Skip to content</a>
 
       <div className={styles.night}>
         <div className={home.container}>

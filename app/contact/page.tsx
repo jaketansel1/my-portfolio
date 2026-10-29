@@ -18,7 +18,6 @@ export default function ContactPage() {
 
   return (
     <div className={home.home}>
-      <a className={home.skipLink} href="#main-content">Skip to content</a>
       <div className={home.container}>
         <SiteHeader editorial current="contact" />
       </div>

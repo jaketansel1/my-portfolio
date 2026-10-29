@@ -27,18 +27,6 @@
   padding-inline: var(--home-gutter);
 }
 
-.skipLink {
-  position: fixed;
-  z-index: 20;
-  top: 12px;
-  left: var(--home-gutter);
-  padding: 12px 18px;
-  transform: translateY(-180%);
-  background: var(--home-ink);
-  color: var(--home-paper);
-}
-.skipLink:focus { transform: translateY(0); }
-
 .home a:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 4px;
@@ -83,7 +71,7 @@
 }
 .factList {
   display: grid;
-  grid-column: 1 / 9;
+  grid-column: 1 / 7;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   column-gap: clamp(16px, 2vw, 32px);
 }
@@ -98,13 +86,16 @@
   line-height: 1.45;
 }
 
+/* Primary, secondary and a text link as one group; wraps cleanly when space runs out. */
 .actions {
   display: flex;
-  grid-column: 9 / -1;
+  flex-wrap: wrap;
+  grid-column: 7 / -1;
   align-items: center;
   justify-content: flex-end;
-  gap: 28px;
+  gap: 12px 12px;
 }
+.actions .textLink { margin-left: 16px; }
 .primaryButton {
   display: inline-flex;
   align-items: center;
