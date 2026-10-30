@@ -1,0 +1,473 @@
+/*
+ * Immersive homepage. Base styles describe the stacked layout (phones, tablets, reduced motion);
+ * the immersive block at the end turns the page into a sticky stage driven by --t / --in / --out.
+ */
+
+.root {
+  --gutter: var(--home-gutter);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--home-paper);
+}
+
+/* ---------- Header: overlays the stage, adapts to light/dark scenes ---------- */
+
+.header {
+  position: absolute;
+  z-index: 50;
+  inset: 0 0 auto;
+  padding-inline: var(--gutter);
+  --home-ink: #121211;
+  --home-muted: #6b6962;
+  color: var(--home-ink);
+  transition: color 400ms ease;
+}
+.header[data-theme="dark"] {
+  --home-ink: #f3f2ee;
+  --home-muted: rgb(243 242 238 / 0.62);
+}
+
+/* ---------- Scenes (stacked by default) ---------- */
+
+.track { position: relative; }
+.stage { position: relative; }
+
+.scene {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(96px, 14vw, 140px) var(--gutter) clamp(56px, 10vw, 96px);
+  background: var(--bg);
+  color: var(--fg);
+}
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg-art, var(--bg));
+}
+.layer { position: relative; z-index: 1; }
+
+/* Whole-scene link: above all artwork (none of it is interactive), below the project info. */
+.sceneLink {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  cursor: pointer;
+}
+.info { z-index: 11; }
+.scene:has(.sceneLink:hover) .cta { filter: brightness(1.1); }
+.scene:has(.sceneLink:hover) .cta span { transform: translateX(5px); }
+
+.scene[data-theme="light"] { --fg: #121211; --muted: #6b6962; }
+.scene[data-theme="dark"] { --fg: #f3f2ee; --muted: rgb(243 242 238 / 0.62); }
+
+.scene[data-scene="intro"] { --bg: #f3f2ee; }
+.scene[data-scene="licklibrary"] {
+  --bg: #0a0a0a;
+  --bg-art:
+    radial-gradient(ellipse 50% 60% at 70% 45%, rgb(238 114 103 / 0.16), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 15% 100%, rgb(238 114 103 / 0.1), transparent 70%),
+    #0a0a0a;
+}
+.scene[data-scene="crumble"] {
+  --bg: #efe4d4;
+  --fg: #3d2314;
+  --muted: rgb(61 35 20 / 0.68);
+  --bg-art: linear-gradient(100deg, #e9dcc9 0%, #efe4d4 40%, #f6efe5 100%);
+}
+.scene[data-scene="fanzine"] {
+  --bg: #070a10;
+  --bg-art:
+    radial-gradient(ellipse 50% 55% at 66% 50%, rgb(70 110 180 / 0.28), transparent 70%),
+    linear-gradient(100deg, #06080d 0%, #0c1320 60%, #111c2d 100%);
+}
+.scene[data-scene="reawakening"] {
+  --bg: #f1e2d8;
+  --fg: #3b2620;
+  --muted: rgb(59 38 32 / 0.68);
+  --bg-art:
+    radial-gradient(ellipse 40% 50% at 60% 50%, rgb(255 250 245 / 0.7), transparent 72%),
+    linear-gradient(105deg, #f5ece3 0%, #f1e2d8 45%, #e9cdbf 100%);
+}
+.scene[data-scene="closing"] { --bg: #f3f2ee; }
+
+/* ---------- Intro ---------- */
+
+.headline {
+  display: grid;
+  font-size: clamp(48px, 7.4vw, 140px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.headlineMuted { color: #8f8c85; }
+.introFoot { margin-top: clamp(40px, 6vw, 80px); }
+.facts { color: #6b6962; font-size: 15px; }
+.introActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding-inline: 22px;
+  background: #121211;
+  color: #f3f2ee;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 250ms var(--ease);
+}
+.primary:hover { background: #2b2b29; }
+.primary span { transition: transform 400ms var(--ease); }
+.primary:hover span { transform: translateY(3px); }
+.quietLink {
+  margin-left: 8px;
+  color: #121211;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: rgb(18 18 17 / 0.25);
+  text-underline-offset: 6px;
+  transition: text-decoration-color 250ms ease;
+}
+.quietLink:hover { text-decoration-color: currentColor; }
+
+/* ---------- Project info ---------- */
+
+.info { max-width: 34rem; }
+.count {
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+.count span { color: var(--fg); }
+.title {
+  margin-top: 16px;
+  font-size: clamp(40px, 5.2vw, 96px);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+.title a { transition: opacity 200ms ease; }
+.title a:hover { opacity: 0.8; }
+.meta {
+  margin-top: 18px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.line {
+  max-width: 34ch;
+  margin-top: 14px;
+  font-size: clamp(17px, 1.35vw, 21px);
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+/* Case-study button, coloured per project (see the scene rules below). */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  margin-top: 28px;
+  padding-inline: 22px;
+  background: var(--cta-bg, #121211);
+  color: var(--cta-fg, #fff);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 250ms var(--ease), filter 250ms ease;
+}
+.cta:hover { filter: brightness(1.1); }
+.cta span { transition: transform 400ms var(--ease); }
+.cta:hover span { transform: translateX(5px); }
+.scene[data-scene="licklibrary"] { --cta-bg: #c93d32; --cta-fg: #fff; }
+.scene[data-scene="crumble"] { --cta-bg: #3d2314; --cta-fg: #f6ede2; }
+.scene[data-scene="fanzine"] { --cta-bg: #2f62d9; --cta-fg: #fff; }
+.scene[data-scene="reawakening"] { --cta-bg: #5b6752; --cta-fg: #fff; }
+.scene a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+
+/* ---------- Devices ---------- */
+
+.browser {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: clamp(8px, 0.8vw, 14px);
+  background: #161616;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.2), 0 50px 100px -40px rgb(0 0 0 / 0.7);
+}
+.browser[data-scheme="light"] {
+  border-color: rgb(40 28 20 / 0.1);
+  background: #fbf8f4;
+  box-shadow: 0 2px 4px rgb(60 40 25 / 0.06), 0 50px 100px -40px rgb(80 50 30 / 0.4);
+}
+.browserBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: clamp(22px, 2vw, 32px);
+  padding-inline: 12px;
+  border-bottom: 1px solid rgb(127 127 127 / 0.15);
+}
+.browserBar span { width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; }
+.browserBar span:nth-child(2) { background: #febc2e; }
+.browserBar span:nth-child(3) { background: #28c840; }
+.browserBar em {
+  margin-inline: auto;
+  color: rgb(127 127 127 / 0.9);
+  font-size: clamp(9px, 0.7vw, 11px);
+  font-style: normal;
+}
+.browser img { display: block; width: 100%; height: auto; }
+.videoBox { position: relative; background: #0f0f0e; }
+.videoBox video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+.phone {
+  padding: 2.6%;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 13% / 6%;
+  background: #0b0b0d;
+  box-shadow: 0 40px 70px -28px rgb(0 0 0 / 0.65);
+}
+.phone img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 19.5;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 11% / 5.2%;
+}
+
+/* ---------- Closing ---------- */
+
+.closingTitle {
+  max-width: 14ch;
+  font-size: clamp(44px, 6.6vw, 124px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.closingLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin-top: clamp(32px, 4vw, 56px);
+  font-size: clamp(20px, 1.8vw, 28px);
+  letter-spacing: -0.02em;
+}
+.closingLinks a {
+  border-bottom: 1px solid rgb(18 18 17 / 0.25);
+  transition: border-color 200ms ease;
+}
+.closingLinks a:hover { border-color: currentColor; }
+.closingTry { margin-top: 28px; }
+
+/* ---------- Project markers ---------- */
+
+.markers { display: none; }
+
+/* ---------- Stacked layout (default): one strong visual per project ---------- */
+
+.llGhost, .crDog, .fzWall, .fzLeft, .fzRight, .rwPhoto { display: none; }
+.llBrowser, .crBrowser, .rwBrowser { margin-top: 32px; }
+.llGhost img, .fzWall img, .rwPhoto img { display: block; width: 100%; height: auto; }
+.fzCentre { width: min(60%, 260px); margin: 32px auto 0; }
+.info { order: -1; }
+.scene { display: flex; flex-direction: column; }
+.scene[data-scene="intro"] { min-height: 92svh; justify-content: center; }
+
+/* ======================================================================
+   Immersive: a sticky stage, scenes stacked in place, scroll drives --t.
+   ====================================================================== */
+
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .header { position: fixed; }
+
+  /* Tall track; the stage sticks for its whole length. */
+  .track { height: calc(var(--scenes) * 110svh); }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .scene {
+    --t: 0;
+    --a: 0;
+    --in: 0;
+    --out: 0;
+    position: absolute;
+    inset: 0;
+    display: block;
+    padding: 0;
+    background: none;
+    pointer-events: none;
+  }
+  .scene[data-active] { pointer-events: auto; }
+  .scene:not([data-scene="intro"]) { --t: -1; --a: 1; --in: 1; }
+
+  /* Incoming backgrounds fade over the previous scene, so colour never passes through a gap. */
+  /* The next scene rises from the bottom edge as one piece, background and artwork together;
+     the world changes in place rather than through a muddy crossfade. */
+  .scene { clip-path: inset(calc(var(--in) * 100%) 0 0 0); }
+
+  .layer {
+    position: absolute;
+    transform:
+      translate3d(
+        calc(var(--in) * var(--xi) + var(--out) * var(--xo)),
+        calc(var(--in) * var(--yi) + var(--out) * var(--yo)),
+        0
+      )
+      scale(calc(1 - var(--a) * var(--sc)));
+    /* Staggered: the outgoing scene clears in the first half, the next arrives in the second. */
+    opacity: calc(1 - var(--a) * var(--fd));
+    will-change: transform, opacity;
+  }
+
+  /* Show everything in immersive mode. */
+  .llGhost, .crDog, .fzWall, .fzLeft, .fzRight, .rwPhoto { display: block; }
+  .llBrowser, .crBrowser, .rwBrowser, .fzCentre { margin: 0; }
+
+  /* Intro */
+  .introText { left: var(--gutter); right: var(--gutter); top: 30%; }
+  .introFoot { left: var(--gutter); right: var(--gutter); bottom: 10%; margin: 0; }
+
+  /* Shared: project info sits as a block on the vertical centre, text left-aligned. */
+  .info { left: var(--gutter); top: 50%; bottom: auto; translate: 0 -50%; width: min(32rem, 30vw); }
+
+  /* 01 LickLibrary: oversized and pushing past the edges. */
+  .llGhost { left: -4vw; bottom: -4svh; width: min(78vw, 170svh); opacity: calc(0.36 - var(--a) * 0.4); }
+  .llGhost img { mask-image: linear-gradient(to bottom, #000 60%, transparent 98%); }
+  /* Fully inside the viewport: right gutter, height capped so it never crops top or bottom. */
+  .llBrowser { top: 50%; translate: 0 -50%; right: var(--gutter); width: min(54vw, 120svh); }
+  .llInfo { width: min(28rem, 28vw); }
+
+  /* 02 Crumble & Co: one dog, one big store. */
+  .crBrowser { top: 50%; translate: 0 -56%; right: -2vw; width: min(56vw, 104svh); }
+  /* Right edge tied to the browser’s left edge (browser: right -2vw, width min(56vw, 104svh)),
+     so the dog only slightly overlaps it at any width. */
+  .crDog {
+    bottom: 4svh;
+    right: calc(min(56vw, 104svh) - 8vw);
+    width: auto;
+    height: min(74svh, 52vw);
+  }
+  .crDog img { width: auto; height: 100%; }
+  /* Grounding: a soft ellipse on the floor beneath the paws. */
+  .crDog::after {
+    position: absolute;
+    z-index: -1;
+    bottom: -1.5%;
+    left: 18%;
+    width: 72%;
+    height: 6%;
+    border-radius: 50%;
+    background: rgb(80 54 30 / 0.28);
+    filter: blur(16px);
+    content: "";
+  }
+  .crInfo { width: min(24rem, 24vw); }
+
+  /* 03 Fanzine: three big phones, centre one dominant. */
+  .fzWall { inset: 0; opacity: calc(0.16 - var(--a) * 0.2); }
+  .fzWall img { width: 100%; height: 100%; object-fit: cover; mask-image: radial-gradient(ellipse 70% 70% at 60% 50%, #000 30%, transparent 80%); }
+  .fzPhone { --pw: min(19.5vw, 38svh); width: var(--pw); }
+  .fzCentre { top: calc(50svh - var(--pw) * 1.12); left: calc(64vw - var(--pw) / 2); z-index: 3; }
+  .fzLeft { top: calc(50svh - var(--pw) * 1.0); left: calc(64vw - var(--pw) * 1.28); rotate: -7deg; scale: 0.9; z-index: 2; }
+  .fzRight { top: calc(50svh - var(--pw) * 1.0); left: calc(64vw + var(--pw) * 0.28); rotate: 7deg; scale: 0.9; z-index: 2; }
+  .fzInfo { width: min(26rem, 26vw); }
+
+  /* 04 Reawakening: the calmest scene. Photography → real website → project information. */
+  .rwPhoto { top: 0; bottom: 0; left: -4vw; width: auto; height: 100%; }
+  /* Full strength across the left ~55%, then a soft fade into the blush. */
+  .rwPhoto img {
+    width: auto;
+    height: 100%;
+    mask-image: linear-gradient(to right, #000 54%, rgb(0 0 0 / 0.75) 70%, rgb(0 0 0 / 0.3) 86%, transparent 100%);
+  }
+  .rwBrowser { --bw: min(46vw, 88svh); top: 50%; translate: 0 -50%; left: 16vw; width: var(--bw); }
+  /* Browser and project information share the viewport's vertical centre. */
+  .rwInfo {
+    left: auto;
+    right: calc(var(--gutter) + 3vw);
+    top: 50%;
+    width: min(24rem, 24vw);
+  }
+  .rwInfo .title { font-size: clamp(36px, 3.7vw, 68px); }
+
+  /* Closing */
+  .closing { left: var(--gutter); right: var(--gutter); top: 30%; }
+
+  /* Markers */
+  .markers {
+    position: absolute;
+    z-index: 40;
+    right: var(--gutter);
+    bottom: clamp(24px, 4svh, 40px);
+    display: block;
+    color: #121211;
+    opacity: 0;
+    transition: opacity 400ms ease, color 400ms ease;
+  }
+  .markers[data-visible="true"] { opacity: 1; }
+  .markers[data-theme="dark"] { color: #f3f2ee; }
+  .markers ol { display: flex; gap: 18px; list-style: none; }
+  .markers a {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 28px;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 11px;
+    opacity: 0.4;
+    transition: opacity 250ms ease;
+  }
+  .markers a::after {
+    width: 18px;
+    height: 1px;
+    background: currentColor;
+    transition: width 300ms var(--ease);
+    content: "";
+  }
+  .markers em {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    font-family: var(--font-geist-sans), sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    white-space: nowrap;
+    opacity: 0;
+    translate: 0 4px;
+    transition: opacity 250ms ease, translate 300ms var(--ease);
+  }
+  .markers li { position: relative; }
+  .markers a:hover, .markers a[aria-current] { opacity: 1; }
+  .markers a[aria-current]::after { width: 36px; height: 2px; }
+  .markers a:hover em, .markers a:focus-visible em { opacity: 1; translate: 0 0; }
+  .markers a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+}
+
+/* Narrow laptops: keep info and artwork apart. */
+@media (min-width: 900px) and (max-width: 1200px) and (prefers-reduced-motion: no-preference) {
+  .crDog { height: min(60svh, 46vw); }
+}

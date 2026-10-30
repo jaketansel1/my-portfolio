@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import SiteHeader from "../components/SiteHeader";
-import HomeHero from "../components/HomeHero";
-import HomeWork from "../components/HomeWork";
-import { projects } from "./data/projects";
-import styles from "./home.module.css";
+import HomeStage from "../components/home/HomeStage";
 
 export const metadata: Metadata = {
   title: "Jake Tansel — Product Designer & Builder",
@@ -12,15 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return (
-    <div className={styles.home}>
-      <div className={styles.container}>
-        <SiteHeader editorial />
-      </div>
-      <main id="main-content">
-        <HomeHero />
-        <HomeWork projects={projects.filter((project) => project.featured)} />
-      </main>
-    </div>
-  );
+  return <HomeStage />;
 }
