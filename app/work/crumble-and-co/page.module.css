@@ -1,0 +1,100 @@
+/*
+ * Crumble & Co: warm, tactile, photographic. Layout, rail and chapters come from components/case/Chapters;
+ * this file holds the project's own compositions.
+ */
+
+.photo { border-radius: 6px; }
+
+/* Brief: the range, staggered. */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--col-gap);
+}
+.productGrid figure:nth-child(2),
+.productGrid figure:nth-child(4) { margin-top: clamp(24px, 3.5vw, 64px); }
+.productGrid :global(img) { border-radius: 6px; }
+
+/* Storefront: collection page with two phones beside it. */
+.storeRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--col-gap);
+}
+.storePhones {
+  display: flex;
+  justify-content: center;
+  gap: clamp(12px, 2vw, 28px);
+}
+.storePhones > * { width: min(46%, 240px); }
+.storePhones > :first-child { margin-top: clamp(32px, 4vw, 64px); }
+
+/* Sizing: drawer on desktop, the phone tucked over its corner. */
+.sizeStage { position: relative; padding-bottom: 6%; }
+.sizePhone {
+  position: absolute;
+  right: -2%;
+  bottom: -4%;
+  width: 20%;
+}
+
+/* Build Your Set: picker and bottom sheet side by side. */
+.pickerRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2.6fr) minmax(0, 1fr);
+  align-items: end;
+  gap: var(--col-gap);
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+  list-style: none;
+}
+.timeline li {
+  position: relative;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+}
+.timeline li::before {
+  position: absolute;
+  top: -5px;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--fg);
+  content: "";
+}
+.timeline li[data-final]::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.timelineDate {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.timeline h3 { margin-bottom: 6px; font-size: 16px; font-weight: 500; letter-spacing: -0.02em; }
+.timeline p { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+
+.nextFanzine { border-radius: 4px; }
+
+@media (max-width: 1000px) {
+  .productGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .storeRow { grid-template-columns: minmax(0, 1fr); }
+  .timeline { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 36px; }
+}
+
+@media (max-width: 600px) {
+  .pickerRow { grid-template-columns: minmax(0, 1fr); }
+  .pickerRow > :last-child { width: 60%; margin-inline: auto; }
+  .timeline { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .sizePhone { width: 30%; }
+}

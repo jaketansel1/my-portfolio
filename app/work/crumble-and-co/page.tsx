@@ -1,275 +1,255 @@
 import type { Metadata } from "next";
-import SiteHeader from "../../../components/SiteHeader";
+import { Browser, CasePage, Figure, Img, NextProject, Phone, Placeholder, type Tone } from "../../../components/case/Case";
 import {
-  Annotated,
-  Band,
-  BeforeAfter,
-  CaseHero,
-  CaseStudy,
-  Chapter,
-  ChapterIndex,
-  CopyNeeded,
-  Evolution,
-  Media,
-  MediaRow,
-  NextProject,
-  Statement,
-  Stats,
-  TextBlock,
-} from "../../../components/case-study/CaseStudy";
-import home from "../../home.module.css";
+  Block,
+  ChapterHero,
+  ChapterLayout,
+  ChapterSection,
+  Insight,
+  Numbers,
+  Pair,
+  Panel,
+  PanelLabel,
+  Points,
+  Subhead,
+  type Chapter,
+} from "../../../components/case/Chapters";
+import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Crumble & Co — Jake Tansel",
   description:
-    "Case study: taking Crumble & Co from a logo, a name and a product idea to a complete Shopify store, including a custom Build Your Set experience.",
+    "Taking a new dog-accessories brand from a name and a logo to a launched Shopify store, including a custom Build Your Set experience.",
 };
 
-// Stand-in photography until real Crumble & Co assets are supplied (see public/placeholders/CREDITS.md).
-const PHOTO = {
-  hero: "/crumble-and-co/showcase-hero.webp",
-  blanket: "/placeholders/crumble-pug-blanket.jpg",
-  puppy: "/placeholders/crumble-puppy.jpg",
-  bulldog: "/placeholders/crumble-bulldog.jpg",
-};
+// Warm / tactile / photographic: one cream tone, espresso type, caramel accent.
+const cream: Tone = { bg: "#f1e7da", fg: "#3d2314", muted: "rgb(61 35 20 / 0.68)", rule: "rgb(61 35 20 / 0.14)" };
+const navy: Tone = { bg: "#070a10", fg: "#eef2f8", muted: "rgb(238 242 248 / 0.62)" };
 
-const brand = { soft: "#e9dccb", deep: "#3a2618", ink: "#3a2618" };
+const C = "/case/crumble";
+const desk = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, width: 2400, height: 1500 });
+const mobile = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, width: 900, height: 1948 });
+const photo = (file: string, alt: string) => ({ src: `${C}/photo-${file}.webp`, alt, width: 1600, height: 1600 });
 
-const chapters = [
-  { id: "direction", number: "01", title: "From idea to direction" },
-  { id: "storefront", number: "02", title: "Creating the storefront" },
-  { id: "build-your-set", number: "03", title: "The product challenge" },
-  { id: "launch", number: "04", title: "Shipping the brand" },
+const chapters: Chapter[] = [
+  { id: "overview", number: "01", title: "Overview" },
+  { id: "brief", number: "02", title: "Brief" },
+  { id: "direction", number: "03", title: "Direction" },
+  { id: "storefront", number: "04", title: "Storefront" },
+  { id: "sizing", number: "05", title: "Sizing" },
+  { id: "build-your-set", number: "06", title: "Build Your Set" },
+  { id: "build", number: "07", title: "Build" },
+  { id: "outcome", number: "08", title: "Outcome" },
+];
+const [overview, brief, direction, storefront, sizing, buildYourSet, build, outcome] = chapters;
+
+const setSteps = [
+  { date: "30 Sep", title: "Fixed sets", text: "A bundle builder with set combinations and a cart drawer." },
+  { date: "2 Oct", title: "Fewer, clearer sets", text: "Collar + Lead and Harness + Lead cards removed from the bundles page." },
+  { date: "5 Oct", title: "Build your own", text: "A set panel on every product page: start from the piece you’re looking at." },
+  { date: "7 Oct", title: "Redesigned", text: "A purchase choice up front, a piece picker and savings tiers." },
+  { date: "8 Oct", title: "Simpler tiers", text: "The 5% two-item tier dropped, so the saving is worth acting on." },
+  { date: "11 Oct", title: "Polish", text: "Picker upgrades, auto-scroll and lifestyle images." },
+];
+
+const theme = [
+  { title: "Custom theme", text: "Built from Shopify’s Skeleton theme: homepage, collections, product, bundles, our story and search." },
+  { title: "Product page", text: "Variant picker, colour swatches, size guide drawer and the set panel." },
+  { title: "Cart drawer", text: "Add to bag without leaving the page." },
+  { title: "Pre-launch", text: "A coming soon page with email signup, on the store’s password page." },
+  { title: "Launch emails", text: "A four-email sequence to the signup list." },
+  { title: "Shipping & policies", text: "Shipping, returns and contact pages set up for launch." },
 ];
 
 export default function CrumbleCaseStudy() {
   return (
-    <div className={home.home}>
-      <div className={home.container}>
-        <SiteHeader editorial current="work" />
-      </div>
+    <CasePage tone={cream} maxWidth="1240px">
+      <ChapterLayout chapters={chapters} title="Crumble & Co" accent="#a4562b" panel="#faf6f0" fill="rgb(61 35 20 / 0.06)">
+        {/* ───────── 01 Overview ───────── */}
+        <ChapterHero
+          chapter={overview}
+          brand="Crumble & Co"
+          label="eCommerce · Shopify store"
+          title="A shop as considered as the products."
+          about="Crumble & Co makes premium dog accessories: harnesses, collars, leads, bow ties and poo bag holders in two colourways, Biscuit and Espresso."
+          role="I owned the website, from an open brief to launch: the direction, the design and a custom Shopify build, including a Build Your Set experience."
+          facts={[
+            { label: "Role", value: "Website direction, design and Shopify build" },
+            { label: "Scope", value: "Direction · Custom theme · Build Your Set · Launch" },
+            { label: "Status", value: "Live on crumbleandco.club", live: true },
+          ]}
+        >
+          <Figure caption="crumbleandco.club, live.">
+            <Browser
+              url="crumbleandco.club"
+              scheme="light"
+              video={{ src: "/crumble-and-co/crumble-video.mp4", poster: "/crumble-and-co/crumble-video-poster.webp", width: 1600, height: 1000 }}
+            />
+          </Figure>
+        </ChapterHero>
 
-      <main id="main-content">
-        <CaseStudy brand={brand}>
-          <CaseHero
-            eyebrow="Case study · eCommerce"
-            title="Crumble & Co"
-            summary="Taking a new brand for dog lovers from a logo, a name and a product idea to a complete Shopify store, with a custom Build Your Set experience at its heart."
-            meta={[
-              { label: "Role", value: "Product design, UX/UI and Shopify implementation" },
-              { label: "Scope", value: "Research, prototyping, storefront, Build Your Set, launch" },
-              { label: "Platform", value: "Shopify" },
-              { label: "Outcome", value: "150 email sign-ups within 48 hours of pre-launch" },
+        {/* ───────── 02 Brief ───────── */}
+        <ChapterSection
+          chapter={brief}
+          title="A name, a logo and a range. The shop didn’t exist yet."
+          intro={<p>Everything digital was still to do. The brief was open; the aim was a shop that felt as considered as the products.</p>}
+        >
+          <div className={styles.productGrid}>
+            <Figure caption="Biscuit">
+              <Img {...photo("biscuit-harness-6", "Biscuit harness")} />
+            </Figure>
+            <Figure caption="Espresso, the complete set">
+              <Img {...photo("espresso-harness-complete-set", "The Espresso complete set")} />
+            </Figure>
+            <Figure caption="Buckle detail">
+              <Img {...photo("espresso-harness-buckle-detail", "Gold buckle detail on the Espresso harness")} />
+            </Figure>
+            <Figure caption="Stitched logo patch">
+              <Img {...photo("espresso-harness-logo-detail", "The Crumble & Co logo patch")} />
+            </Figure>
+          </div>
+        </ChapterSection>
+
+        {/* ───────── 03 Direction ───────── */}
+        <ChapterSection
+          chapter={direction}
+          title="Getting to something real, fast."
+          intro={
+            <p>
+              I looked at how established dog-accessory brands sell: photography, sizing, bundles. Then, instead of static
+              mockups, I built quick prototypes in Base44 and Lovable so the client could react to something that felt like a
+              real shop.
+            </p>
+          }
+        >
+          <Pair className={styles.directionPair}>
+            <Placeholder label="Early prototype" note="Base44 or Lovable homepage direction shown to the client." aspect="16 / 11" />
+            <Placeholder label="Reference board" note="Established dog-accessory brands reviewed before designing." aspect="16 / 11" />
+          </Pair>
+          <Insight label="What it settled">Warm neutrals, a classic serif, and product photography doing most of the work.</Insight>
+        </ChapterSection>
+
+        {/* ───────── 04 Storefront ───────── */}
+        <ChapterSection chapter={storefront} title="A shop that feels like the product.">
+          <Figure caption="Homepage: lifestyle hero, an editorial shop-by-category grid, sets and the brand story.">
+            <Browser url="crumbleandco.club" scheme="light" shot={{ src: `${C}/home-desktop-long.webp`, alt: "The full Crumble & Co homepage", width: 1440, height: 4200 }} aspect="16 / 10" />
+          </Figure>
+          <Block className={styles.storeRow}>
+            <Figure caption="Collections filter by product type.">
+              <Browser url="crumbleandco.club/collections" scheme="light" shot={desk("collection-desktop", "Harnesses collection page")} />
+            </Figure>
+            <div className={styles.storePhones}>
+              <Phone shot={mobile("collection-mobile", "All products on mobile")} />
+              <Phone shot={mobile("product-mobile", "Biscuit harness product page on mobile")} />
+            </div>
+          </Block>
+          <Pair>
+            <Img {...photo("espresso-harness-crumble", "Crumble the cocker spaniel modelling the Espresso set")} aspect="1 / 1" className={styles.photo} />
+            <Img {...photo("espresso-harness-lifestyle", "The Espresso harness on Crumble, close up")} aspect="1 / 1" className={styles.photo} />
+          </Pair>
+        </ChapterSection>
+
+        {/* ───────── 05 Sizing ───────── */}
+        <ChapterSection
+          chapter={sizing}
+          title="Getting the size right before it ships."
+          intro={
+            <p>
+              Harnesses and collars come in four sizes, XS to L, and a wrong size means a return. So sizing sits right next to
+              the size buttons, in a drawer that never leaves the page.
+            </p>
+          }
+        >
+          <div className={styles.sizeStage}>
+            <Browser url="crumbleandco.club/products/espresso-harness" scheme="light" shot={desk("product-sizeguide-desktop", "Size guide drawer open on a product page")} />
+            <Phone shot={mobile("sizeguide-mobile", "Size guide on mobile")} className={styles.sizePhone} />
+          </div>
+          <Points
+            items={[
+              { title: "Next to the choice", text: "Sizing lives beside the size buttons, not in a footer link." },
+              { title: "Measurements per size", text: "Neck and chest for each size, and how to measure your dog." },
+              { title: "One drawer", text: "The size chart tab on the product page opens the same drawer." },
             ]}
-            visual={
-              <Media
-                label="Hero composition"
-                note="Storefront on desktop and mobile over Crumble & Co brand photography."
-                src={PHOTO.hero}
-                aspect="16 / 8"
-                position="30% center"
-                sizes="100vw"
-              />
-            }
           />
+        </ChapterSection>
 
-          <ChapterIndex chapters={chapters} />
+        {/* ───────── 06 Build Your Set ───────── */}
+        <ChapterSection
+          chapter={buildYourSet}
+          title="Matching pieces, picked in the right sizes."
+          intro={<p>The range is designed to be worn together. The question was how to sell sets without forcing everyone into the same combinations.</p>}
+        >
+          <Figure caption="On every product page: buy the piece on its own, or build a set and save up to 20%.">
+            <Browser url="crumbleandco.club/products/espresso-harness" scheme="light" shot={desk("product-buildset-desktop", "Product page with the Build a set and save option")} />
+          </Figure>
+          <Block className={styles.pickerRow}>
+            <Figure caption="The piece picker: filter by type, choose a size, add to the set.">
+              <Browser url="crumbleandco.club" scheme="light" shot={desk("product-buildset-open-desktop", "The Build Your Set piece picker")} aspect="16 / 10" position="center" />
+            </Figure>
+            <Figure caption="On mobile, a bottom sheet.">
+              <Phone shot={mobile("buildset-mobile", "Build Your Set on mobile as a bottom sheet")} />
+            </Figure>
+          </Block>
 
-          {/* 01 — From idea to direction */}
-          <Chapter
-            id="direction"
-            number="01"
-            title="From idea to direction"
-            intro="Crumble & Co started with a logo, a brand name and a product idea. The first job was turning that into a direction the client could see, react to and commit to."
-            topics={["Starting point", "Competitor research", "Base44 / Lovable exploration", "Client buy-in"]}
-          >
-            <TextBlock label="Starting point" title="A logo, a name and an idea" tight>
-              <CopyNeeded>What the client brought, what they wanted the brand to feel like, and what success looked like.</CopyNeeded>
-            </TextBlock>
-            <MediaRow layout="wide-left">
-              <Media label="Original logo and brand assets" note="Exactly as the client supplied them." aspect="4 / 3" />
-              <Media label="The product idea" src={PHOTO.puppy} aspect="2 / 3" />
-            </MediaRow>
+          <Subhead title="Fixed bundles became a set you build yourself.">
+            <p>
+              Every piece has its own size, and a harness in M with a collar in S isn&rsquo;t a combination you can predefine.
+              The version that shipped starts from the product you&rsquo;re looking at, and the saving steps up as the set
+              grows.
+            </p>
+          </Subhead>
+          <Panel>
+            <PanelLabel>Six iterations in under two weeks</PanelLabel>
+            <ol className={styles.timeline}>
+              {setSteps.map((step, i) => (
+                <li key={step.date} data-final={i === setSteps.length - 1 || undefined}>
+                  <span className={styles.timelineDate}>{step.date}</span>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </li>
+              ))}
+            </ol>
+          </Panel>
+        </ChapterSection>
 
-            <TextBlock label="Competitor research" title="Learning from the category" tight>
-              <CopyNeeded>Which competitors you reviewed, what you looked at, and the patterns or gaps that shaped the direction.</CopyNeeded>
-            </TextBlock>
-            <MediaRow layout="thirds">
-              <Media label="Competitor storefront" frame="browser" aspect="4 / 3" />
-              <Media label="Competitor storefront" frame="browser" aspect="4 / 3" />
-              <Media label="Competitor storefront" frame="browser" aspect="4 / 3" />
-            </MediaRow>
+        {/* ───────── 07 Build ───────── */}
+        <ChapterSection
+          chapter={build}
+          title="A custom Shopify theme, start to finish."
+          intro={
+            <p>
+              Written section by section in Liquid, so the client edits content in Shopify&rsquo;s editor without touching code.
+              Building it myself meant a decision like Build Your Set could change in a day, not a sprint.
+            </p>
+          }
+        >
+          <Placeholder label="Coming soon page and launch emails" note="Pre-launch page with signup, plus the four launch emails side by side." aspect="21 / 8" />
+          <Points items={theme} />
+        </ChapterSection>
 
-            <Band tone="brand">
-              <Statement aside="Early directions were explored in Base44 and Lovable before detailed design.">
-                Getting to something real, fast.
-              </Statement>
-              <MediaRow layout="half">
-                <Media label="Base44 exploration" frame="browser" aspect="16 / 11" />
-                <Media label="Lovable exploration" frame="browser" aspect="16 / 11" />
-              </MediaRow>
-              <TextBlock label="Early direction" title="Client buy-in">
-                <CopyNeeded>How the prototypes were presented, what the client responded to, and the direction you agreed.</CopyNeeded>
-              </TextBlock>
-            </Band>
-          </Chapter>
+        {/* ───────── 08 Outcome ───────── */}
+        <ChapterSection chapter={outcome} title="From an open brief to a live store.">
+          <Numbers
+            items={[
+              { value: "150", label: "Email sign-ups within 48 hours of the pre-launch page going up" },
+              { value: "10", label: "Products across two colourways" },
+              { value: "6", label: "Iterations of Build Your Set before launch" },
+            ]}
+          />
+          <Block>
+            <Img {...photo("espresso-harness-lifestyle-sofa", "A cocker spaniel in an Espresso harness on a sofa with its owner")} aspect="21 / 9" className={styles.photo} />
+          </Block>
+        </ChapterSection>
+      </ChapterLayout>
 
-          {/* 02 — Creating the storefront */}
-          <Chapter
-            id="storefront"
-            number="02"
-            title="Creating the storefront"
-            intro="Designing and building the complete Shopify experience, from homepage to cart, across desktop and mobile."
-            topics={["Homepage", "Collections", "Product experience", "Navigation", "Size guides", "Cart", "Responsive"]}
-          >
-            <MediaRow layout="full">
-              <Media label="Homepage — desktop" note="Full-length homepage, the largest storefront visual." frame="browser" aspect="16 / 9" />
-            </MediaRow>
-
-            <MediaRow layout="wide-left">
-              <Media label="Collection page — desktop" frame="browser" aspect="4 / 3" />
-              <Media label="Product page — mobile" frame="phone" aspect="2 / 3" />
-            </MediaRow>
-
-            <TextBlock label="Product experience" title="Helping people choose with confidence">
-              <CopyNeeded>Key decisions on the product page: imagery, variants, information hierarchy and calls to action.</CopyNeeded>
-            </TextBlock>
-
-            <MediaRow layout="thirds">
-              <Media label="Navigation" frame="phone" aspect="3 / 4" caption="Navigation" />
-              <Media label="Size guide" frame="phone" aspect="3 / 4" caption="Size guides" />
-              <Media label="Cart" frame="phone" aspect="3 / 4" caption="Cart" />
-            </MediaRow>
-
-            <Band tone="brand">
-              <TextBlock label="Responsive" title="Designed for the phone first" tight>
-                <CopyNeeded>How the storefront adapts on mobile and why it mattered for this audience.</CopyNeeded>
-              </TextBlock>
-              <MediaRow layout="quarters">
-                <Media label="Homepage" frame="phone" aspect="9 / 16" />
-                <Media label="Collection" frame="phone" aspect="9 / 16" />
-                <Media label="Product" frame="phone" aspect="9 / 16" />
-                <Media label="Cart" frame="phone" aspect="9 / 16" />
-              </MediaRow>
-            </Band>
-          </Chapter>
-
-          {/* 03 — The product challenge: Build Your Set (centrepiece) */}
-          <Chapter
-            id="build-your-set"
-            number="03"
-            title="The product challenge"
-            intro="The most important product story in the project: how fixed bundles evolved into a custom Build Your Set experience."
-            topics={["Fixed bundles", "Build Your Set", "UX iterations", "Discount progression", "Desktop modal", "Mobile bottom sheet", "Client feedback"]}
-            tone="deep"
-          >
-            <TextBlock label="The problem" title="Why fixed bundles weren’t enough">
-              <CopyNeeded>What fixed bundles were, what wasn’t working for customers or the client, and how you knew.</CopyNeeded>
-            </TextBlock>
-
-            <Evolution
-              steps={[
-                {
-                  stage: "01 Fixed bundles",
-                  title: "Where it started",
-                  text: <CopyNeeded>The original bundle offer.</CopyNeeded>,
-                  media: <Media label="Fixed bundles" aspect="3 / 4" />,
-                },
-                {
-                  stage: "02 Early Build Your Set",
-                  title: "First custom flow",
-                  text: <CopyNeeded>The first version and what you learned.</CopyNeeded>,
-                  media: <Media label="Early Build Your Set" aspect="3 / 4" />,
-                },
-                {
-                  stage: "03 UX iteration",
-                  title: "Refining the flow",
-                  text: <CopyNeeded>What changed between iterations and why.</CopyNeeded>,
-                  media: <Media label="Iteration" aspect="3 / 4" />,
-                },
-                {
-                  stage: "04 Final",
-                  title: "Build Your Set",
-                  text: <CopyNeeded>The shipped experience in one line.</CopyNeeded>,
-                  media: <Media label="Final Build Your Set" aspect="3 / 4" />,
-                },
-              ]}
-            />
-
-            <Statement>Turning a fixed offer into something customers build themselves.</Statement>
-
-            <Annotated
-              media={<Media label="Final Build Your Set — desktop" note="Annotated flow of the shipped experience." frame="browser" aspect="16 / 11" />}
-              notes={[
-                { title: "Choose items", text: <CopyNeeded>How customers select products for their set.</CopyNeeded> },
-                { title: "Discount progression", text: <CopyNeeded>How the discount builds as the set grows.</CopyNeeded> },
-                { title: "Review and add to cart", text: <CopyNeeded>How the set is confirmed and added.</CopyNeeded> },
-              ]}
-            />
-
-            <MediaRow layout="full">
-              <Media label="Discount progression" note="Close-up of the progress and discount states." aspect="21 / 9" />
-            </MediaRow>
-
-            <MediaRow layout="wide-left">
-              <Media label="Desktop modal" frame="browser" aspect="4 / 3" caption="Desktop: Build Your Set opens in a modal" />
-              <Media label="Mobile bottom sheet" frame="phone" aspect="2 / 3" caption="Mobile: the same flow as a bottom sheet" />
-            </MediaRow>
-
-            <TextBlock label="Client feedback" title="Iterating with the client" tight>
-              <CopyNeeded>The client’s actual feedback (quoted only if you have it in writing) and what you changed in response.</CopyNeeded>
-            </TextBlock>
-            <BeforeAfter
-              before={<Media label="Before feedback" aspect="4 / 3" />}
-              after={<Media label="After feedback" aspect="4 / 3" />}
-            />
-          </Chapter>
-
-          {/* 04 — Shipping the brand */}
-          <Chapter
-            id="launch"
-            number="04"
-            title="Shipping the brand"
-            intro="Building anticipation before the store opened, then launching it."
-            topics={["Coming Soon", "Email capture", "Launch emails", "Launch", "Results", "Reflection"]}
-          >
-            <MediaRow layout="wide-left">
-              <Media label="Coming Soon page — desktop" frame="browser" aspect="4 / 3" />
-              <Media label="Email capture — mobile" frame="phone" aspect="2 / 3" />
-            </MediaRow>
-
-            <TextBlock label="Launch emails" title="Four emails to launch" tight>
-              <CopyNeeded>The role of each email in the sequence and when it was sent.</CopyNeeded>
-            </TextBlock>
-            <MediaRow layout="quarters">
-              <Media label="Email 1" aspect="3 / 5" caption="Email 01" />
-              <Media label="Email 2" aspect="3 / 5" caption="Email 02" />
-              <Media label="Email 3" aspect="3 / 5" caption="Email 03" />
-              <Media label="Email 4" aspect="3 / 5" caption="Email 04" />
-            </MediaRow>
-
-            <MediaRow layout="full">
-              <Media label="Launch" note="Launch-night moment: live store or brand photography." src={PHOTO.blanket} aspect="21 / 9" sizes="100vw" />
-            </MediaRow>
-
-            <Band tone="deep">
-              <Stats
-                items={[
-                  { value: "150", label: "Email sign-ups within 48 hours of pre-launch" },
-                  { value: "2", label: "Sales on launch night" },
-                ]}
-                note="Supporting evidence to be added."
-              />
-            </Band>
-
-            <TextBlock label="Reflection" title="What I learned">
-              <CopyNeeded>What worked, what you’d do differently, and what’s next for Crumble & Co.</CopyNeeded>
-            </TextBlock>
-          </Chapter>
-
-          <NextProject title="Fanzine" href="/work/fanzine" />
-        </CaseStudy>
-      </main>
-    </div>
+      <NextProject
+        number="03"
+        title="Fanzine"
+        href="/work/fanzine"
+        line="Designing one product system for 50+ football club apps."
+        tone={navy}
+        media={<Img src="/fanzine-homepage.jpg" alt="Fanzine club apps" width={2880} height={1650} aspect="21 / 9" className={styles.nextFanzine} />}
+      />
+    </CasePage>
   );
 }

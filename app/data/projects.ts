@@ -189,6 +189,7 @@ export const projects: Project[] = [
   {
     title: "Reawakening the Feminine",
     featured: true,
+    link: "/work/reawakening-the-feminine",
     // PLACEHOLDER copy, tags and period: replace with the real details.
     description:
       "An editorial digital experience for a women's wellbeing practice, designed to feel calm, warm and personal across desktop and mobile.",

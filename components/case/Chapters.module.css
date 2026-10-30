@@ -1,0 +1,421 @@
+/*
+ * Chaptered case-study layout. One calm tone per page, a sticky section rail on the left, and a single
+ * content column where the work does the talking. Sections are separated by hairlines, not colour changes.
+ * Tokens: --accent (set per case study), --panel and --fill (derived from the tone unless overridden).
+ */
+
+.layout {
+  --accent: #ee7267;
+  --panel: color-mix(in srgb, var(--fg) 5%, var(--bg));
+  --fill: color-mix(in srgb, var(--fg) 6%, transparent);
+  --rail: 216px;
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  column-gap: clamp(40px, 5vw, 104px);
+  max-width: calc(1480px + var(--home-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--home-gutter);
+}
+.content { min-width: 0; }
+
+/* ---------- Section rail ---------- */
+
+.caseNav {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  z-index: 20;
+  padding-block: clamp(40px, 7vh, 104px) 32px;
+}
+.caseNavInner { display: grid; gap: 32px; }
+.caseNavBack {
+  display: inline-flex;
+  gap: 8px;
+  width: fit-content;
+  color: var(--muted);
+  font-size: 15px;
+  transition: color 200ms ease;
+}
+.caseNavBack:hover { color: var(--fg); }
+.caseNavTitle {
+  color: var(--fg);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.caseNav ol {
+  display: grid;
+  list-style: none;
+  border-left: 1px solid var(--rule);
+}
+.caseNav a {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 9px 0 9px 18px;
+  color: var(--muted);
+  font-size: 15.5px;
+  white-space: nowrap;
+  transition: color 200ms ease;
+}
+.caseNav a span {
+  min-width: 2ch;
+  opacity: 0.6;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+}
+.caseNav a::before {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: -1px;
+  width: 1px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 350ms var(--case-ease);
+  content: "";
+}
+.caseNav a:hover,
+.caseNav a[aria-current] { color: var(--fg); }
+.caseNav a[aria-current] span { opacity: 1; color: var(--accent); }
+.caseNav a[aria-current]::before { transform: scaleY(1); }
+.caseNav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- Chapters ---------- */
+
+.chapter {
+  padding-block: clamp(64px, 6.5vw, 112px);
+  border-top: 1px solid var(--rule);
+  scroll-margin-top: 0;
+}
+.chapter:first-child { border-top: 0; }
+.chapterHead { margin-bottom: clamp(32px, 3.4vw, 52px); }
+.chapterLabel {
+  display: flex;
+  gap: 14px;
+  margin-bottom: clamp(20px, 2vw, 28px);
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.chapterLabel span { color: var(--accent); }
+.chapterTitle {
+  max-width: 18ch;
+  font-size: clamp(34px, 3.8vw, 64px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.chapterIntro {
+  max-width: 42ch;
+  margin-top: clamp(18px, 1.8vw, 28px);
+  color: var(--muted);
+  font-size: clamp(16px, 1.15vw, 18px);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.chapterIntro > * + * { margin-top: 1em; }
+.chapterIntro strong { color: var(--fg); font-weight: 500; }
+
+/* Follow-on visuals, evenly spaced. */
+.block,
+.pair { margin-top: clamp(32px, 3.4vw, 52px); }
+.chapterHead + .block,
+.chapterHead + .pair { margin-top: 0; }
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--col-gap);
+  align-items: start;
+}
+.subhead {
+  margin-top: clamp(72px, 7vw, 112px);
+  margin-bottom: clamp(28px, 3vw, 44px);
+}
+.subheadTitle {
+  max-width: 22ch;
+  font-size: clamp(26px, 2.4vw, 40px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+/* ---------- 01 Overview ---------- */
+
+.overview { padding-top: clamp(40px, 7vh, 104px); }
+.brand { margin-bottom: clamp(24px, 2.4vw, 36px); }
+.brand img { display: block; width: clamp(100px, 8vw, 124px); height: auto; }
+.wordmark {
+  margin-bottom: clamp(24px, 2.4vw, 36px);
+  font-size: clamp(17px, 1.3vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.heroTitle {
+  max-width: 15ch;
+  font-size: clamp(44px, 5.4vw, 96px);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+.heroLede {
+  display: grid;
+  gap: 0.75em;
+  max-width: 50ch;
+  margin-top: clamp(22px, 2.2vw, 32px);
+  color: var(--muted);
+  font-size: clamp(17px, 1.3vw, 21px);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.heroLede p:last-child { color: var(--fg); }
+.facts {
+  display: grid;
+  grid-template-columns: repeat(var(--facts, 3), minmax(0, 1fr));
+  gap: 24px var(--col-gap);
+  margin-top: clamp(40px, 4vw, 64px);
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+.facts dt {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.facts dd { font-size: 15px; line-height: 1.45; }
+.live { display: inline-flex; gap: 8px; align-items: center; }
+.live::before {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3fbf72;
+  box-shadow: 0 0 0 4px rgb(63 191 114 / 0.16);
+  content: "";
+}
+.heroFigure { margin-top: clamp(44px, 4.5vw, 72px); }
+
+/* ---------- Insight ---------- */
+
+.insight {
+  max-width: 30ch;
+  margin: clamp(40px, 4vw, 64px) 0 0;
+  font-size: clamp(24px, 2.4vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.insightLabel {
+  margin-bottom: 16px;
+  color: var(--accent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.chapterHead + .insight { margin-top: 0; }
+
+/* ---------- Panels ---------- */
+
+.panel {
+  margin: 0;
+  padding: clamp(28px, 4vw, 64px);
+  border: 1px solid var(--rule);
+  border-radius: clamp(10px, 1vw, 16px);
+  background: var(--panel);
+}
+.panelCaption {
+  margin-top: clamp(28px, 3vw, 44px);
+  color: var(--muted);
+  font-size: 13px;
+}
+.panelLabel {
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- Bridge (lead-in before a headline) ---------- */
+
+.bridge {
+  margin-bottom: clamp(48px, 5vw, 80px);
+  padding-bottom: clamp(36px, 4vw, 64px);
+  border-bottom: 1px solid var(--rule);
+}
+.bridgeLead { color: var(--muted); font-size: clamp(18px, 1.5vw, 24px); letter-spacing: -0.015em; }
+.bridgeQuestion {
+  max-width: 20ch;
+  margin-top: 14px;
+  font-size: clamp(30px, 3.2vw, 54px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+/* ---------- Points: titled one-liners, no boxes ---------- */
+
+.points {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: clamp(28px, 3vw, 44px) var(--col-gap);
+  margin-top: clamp(48px, 5vw, 80px);
+  list-style: none;
+}
+.chapterHead + .points { margin-top: 0; }
+.points li { padding-top: 16px; border-top: 1px solid var(--rule); }
+.points h3 { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+.points p { margin-top: 6px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+/* ---------- Groups: chips and lists ---------- */
+
+.split,
+.lists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--col-gap);
+  margin-top: clamp(32px, 3.4vw, 52px);
+}
+.chapterHead + .split,
+.chapterHead + .lists { margin-top: 0; }
+.split h3 { margin-bottom: 14px; font-size: 16px; font-weight: 500; }
+.split [data-muted] h3,
+.split [data-muted] li { color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
+.chips li {
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 13.5px;
+}
+.split > div:first-child .chips li { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+
+.lists h3 {
+  margin-bottom: 8px;
+  font-size: clamp(20px, 1.7vw, 26px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.lists ul { list-style: none; }
+.lists li {
+  padding-block: 11px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* ---------- Numbers ---------- */
+
+.numbers {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 32px var(--col-gap);
+}
+.numbers > div { padding-top: 18px; border-top: 1px solid var(--rule); }
+.numbers dd {
+  font-size: clamp(44px, 5vw, 88px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.numbers dt { max-width: 26ch; margin-top: 12px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+/* ---------- Phone row ---------- */
+
+.phoneRow {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 32px);
+  align-items: start;
+  /* Keep phones phone-sized: roughly 300px each at most. */
+  max-width: calc(var(--cols, 3) * 300px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caseNav a::before { transition: none; }
+}
+
+/* ---------- Responsive ---------- */
+
+/* Below 1100px the rail becomes a slim sticky bar across the top. */
+@media (max-width: 1100px) {
+  .layout { display: block; }
+  .caseNav {
+    margin-inline: calc(var(--home-gutter) * -1);
+    padding: 0;
+    border-block: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(14px);
+  }
+  .caseNavInner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-left: var(--home-gutter);
+  }
+  .caseNavTitle { display: none; }
+  .caseNavBack { flex: none; font-size: 14px; }
+  .caseNav ol {
+    display: flex;
+    overflow-x: auto;
+    padding-right: var(--home-gutter);
+    border-left: 0;
+    scrollbar-width: none;
+  }
+  .caseNav ol::-webkit-scrollbar { display: none; }
+  .caseNav a { min-height: 48px; padding: 0 10px; align-items: center; font-size: 14px; }
+  .caseNav a::before {
+    top: auto;
+    right: 10px;
+    bottom: -1px;
+    left: 10px;
+    width: auto;
+    height: 2px;
+    transform: scaleX(0);
+  }
+  .caseNav a[aria-current]::before { transform: scaleX(1); }
+  .chapter,
+  .chapter:first-child { scroll-margin-top: 48px; }
+  .points { --cols: 3 !important; }
+}
+
+@media (max-width: 800px) {
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .points { --cols: 2 !important; }
+  .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .phoneRow { grid-template-columns: repeat(min(var(--cols, 3), 3), minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .pair,
+  .split,
+  .lists { grid-template-columns: minmax(0, 1fr); }
+  .points { --cols: 1 !important; }
+  .phoneRow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Phone-shaped placeholder: the same proportions and frame as Case <Phone>. */
+.phoneSlot {
+  padding: 2.6%;
+  border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+  border-radius: 13% / 6%;
+  background: var(--panel);
+}
+.phoneSlot > * { border-radius: 11% / 5.2%; }
+@media (max-width: 600px) {
+  .phoneSlot > * > :last-child { display: none; }
+}
