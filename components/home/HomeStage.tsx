@@ -208,6 +208,143 @@ export default function HomeStage() {
     };
   }, []);
 
+  /*
+   * Paged scrolling. One wheel or trackpad gesture, swipe or key press moves exactly one scene, as
+   * a single eased animation. The tween skips the held part of each segment (instant jumps there
+   * change nothing on screen) and plays only the moving part, so the motion starts immediately.
+   * Anything that leaves the page between scenes (scrollbar drag, find-in-page) settles on the nearest one.
+   */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const n = SCENES.length - 1;
+    const DURATION = 1000;
+    let animating = false;
+    let raf = 0;
+    let lastWheel = 0;
+    let lastDelta = 0;
+    let settleTimer = 0;
+    let touchY: number | null = null;
+
+    const geometry = () => {
+      const total = track.offsetHeight - window.innerHeight;
+      const top = track.getBoundingClientRect().top + window.scrollY;
+      return { top, total, seg: total / n };
+    };
+    /** Scene position from scroll, as a float (0 … n). */
+    const position = () => {
+      const { top, seg } = geometry();
+      return (window.scrollY - top) / seg;
+    };
+    const inTrack = () => {
+      const pos = position();
+      return pos > -0.01 && pos < n + 0.01;
+    };
+    const jump = (y: number) => window.scrollTo({ top: y, behavior: "instant" as ScrollBehavior });
+
+    /** Animate from scene `from` to its neighbour `to`, playing only the moving middle of the segment. */
+    const step = (from: number, to: number) => {
+      const { top, seg } = geometry();
+      const dir = Math.sign(to - from);
+      const start = top + (from + dir * HOLD) * seg;
+      const end = top + (to - dir * HOLD) * seg;
+      animating = true;
+      jump(start);
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        const x = Math.min((now - t0) / DURATION, 1);
+        // Linear here: the stage already eases the visible motion across this stretch.
+        jump(start + (end - start) * x);
+        if (x < 1) raf = requestAnimationFrame(tick);
+        else {
+          jump(top + to * seg);
+          animating = false;
+        }
+      };
+      raf = requestAnimationFrame(tick);
+    };
+
+    /** Move one scene in a direction. Returns false at the ends, so native scrolling can take over. */
+    const page = (dir: 1 | -1) => {
+      const current = Math.round(position());
+      const next = current + dir;
+      if (next < 0 || next > n) return false;
+      step(current, next);
+      return true;
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!immersive() || e.ctrlKey || !inTrack()) return;
+      const now = performance.now();
+      const delta = Math.abs(e.deltaY);
+      const quiet = now - lastWheel > 160;
+      // A fresh gesture: either a pause since the last event, or a clear acceleration on top of a momentum tail.
+      const fresh = quiet || (delta > 20 && delta > lastDelta * 1.6);
+      lastWheel = now;
+      lastDelta = delta;
+      if (animating || !fresh || delta < 2) {
+        e.preventDefault();
+        return;
+      }
+      if (page(e.deltaY > 0 ? 1 : -1)) e.preventDefault();
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (!immersive() || !inTrack() || e.altKey || e.ctrlKey || e.metaKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable], [role=dialog]")) return;
+      // Space on a focused button or link activates it; leave that alone.
+      if (e.key === " " && target?.closest("a, button")) return;
+      const down = e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey);
+      const up = e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey);
+      if (!down && !up) return;
+      e.preventDefault();
+      if (!animating) page(down ? 1 : -1);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = e.touches[0]?.clientY ?? null;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (immersive() && inTrack() && touchY !== null) e.preventDefault();
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (touchY === null || !immersive() || !inTrack()) return;
+      const dy = touchY - (e.changedTouches[0]?.clientY ?? touchY);
+      touchY = null;
+      if (!animating && Math.abs(dy) > 40) page(dy > 0 ? 1 : -1);
+    };
+
+    /** Anything that stops between scenes eases onto the nearest one. */
+    const onScroll = () => {
+      if (animating || !immersive()) return;
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => {
+        if (animating || !inTrack()) return;
+        const pos = position();
+        const nearest = Math.round(pos);
+        if (Math.abs(pos - nearest) > 0.002) goTo(Math.min(Math.max(nearest, 0), n));
+      }, 180);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(settleTimer);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [goTo]);
+
   /** Keyboard: focusing a link in another scene brings that scene into its settled state. */
   const onFocus = (i: number) => () => {
     if (immersive() && activeRef.current !== i) goTo(i, "auto");
@@ -236,8 +373,12 @@ export default function HomeStage() {
               <div className={styles.bg} />
               <Layer m={{ yo: "-14vh", f: 1.7 }} className={styles.introText}>
                 <h1 id="hero-heading" className={styles.headline}>
-                  <span>Product designer</span>
-                  <span className={styles.headlineMuted}>who builds and ships.</span>
+                  <span className={styles.mask}>
+                    <span>Product designer</span>
+                  </span>
+                  <span className={`${styles.mask} ${styles.headlineMuted}`}>
+                    <span>who builds and ships.</span>
+                  </span>
                 </h1>
               </Layer>
               <Layer m={{ yo: "-6vh", f: 2.4 }} className={styles.introFoot}>
@@ -316,15 +457,24 @@ export default function HomeStage() {
               <Layer m={{ yi: "6vh", yo: "-4vh", s: 0.04, f: 2 }} className={styles.fzWall}>
                 <Image src="/fanzine-homepage.jpg" alt="" width={2880} height={1650} unoptimized />
               </Layer>
-              <Layer m={{ xi: "-8vw", yi: "30vh", xo: "-10vw", yo: "-12vh" }} className={`${styles.fzPhone} ${styles.fzLeft}`}>
-                <Phone src="/fanzine/screen-chelsea.webp" alt="Chelsea club app" width={515} height={1105} />
-              </Layer>
-              <Layer m={{ yi: "36vh", yo: "-22vh", s: 0.04 }} className={`${styles.fzPhone} ${styles.fzCentre}`}>
-                <Phone src="/fanzine/screen-arsenal.webp" alt="Arsenal club app" width={517} height={1105} />
-              </Layer>
-              <Layer m={{ xi: "8vw", yi: "42vh", xo: "8vw", yo: "-14vh" }} className={`${styles.fzPhone} ${styles.fzRight}`}>
-                <Phone src="/fanzine/screen-man-city.webp" alt="Manchester City club app" width={517} height={1105} />
-              </Layer>
+              {/* One composition: Arsenal leads, the two blue clubs behind it, Celtic and West Ham smallest at the edges. Its own grid when stacked. */}
+              <div className={styles.fzPhones}>
+                <Layer m={{ xi: "-12vw", yi: "26vh", xo: "-14vw", yo: "-10vh" }} className={`${styles.fzPhone} ${styles.fzFarLeft}`}>
+                  <Phone src="/fanzine/app-celtic.webp" alt="Celtic club app" width={1861} height={4041} />
+                </Layer>
+                <Layer m={{ xi: "-8vw", yi: "30vh", xo: "-10vw", yo: "-12vh" }} className={`${styles.fzPhone} ${styles.fzLeft}`}>
+                  <Phone src="/fanzine/app-chelsea.webp" alt="Chelsea club app" width={2004} height={4359} />
+                </Layer>
+                <Layer m={{ yi: "36vh", yo: "-22vh", s: 0.04 }} className={`${styles.fzPhone} ${styles.fzCentre}`}>
+                  <Phone src="/fanzine/app-arsenal.webp" alt="Arsenal club app" width={1998} height={4359} />
+                </Layer>
+                <Layer m={{ xi: "8vw", yi: "42vh", xo: "8vw", yo: "-14vh" }} className={`${styles.fzPhone} ${styles.fzRight}`}>
+                  <Phone src="/fanzine/app-man-city.webp" alt="Manchester City club app" width={2004} height={4359} />
+                </Layer>
+                <Layer m={{ xi: "12vw", yi: "46vh", xo: "12vw", yo: "-10vh" }} className={`${styles.fzPhone} ${styles.fzFarRight}`}>
+                  <Phone src="/fanzine/app-west-ham.webp" alt="West Ham club app" width={1861} height={4042} />
+                </Layer>
+              </div>
               <Info
                 index={3}
                 title="Fanzine"
@@ -335,7 +485,7 @@ export default function HomeStage() {
               />
             </section>
 
-            {/* ── 04 Reawakening: blush, editorial photography, browser + phone ── */}
+            {/* ── 04 Reawakening: soft warm gradient, the website as the focus, browser + phone ── */}
             <section {...sceneProps(4)} aria-label="Reawakening the Feminine">
               <div className={styles.bg} />
               <SceneLink href="/work/reawakening-the-feminine" />
@@ -346,6 +496,9 @@ export default function HomeStage() {
                 <Browser url="reawakeningthefeminineprograms.com" scheme="light">
                   <Image src="/reawakening/screen-desktop.webp" alt="She Who Mothers Herself homepage" width={1521} height={1078} unoptimized />
                 </Browser>
+              </Layer>
+              <Layer m={{ yi: "22vh", xo: "-2vw", yo: "-14vh", s: 0.05 }} className={styles.rwPhone}>
+                <Phone src="/reawakening/screen-mobile.jpg" alt="She Who Mothers Herself on mobile" width={945} height={2048} />
               </Layer>
               <Info
                 index={4}

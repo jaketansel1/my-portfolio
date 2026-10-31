@@ -84,9 +84,10 @@
   --bg: #f1e2d8;
   --fg: #3b2620;
   --muted: rgb(59 38 32 / 0.68);
+  /* Muted taupe on the left, warm beige through the middle, pale blush-cream on the right, from the site's photography. */
   --bg-art:
-    radial-gradient(ellipse 40% 50% at 60% 50%, rgb(255 250 245 / 0.7), transparent 72%),
-    linear-gradient(105deg, #f5ece3 0%, #f1e2d8 45%, #e9cdbf 100%);
+    radial-gradient(ellipse 62% 95% at 0% 55%, rgb(156 114 88 / 0.28), transparent 72%),
+    linear-gradient(100deg, #c9b19e 0%, #d7c3b1 20%, #e5d5c5 42%, #efe2d6 64%, #f5ebe3 84%, #f8f0ea 100%);
 }
 .scene[data-scene="closing"] { --bg: #f3f2ee; }
 
@@ -102,6 +103,31 @@
 .headlineMuted { color: #8f8c85; }
 .introFoot { margin-top: clamp(40px, 6vw, 80px); }
 .facts { color: #6b6962; font-size: 15px; }
+
+/* Load sequence, matching the Contact and About pages: headline lines rise out of a mask, then the rest fades up. */
+.mask {
+  display: block;
+  overflow: hidden;
+  /* Room for descenders inside the mask. */
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.mask > span {
+  display: inline-block;
+  animation: rise 1100ms var(--ease) both;
+}
+.headlineMuted > span { animation-delay: 90ms; }
+.facts { animation: fade 1100ms 250ms var(--ease) both; }
+.introActions { animation: fade 1100ms 350ms var(--ease) both; }
+@keyframes rise {
+  from { transform: translateY(105%); }
+}
+@keyframes fade {
+  from { opacity: 0; transform: translateY(12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mask > span, .facts, .introActions { animation: none; }
+}
 .introActions {
   display: flex;
   flex-wrap: wrap;
@@ -284,10 +310,37 @@
 
 /* ---------- Stacked layout (default): one strong visual per project ---------- */
 
-.llGhost, .crDog, .fzWall, .fzLeft, .fzRight, .rwPhoto { display: none; }
+.llGhost, .crDog, .fzWall, .rwPhoto, .rwPhone { display: none; }
 .llBrowser, .crBrowser, .rwBrowser { margin-top: 32px; }
 .llGhost img, .fzWall img, .rwPhoto img { display: block; width: 100%; height: auto; }
-.fzCentre { width: min(60%, 260px); margin: 32px auto 0; }
+/* Fanzine: Arsenal leads, Chelsea and Man City tucked behind and angled out. */
+.fzPhones {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1.15fr 1fr 0.8fr;
+  align-items: center;
+  width: min(100%, 520px);
+  margin: 40px auto 0;
+  padding-inline: 9%;
+}
+.fzPhones > * { position: relative; }
+.fzLeft { margin-right: -34%; rotate: -9deg; scale: 0.8; filter: brightness(0.86); }
+.fzCentre { z-index: 3; }
+.fzLeft, .fzRight { z-index: 2; }
+.fzFarLeft { z-index: 1; margin-right: -60%; rotate: -15deg; scale: 0.7; filter: brightness(0.72); }
+.fzFarRight { z-index: 1; margin-left: -60%; rotate: 15deg; scale: 0.7; filter: brightness(0.72); }
+.fzRight { margin-left: -34%; rotate: 9deg; scale: 0.8; filter: brightness(0.86); }
+.fzPhone .phone {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 24px 48px -18px rgb(0 0 0 / 0.55),
+    0 60px 110px -36px rgb(0 0 0 / 0.75);
+}
+.fzCentre .phone {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.45),
+    0 30px 60px -20px rgb(0 0 0 / 0.6),
+    0 80px 140px -40px rgb(0 0 0 / 0.85);
+}
 .info { order: -1; }
 .scene { display: flex; flex-direction: column; }
 .scene[data-scene="intro"] { min-height: 92svh; justify-content: center; }
@@ -343,8 +396,8 @@
   }
 
   /* Show everything in immersive mode. */
-  .llGhost, .crDog, .fzWall, .fzLeft, .fzRight, .rwPhoto { display: block; }
-  .llBrowser, .crBrowser, .rwBrowser, .fzCentre { margin: 0; }
+  .llGhost, .crDog, .fzWall, .rwPhoto, .rwPhone { display: block; }
+  .llBrowser, .crBrowser, .rwBrowser { margin: 0; }
 
   /* Intro */
   .introText { left: var(--gutter); right: var(--gutter); top: 30%; }
@@ -389,21 +442,53 @@
   /* 03 Fanzine: three big phones, centre one dominant. */
   .fzWall { inset: 0; opacity: calc(0.16 - var(--a) * 0.2); }
   .fzWall img { width: 100%; height: 100%; object-fit: cover; mask-image: radial-gradient(ellipse 70% 70% at 60% 50%, #000 30%, transparent 80%); }
-  .fzPhone { --pw: min(19.5vw, 38svh); width: var(--pw); }
-  .fzCentre { top: calc(50svh - var(--pw) * 1.12); left: calc(64vw - var(--pw) / 2); z-index: 3; }
-  .fzLeft { top: calc(50svh - var(--pw) * 1.0); left: calc(64vw - var(--pw) * 1.28); rotate: -7deg; scale: 0.9; z-index: 2; }
-  .fzRight { top: calc(50svh - var(--pw) * 1.0); left: calc(64vw + var(--pw) * 0.28); rotate: 7deg; scale: 0.9; z-index: 2; }
+  .fzPhones { display: contents; }
+  /*
+   * The group is about 14% smaller than before and centred both ways: vertically on the screen, and
+   * horizontally a little right of the space between the text column and the right edge (--fx).
+   * A framed phone is about 2.1 times as tall as it is wide.
+   */
+  .fzPhone { --pw: min(16.8vw, 32.7svh); --fx: calc(54vw + min(13rem, 13vw)); width: var(--pw); margin: 0; }
+  /* Hero: slightly larger than the side phones. */
+  .fzCentre { --cw: calc(var(--pw) * 1.04); width: var(--cw); top: calc(50svh - var(--cw) * 1.053); left: calc(var(--fx) - var(--cw) / 2); z-index: 3; }
+  /* Each side phone tucks about 25% of its width behind the hero, scaled and angled about its own centre. */
+  .fzLeft { top: calc(50svh - var(--pw) * 1.053); left: calc(var(--fx) - var(--pw) * 1.21); rotate: -9deg; scale: 0.88; z-index: 2; }
+  .fzRight { top: calc(50svh - var(--pw) * 1.053); left: calc(var(--fx) + var(--pw) * 0.21); rotate: 9deg; scale: 0.88; z-index: 2; }
+  /* Outer pair: smallest and most angled, sitting a little lower, about a third tucked behind the blue phones. */
+  .fzFarLeft { top: calc(50svh - var(--pw) * 0.95); left: calc(var(--fx) - var(--pw) * 1.68); rotate: -15deg; scale: 0.74; filter: brightness(0.78); z-index: 1; }
+  .fzFarRight { top: calc(50svh - var(--pw) * 0.95); left: calc(var(--fx) + var(--pw) * 0.68); rotate: 15deg; scale: 0.74; filter: brightness(0.78); z-index: 1; }
   .fzInfo { width: min(26rem, 26vw); }
 
-  /* 04 Reawakening: the calmest scene. Photography → real website → project information. */
-  .rwPhoto { top: 0; bottom: 0; left: -4vw; width: auto; height: 100%; }
-  /* Full strength across the left ~55%, then a soft fade into the blush. */
+  /* 04 Reawakening: the calmest scene. A soft gradient, a faint glow of the photography, the website in focus. */
+  /* The sunset photo as atmosphere only: heavily blurred, very faint, fading out at every edge. */
+  .rwPhoto { top: 0; bottom: 0; left: 0; width: 72vw; mask-image: radial-gradient(ellipse 60% 60% at 45% 50%, #000 20%, transparent 75%); }
   .rwPhoto img {
-    width: auto;
+    width: 100%;
     height: 100%;
-    mask-image: linear-gradient(to right, #000 54%, rgb(0 0 0 / 0.75) 70%, rgb(0 0 0 / 0.3) 86%, transparent 100%);
+    object-fit: cover;
+    opacity: 0.14;
+    filter: blur(56px) saturate(0.85);
+    transform: scale(1.2);
   }
-  .rwBrowser { --bw: min(46vw, 88svh); top: 50%; translate: 0 -50%; left: 16vw; width: var(--bw); }
+  /* Left edge eases in on smaller screens: 16vw on large monitors, nearer the gutter on laptops. */
+  .scene[data-scene="reawakening"] { --rx: clamp(var(--gutter), calc(48vw - 576px), 16vw); }
+  .rwBrowser { --bw: min(46vw, 88svh); top: 50%; translate: 0 -50%; left: var(--rx); width: var(--bw); }
+  .rwBrowser > * {
+    border-color: rgb(80 52 36 / 0.08);
+    box-shadow:
+      0 1px 4px rgb(80 52 36 / 0.06),
+      0 24px 60px -28px rgb(80 52 36 / 0.14),
+      0 60px 140px -50px rgb(80 52 36 / 0.26);
+  }
+  /* The phone overlaps the browser's lower-right corner, clear of the text column. */
+  .rwPhone {
+    --pw: min(9.5vw, 18svh);
+    top: calc(50svh + min(46vw, 88svh) * 0.36 + 4svh - var(--pw) * 2.1 + 16px);
+    left: calc(var(--rx) + min(46vw, 88svh) - var(--pw) * 0.6 - 24px);
+    width: var(--pw);
+    z-index: 2;
+  }
+  .rwPhone .phone { box-shadow: 0 2px 6px rgb(40 24 16 / 0.18), 0 36px 70px -26px rgb(40 24 16 / 0.5); }
   /* Browser and project information share the viewport's vertical centre. */
   .rwInfo {
     left: auto;
