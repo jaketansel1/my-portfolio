@@ -164,16 +164,20 @@
 
 /* Opening: a visual biography. Sticky photograph, scroll-driven chapters, contact-sheet index. */
 
-/* The header sits on the dark opening; remap the tokens it reads. */
+/* The header stays fixed at the top on a dark bar; remap the tokens it reads. */
 .night {
   --home-ink: var(--home-paper);
   --home-muted: var(--home-night-muted);
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
   background: var(--home-night);
   color: var(--home-paper);
 }
 
 .personal {
-  padding-block: clamp(48px, 10vh, 136px) clamp(48px, 6vw, 96px);
+  --header-h: 88px;
+  padding-block: 0 clamp(48px, 6vw, 96px);
   background: var(--home-night);
   color: var(--home-paper);
 }
@@ -182,6 +186,11 @@
   color: var(--home-night);
 }
 .personal .eyebrow { color: var(--home-night-muted); }
+.personalIntroCol {
+  grid-column: 9 / -1;
+  grid-row: 1;
+  padding-top: calc(var(--header-h) + 24px);
+}
 .personalHeader { margin-bottom: clamp(24px, 3vw, 48px); }
 .personalIntro {
   margin-top: clamp(20px, 2vw, 28px);
@@ -190,7 +199,7 @@
   line-height: 1.4;
 }
 .personalHeading {
-  font-size: clamp(44px, 6.4vw, 120px);
+  font-size: clamp(40px, 4.2vw, 76px);
   font-weight: 500;
   line-height: 0.95;
   letter-spacing: -0.045em;
@@ -208,9 +217,11 @@
   display: flex;
   flex-direction: column;
   grid-column: 1 / 8;
+  grid-row: 1 / span 2;
+  align-self: start;
   gap: 16px;
   height: 100svh;
-  padding-block: 24px;
+  padding-block: calc(var(--header-h) + 8px) 24px;
 }
 .frame {
   position: relative;
@@ -300,7 +311,13 @@
   outline-offset: 4px;
 }
 
-.chapters { grid-column: 9 / -1; }
+.chapters { grid-column: 9 / -1; grid-row: 2; }
+/* Room after the last chapter so it can rest centred while the photo stays pinned. */
+@media (min-width: 901px) {
+  .chapters { padding-bottom: 12svh; }
+  /* Chapter 1 sits just under the heading on arrival rather than mid-block. */
+  .chapter:first-child { justify-content: flex-start; padding-top: clamp(40px, 7vh, 88px); }
+}
 .chapter {
   display: flex;
   flex-direction: column;
@@ -366,6 +383,18 @@
 @keyframes fade {
   from { opacity: 0; transform: translateY(12px); }
 }
+@keyframes reveal {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0); }
+}
+
+/* Load sequence, matching the Contact page: photo wipes up, headline rises, the rest fades in. */
+.personalIntroCol .eyebrow { animation: fade 1100ms 100ms var(--home-ease) both; }
+.personalHeading > span:nth-child(2) > span { animation-delay: 90ms; }
+.personalIntro { animation: fade 1100ms 250ms var(--home-ease) both; }
+.frame { animation: reveal 1300ms 150ms var(--home-ease) both; }
+.stageIndex { animation: fade 1100ms 350ms var(--home-ease) both; }
+.chapter:first-child { animation: fade 1100ms 450ms var(--home-ease) both; }
 
 @media (max-width: 900px) {
   .storyLabel, .storyBody { grid-column: 1 / -1; }
@@ -378,11 +407,17 @@
 
   /* Mobile pins the whole scene; chapters become invisible scroll steps (still read by screen readers). */
   .personalLayout { display: block; }
+  .personalIntroCol { padding-top: calc(var(--header-h) + clamp(24px, 6vh, 56px)); }
+  /* The pinned stage reserves room for the fixed nav; pull it up so the photo follows the heading closely. */
+  .personalIntroCol { margin-bottom: calc(var(--header-h) * -1); }
+  .personalIntroCol .personalHeader { margin-bottom: 8px; }
+  .personalHeading { font-size: clamp(44px, 11vw, 72px); }
   .stage {
     z-index: 2;
     gap: 12px;
-    padding-block: 16px;
-    background: var(--home-night);
+    padding-block: calc(var(--header-h) + 8px) 16px;
+    /* Clear behind the fixed nav, solid below it so the scroll steps stay hidden. */
+    background: linear-gradient(to bottom, transparent var(--header-h), var(--home-night) var(--header-h));
   }
   .frame { min-height: 0; }
   .stageIndex { gap: 6px; }
@@ -412,6 +447,7 @@
 }
 
 @media (max-width: 600px) {
+  .personal { --header-h: 72px; }
   .experience li { grid-template-columns: 6.5em minmax(0, 1fr); row-gap: 4px; }
   .capabilities { grid-template-columns: minmax(0, 1fr); }
   .capabilities li { padding-block: 14px; }
@@ -420,6 +456,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .story, .stageCaption { animation: none; }
+  .story, .stageCaption, .personalIntroCol .eyebrow, .personalIntro, .frame, .stageIndex, .chapter:first-child { animation: none; }
   .slide, .slideImage, .chapter, .thumb { transition: none; }
 }

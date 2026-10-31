@@ -26,15 +26,25 @@ export default function AboutPage() {
 
       <main id="main-content">
         <section className={styles.personal} aria-labelledby="about-heading">
-          <div className={`${home.container} ${styles.personalHeader}`}>
-            <p className={styles.eyebrow}>About</p>
-            <h1 id="about-heading" className={styles.personalHeading}>
-              The rest of the picture.
-            </h1>
-            <p className={styles.personalIntro}>Work and life, in no particular order.</p>
-          </div>
+          {/* The heading sits in the text column beside the photographs, so the whole scene is visible on arrival. */}
           <div className={home.container}>
-            <AboutPersonal chapters={personalChapters} />
+            <AboutPersonal
+              chapters={personalChapters}
+              intro={
+                <div className={styles.personalHeader}>
+                  <p className={styles.eyebrow}>About</p>
+                  <h1 id="about-heading" className={styles.personalHeading}>
+                    <span className={home.line}>
+                      <span>The rest of the</span>
+                    </span>
+                    <span className={home.line}>
+                      <span>picture.</span>
+                    </span>
+                  </h1>
+                  <p className={styles.personalIntro}>Work and life, in no particular order.</p>
+                </div>
+              }
+            />
           </div>
         </section>
 
