@@ -1,0 +1,210 @@
+/* About: intro, "Pick a side of me", how I got here. Tokens come from home.module.css (.home). */
+
+.eyebrow {
+  margin-bottom: 20px;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: fade 1100ms 100ms var(--home-ease) both;
+}
+
+/* ---------- Intro: text and a modest photo, under one viewport ---------- */
+
+.intro {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(16px, 2vw, 32px);
+  align-items: end;
+  padding-block: clamp(16px, 3vh, 48px) clamp(56px, 6vw, 96px);
+}
+.introText { grid-column: 1 / 7; }
+.heading {
+  /* About's page title: a step above the shared page-heading size, well short of the homepage hero. */
+  font-size: clamp(45px, 4.95vw, 90px);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+.lede {
+  max-width: 46ch;
+  margin-top: clamp(24px, 2.6vw, 36px);
+  font-size: var(--text-lead);
+  line-height: 1.42;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+  animation: fade 1100ms 250ms var(--home-ease) both;
+}
+/* Wide hero photo (HeroShuffle): click to shuffle. */
+.portrait {
+  grid-column: 7 / -1;
+  animation: reveal 1300ms 150ms var(--home-ease) both;
+}
+
+/* ---------- Section heads ---------- */
+
+.sectionHeading {
+  font-size: var(--text-2);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+.sectionNote {
+  color: var(--home-muted);
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.45;
+}
+.sidesHead,
+.careerHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 32px;
+  margin-bottom: clamp(24px, 3vw, 44px);
+}
+
+/* ---------- A few sides of me ---------- */
+
+
+
+.sides { padding-bottom: clamp(96px, 10vw, 176px); }
+
+/* ---------- How I got here ---------- */
+
+.career { padding-bottom: clamp(96px, 10vw, 176px); }
+/* Journey: a thin line across the page with a node where each stage starts, stages beneath. */
+.journey {
+  --cols: 3;
+  --gap: clamp(24px, 3vw, 56px);
+  margin-top: clamp(16px, 2vw, 32px);
+}
+.track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gap);
+  padding-top: 26px;
+}
+/* The line itself, running the full width. */
+.track::before {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--ink) 16%, transparent);
+  content: "";
+}
+.node,
+.nodeNow {
+  position: relative;
+  display: block;
+  padding-top: 18px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* Nodes sit on the line. */
+.node::before,
+.nodeNow::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px var(--ink);
+  content: "";
+}
+.node:first-child::before { background: var(--ink); }
+/* "Now" closes the line at its right end, filled in the accent of the present. */
+.nodeNow {
+  position: absolute;
+  top: 26px;
+  right: 0;
+  text-align: right;
+}
+.nodeNow::before { right: 0; left: auto; background: var(--ink); }
+
+.stages {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gap);
+  margin-top: clamp(32px, 3.4vw, 52px);
+  list-style: none;
+}
+.stageMeta {
+  display: flex;
+  gap: 12px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+.stageMeta span { color: var(--ink); }
+.stageTitle {
+  margin-top: 14px;
+  font-size: clamp(26px, 2.4vw, 40px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+.stageBody {
+  max-width: 36ch;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.stagePlaces {
+  max-width: 40ch;
+  margin-top: 16px;
+  color: var(--quiet);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(12px); }
+}
+@keyframes reveal {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0); }
+}
+
+@media (max-width: 900px) {
+  .introText { grid-column: 1 / -1; }
+  .portrait { grid-column: 1 / -1; margin-top: 40px; }
+  /* The line turns vertical: it runs down the left with a node at each stage. */
+  .track { display: none; }
+  .stages {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 44px;
+    margin-top: 8px;
+    padding-left: 28px;
+    border-left: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  }
+  .stage { position: relative; }
+  .stage::before {
+    position: absolute;
+    top: 3px;
+    left: -33px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: 0 0 0 1px var(--ink);
+    content: "";
+  }
+  .stage:first-child::before { background: var(--ink); }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .eyebrow, .lede, .portrait { animation: none; }
+}

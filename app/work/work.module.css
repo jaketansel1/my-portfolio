@@ -1,0 +1,199 @@
+/* Tokens come from home.module.css (.home). A dense, uniform project archive. */
+
+/* Intro: an editorial lead-in to the work; metadata sits right of the headline on desktop. */
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(16px, 2vw, 32px);
+  align-items: end;
+  padding-block: clamp(16px, 3vh, 40px) clamp(24px, 2.6vw, 40px);
+}
+.eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: 14px;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.headline {
+  grid-column: 1 / 10;
+  font-size: var(--text-1);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.headline > span > span { text-wrap: balance; }
+.meta {
+  grid-column: 10 / -1;
+  justify-self: end;
+  padding-bottom: 0.4em;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  letter-spacing: 0.06em;
+  text-align: right;
+  text-transform: uppercase;
+  animation: fade 1100ms 250ms var(--home-ease) both;
+}
+
+@media (max-width: 900px) {
+  .headline, .meta { grid-column: 1 / -1; }
+  .meta {
+    display: flex;
+    gap: 20px;
+    justify-self: start;
+    margin-top: 28px;
+    padding-bottom: 0;
+    text-align: left;
+  }
+}
+
+@media (max-width: 600px) {
+  .headline { font-size: 9vw; line-height: 1; }
+}
+
+/* ---------- Project grid ---------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(32px, 3vw, 48px) clamp(16px, 1.6vw, 28px);
+  padding-bottom: clamp(80px, 8vw, 140px);
+  list-style: none;
+}
+.grid > li { scroll-margin-top: 24px; }
+
+.card { display: block; color: inherit; }
+.card:focus-visible { outline: 2px solid var(--home-ink); outline-offset: 6px; }
+
+/* One canvas for every project; the interface brings the colour. */
+.frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-m);
+  background: var(--surface);
+  transition: background-color var(--dur-fast) var(--ease);
+}
+.card:hover .frame { background: color-mix(in srgb, var(--surface) 94%, var(--ink)); }
+.stage {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--dur) var(--ease);
+}
+.card:hover .stage { transform: scale(1.012); }
+.card[data-static] .stage { opacity: 0.94; }
+
+.stage img { display: block; width: 100%; height: auto; }
+
+/* Browser (shared frame): large, running off the bottom edge so the interface reads. */
+.browser {
+  position: absolute;
+  top: 8%;
+  left: 6%;
+  right: 6%;
+  border-radius: var(--radius-m) var(--radius-m) 0 0;
+  /* Lower elevation than the homepage scenes: these sit on a flat canvas. */
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.04), 0 10px 30px -18px rgb(0 0 0 / 0.22);
+}
+
+/* Phone (shared frame): sized per layout below. */
+.phone { position: relative; }
+
+/* Responsive projects: browser on the left, phone over its lower right. */
+.stage[data-kind="browserPhone"] .browser { right: 22%; }
+.stage[data-kind="browserPhone"] .phone {
+  position: absolute;
+  top: 26%;
+  right: 7%;
+  width: 21%;
+}
+
+/* App projects: three phones, the centre one slightly larger and higher. */
+.stage[data-kind="phones"] {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2.5%;
+  padding-top: 9%;
+}
+.stage[data-kind="phones"] .phone { width: 24%; margin-top: 3%; }
+.stage[data-kind="phones"] .phone:nth-child(2) { width: 27%; margin-top: 0; }
+
+/* Caption: number · title, discipline, year. */
+.caption {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "num title year"
+    ". disc disc";
+  align-items: baseline;
+  gap: 2px 12px;
+  padding-top: 14px;
+}
+.number { grid-area: num; }
+.title { grid-area: title; }
+.discipline { grid-area: disc; }
+.year { grid-area: year; }
+.number,
+.year {
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+.year { text-align: right; white-space: nowrap; }
+.year[data-soon] { color: var(--home-quiet); text-transform: uppercase; letter-spacing: 0.06em; font-size: 10.5px; }
+.title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: clamp(17px, 1.25vw, 21px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.arrow {
+  color: var(--home-muted);
+  font-size: 0.75em;
+  opacity: 0;
+  transform: translate(-3px, 2px);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur) var(--ease);
+}
+.card:hover .arrow,
+.card:focus-visible .arrow { opacity: 1; transform: none; }
+.discipline { color: var(--home-muted); font-size: 13.5px; line-height: 1.4; }
+
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (hover: none) {
+  .arrow { opacity: 1; transform: none; }
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meta { animation: none; }
+  .frame, .stage, .arrow { transition: none; }
+}

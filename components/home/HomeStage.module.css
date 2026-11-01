@@ -1,0 +1,556 @@
+/*
+ * Immersive homepage. Base styles describe the stacked layout (phones, tablets, reduced motion);
+ * the immersive block at the end turns the page into a sticky stage driven by --t / --in / --out.
+ */
+
+.root {
+  background: var(--home-paper);
+}
+
+/* ---------- Header: overlays the stage, adapts to light/dark scenes ---------- */
+
+.header {
+  position: absolute;
+  z-index: 50;
+  inset: 0 0 auto;
+  padding-inline: var(--gutter);
+  --home-ink: #121211;
+  --home-muted: #6b6962;
+  color: var(--home-ink);
+  transition: color 400ms ease;
+}
+.header[data-theme="dark"] {
+  --home-ink: #f3f2ee;
+  --home-muted: rgb(243 242 238 / 0.62);
+}
+
+/* ---------- Scenes (stacked by default) ---------- */
+
+.track { position: relative; }
+.stage { position: relative; }
+
+.scene {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(96px, 14vw, 140px) var(--gutter) clamp(56px, 10vw, 96px);
+  background: var(--bg);
+  color: var(--fg);
+}
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg-art, var(--bg));
+}
+.layer { position: relative; z-index: 1; }
+
+/* Whole-scene link: above all artwork (none of it is interactive), below the project info. */
+.sceneLink {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  cursor: pointer;
+}
+.info { z-index: 11; }
+.scene:has(.sceneLink:hover) .cta { filter: brightness(1.1); }
+.scene:has(.sceneLink:hover) .cta span { transform: translateX(5px); }
+
+.scene[data-theme="light"] { --fg: #121211; --muted: #6b6962; }
+.scene[data-theme="dark"] { --fg: #f3f2ee; --muted: rgb(243 242 238 / 0.62); }
+
+.scene[data-scene="intro"] { --bg: #f3f2ee; }
+.scene[data-scene="licklibrary"] {
+  --bg: #0a0a0a;
+  --bg-art:
+    radial-gradient(ellipse 50% 60% at 70% 45%, rgb(238 114 103 / 0.16), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 15% 100%, rgb(238 114 103 / 0.1), transparent 70%),
+    #0a0a0a;
+}
+.scene[data-scene="crumble"] {
+  --bg: #efe4d4;
+  --fg: #3d2314;
+  --muted: rgb(61 35 20 / 0.68);
+  --bg-art: linear-gradient(100deg, #e9dcc9 0%, #efe4d4 40%, #f6efe5 100%);
+}
+.scene[data-scene="fanzine"] {
+  --bg: #070a10;
+  --bg-art:
+    radial-gradient(ellipse 50% 55% at 66% 50%, rgb(70 110 180 / 0.28), transparent 70%),
+    linear-gradient(100deg, #06080d 0%, #0c1320 60%, #111c2d 100%);
+}
+.scene[data-scene="reawakening"] {
+  --bg: #f1e2d8;
+  --fg: #3b2620;
+  --muted: rgb(59 38 32 / 0.68);
+  /* Muted taupe on the left, warm beige through the middle, pale blush-cream on the right, from the site's photography. */
+  --bg-art:
+    radial-gradient(ellipse 62% 95% at 0% 55%, rgb(156 114 88 / 0.28), transparent 72%),
+    linear-gradient(100deg, #c9b19e 0%, #d7c3b1 20%, #e5d5c5 42%, #efe2d6 64%, #f5ebe3 84%, #f8f0ea 100%);
+}
+.scene[data-scene="closing"] { --bg: #f3f2ee; }
+
+/* ---------- Intro ---------- */
+
+.headline {
+  display: grid;
+  font-size: var(--text-display);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.headlineMuted { color: #8f8c85; }
+.introFoot { margin-top: clamp(40px, 6vw, 80px); }
+.facts { color: #6b6962; font-size: 15px; }
+
+/* Load sequence, matching the Contact and About pages: headline lines rise out of a mask, then the rest fades up. */
+.mask {
+  display: block;
+  overflow: hidden;
+  /* Room for descenders inside the mask. */
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.mask > span {
+  display: inline-block;
+  animation: rise 1100ms var(--ease) both;
+}
+.headlineMuted > span { animation-delay: 90ms; }
+
+/* Typed second line: all phrases share one grid cell so the longest reserves the space. */
+.typed { display: inline-grid; }
+.typedGhost,
+.typedText { grid-area: 1 / 1; }
+.typedGhost { visibility: hidden; }
+/* A thin caret, only while the line is changing. */
+.caret {
+  display: inline-block;
+  width: 0.05em;
+  height: 0.78em;
+  margin-left: 0.06em;
+  vertical-align: -0.04em;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.caret[data-busy] { opacity: 0.7; }
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.facts { animation: fade 1100ms 250ms var(--ease) both; }
+.introActions { animation: fade 1100ms 350ms var(--ease) both; }
+@keyframes rise {
+  from { transform: translateY(105%); }
+}
+@keyframes fade {
+  from { opacity: 0; transform: translateY(12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mask > span, .facts, .introActions, .caret { animation: none; }
+}
+.introActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 30px;
+  margin-top: 24px;
+}
+/* ---------- Project info ---------- */
+
+.info { max-width: 34rem; }
+.title {
+  margin-top: 16px;
+  font-size: clamp(40px, 5.2vw, 96px);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+.title a { transition: opacity 200ms ease; }
+.title a:hover { opacity: 0.8; }
+.meta {
+  margin-top: 18px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.line {
+  max-width: 34ch;
+  margin-top: 14px;
+  font-size: clamp(17px, 1.35vw, 21px);
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+/* Case-study button, coloured per project (see the scene rules below). */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  margin-top: 28px;
+  padding-inline: 22px;
+  background: var(--cta-bg, #121211);
+  color: var(--cta-fg, #fff);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 250ms var(--ease), filter 250ms ease;
+}
+.cta:hover { filter: brightness(1.1); }
+.cta span { transition: transform 400ms var(--ease); }
+.cta:hover span { transform: translateX(5px); }
+.scene[data-scene="licklibrary"] { --cta-bg: #c93d32; --cta-fg: #fff; }
+.scene[data-scene="crumble"] { --cta-bg: #3d2314; --cta-fg: #f6ede2; }
+.scene[data-scene="fanzine"] { --cta-bg: #2f62d9; --cta-fg: #fff; }
+.scene[data-scene="reawakening"] { --cta-bg: #5b6752; --cta-fg: #fff; }
+.scene a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+
+/* ---------- Devices ---------- */
+
+.videoBox { position: relative; background: #0f0f0e; }
+.videoBox video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+
+/* ---------- Closing: a calm invitation, then a quiet footer row ---------- */
+
+.closing {
+  display: grid;
+  gap: 96px;
+  padding-block: 96px 32px;
+}
+.closingTitle {
+  max-width: 18ch;
+  font-size: var(--text-1);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.closingTitle span { display: block; }
+.closingLine {
+  margin-top: clamp(16px, 1.8vw, 24px);
+  color: #4d4b46;
+  font-size: var(--text-lead);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+/* Contact: a blue filled button (the site's Fanzine blue), the one strong action on this screen. */
+.closingCta {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 56px;
+  margin-top: clamp(28px, 3.4vw, 44px);
+  padding-inline: 26px;
+  background: #2f62d9;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+.closingCta:hover { background: #2652bd; }
+.closingCtaArrow { transition: transform var(--dur) var(--ease); }
+.closingCta:hover .closingCtaArrow { transform: translate(3px, -3px); }
+.closingCta:focus-visible { outline: 2px solid #2f62d9; outline-offset: 4px; }
+
+/* Footer row: small and muted. */
+.closingFoot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(18 18 17 / 0.06);
+  color: var(--muted);
+  font-size: 13px;
+}
+.closingFoot nav { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+.closingFoot nav span { color: var(--quiet); }
+/* Links: darken and draw a hairline underline across on hover. */
+.closingFoot a {
+  display: inline-block;
+  padding-block: 6px;
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 4px) / 0 1px no-repeat;
+  transition: color var(--dur-fast) var(--ease), background-size var(--dur) var(--ease);
+}
+.closingFoot a:hover { color: var(--ink); background-size: 100% 1px; }
+.closingFoot p { padding-block: 6px; }
+.closingFoot a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .closingCta, .closingCtaArrow, .closingFoot a { transition: none; }
+}
+
+/* ---------- Project markers ---------- */
+
+.rail { display: none; }
+
+/* ---------- Stacked layout (default): one strong visual per project ---------- */
+
+.llGhost, .crDog, .fzWall, .rwPhoto, .rwPhone { display: none; }
+.llBrowser, .crBrowser, .rwBrowser { margin-top: 32px; }
+.llGhost img, .fzWall img, .rwPhoto img { display: block; width: 100%; height: auto; }
+/* Fanzine: Arsenal leads, Chelsea and Man City tucked behind and angled out. */
+.fzPhones {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1.15fr 1fr 0.8fr;
+  align-items: center;
+  width: min(100%, 520px);
+  margin: 40px auto 0;
+  padding-inline: 9%;
+}
+.fzPhones > * { position: relative; }
+.fzLeft { margin-right: -34%; rotate: -9deg; scale: 0.8; filter: brightness(0.86); }
+.fzCentre { z-index: 3; }
+.fzLeft, .fzRight { z-index: 2; }
+.fzFarLeft { z-index: 1; margin-right: -60%; rotate: -15deg; scale: 0.7; filter: brightness(0.72); }
+.fzFarRight { z-index: 1; margin-left: -60%; rotate: 15deg; scale: 0.7; filter: brightness(0.72); }
+.fzRight { margin-left: -34%; rotate: 9deg; scale: 0.8; filter: brightness(0.86); }
+.fzPhone .phone {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 24px 48px -18px rgb(0 0 0 / 0.55),
+    0 60px 110px -36px rgb(0 0 0 / 0.75);
+}
+.fzCentre .phone {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.45),
+    0 30px 60px -20px rgb(0 0 0 / 0.6),
+    0 80px 140px -40px rgb(0 0 0 / 0.85);
+}
+.info { order: -1; }
+.scene { display: flex; flex-direction: column; }
+.scene[data-scene="intro"] { min-height: 92svh; justify-content: center; }
+
+/* ======================================================================
+   Immersive: a sticky stage, scenes stacked in place, scroll drives --t.
+   ====================================================================== */
+
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .header { position: fixed; }
+
+  /* Tall track; the stage sticks for its whole length. */
+  .track { height: calc(var(--scenes) * 110svh); }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .scene {
+    --t: 0;
+    --a: 0;
+    --in: 0;
+    --out: 0;
+    position: absolute;
+    inset: 0;
+    display: block;
+    padding: 0;
+    background: none;
+    pointer-events: none;
+  }
+  .scene[data-active] { pointer-events: auto; }
+  .scene:not([data-scene="intro"]) { --t: -1; --a: 1; --in: 1; }
+
+  /* Incoming backgrounds fade over the previous scene, so colour never passes through a gap. */
+  /* The next scene rises from the bottom edge as one piece, background and artwork together;
+     the world changes in place rather than through a muddy crossfade. */
+  .scene { clip-path: inset(calc(var(--in) * 100%) 0 0 0); }
+
+  .layer {
+    position: absolute;
+    transform:
+      translate3d(
+        calc(var(--in) * var(--xi) + var(--out) * var(--xo)),
+        calc(var(--in) * var(--yi) + var(--out) * var(--yo)),
+        0
+      )
+      scale(calc(1 - var(--a) * var(--sc)));
+    /* Staggered: the outgoing scene clears in the first half, the next arrives in the second. */
+    opacity: calc(1 - var(--a) * var(--fd));
+    will-change: transform, opacity;
+  }
+
+  /* Show everything in immersive mode. */
+  .llGhost, .crDog, .fzWall, .rwPhoto, .rwPhone { display: block; }
+  .llBrowser, .crBrowser, .rwBrowser { margin: 0; }
+
+  /* Intro */
+  .introText { left: var(--gutter); right: var(--gutter); top: 30%; }
+  .introFoot { left: var(--gutter); right: var(--gutter); bottom: 10%; margin: 0; }
+
+  /* Shared: project info sits as a block on the vertical centre, text left-aligned. */
+  .info { left: var(--gutter); top: 50%; bottom: auto; translate: 0 -50%; width: min(32rem, 30vw); }
+
+  /* 01 LickLibrary: oversized and pushing past the edges. */
+  .llGhost { left: -4vw; bottom: -4svh; width: min(78vw, 170svh); opacity: calc(0.36 - var(--a) * 0.4); }
+  .llGhost img { mask-image: linear-gradient(to bottom, #000 60%, transparent 98%); }
+  /* Fully inside the viewport: right gutter, height capped so it never crops top or bottom. */
+  .llBrowser { top: 50%; translate: 0 -50%; right: var(--gutter); width: min(54vw, 120svh); }
+  .llInfo { width: min(28rem, 28vw); }
+
+  /* 02 Crumble & Co: one dog, one big store. */
+  .crBrowser { top: 50%; translate: 0 -56%; right: -2vw; width: min(56vw, 104svh); }
+  /* Right edge tied to the browser’s left edge (browser: right -2vw, width min(56vw, 104svh)),
+     so the dog only slightly overlaps it at any width. */
+  .crDog {
+    bottom: 4svh;
+    right: calc(min(56vw, 104svh) - 8vw);
+    width: auto;
+    height: min(74svh, 52vw);
+  }
+  .crDog img { width: auto; height: 100%; }
+  /* Grounding: a soft ellipse on the floor beneath the paws. */
+  .crDog::after {
+    position: absolute;
+    z-index: -1;
+    bottom: -1.5%;
+    left: 18%;
+    width: 72%;
+    height: 6%;
+    border-radius: 50%;
+    background: rgb(80 54 30 / 0.28);
+    filter: blur(16px);
+    content: "";
+  }
+  .crInfo { width: min(24rem, 24vw); }
+
+  /* 03 Fanzine: three big phones, centre one dominant. */
+  .fzWall { inset: 0; opacity: calc(0.16 - var(--a) * 0.2); }
+  .fzWall img { width: 100%; height: 100%; object-fit: cover; mask-image: radial-gradient(ellipse 70% 70% at 60% 50%, #000 30%, transparent 80%); }
+  .fzPhones { display: contents; }
+  /*
+   * The group is about 14% smaller than before and centred both ways: vertically on the screen, and
+   * horizontally a little right of the space between the text column and the right edge (--fx).
+   * A framed phone is about 2.1 times as tall as it is wide.
+   */
+  .fzPhone { --pw: min(16.8vw, 32.7svh); --fx: calc(54vw + min(13rem, 13vw)); width: var(--pw); margin: 0; }
+  /* Hero: slightly larger than the side phones. */
+  .fzCentre { --cw: calc(var(--pw) * 1.04); width: var(--cw); top: calc(50svh - var(--cw) * 1.053); left: calc(var(--fx) - var(--cw) / 2); z-index: 3; }
+  /* Each side phone tucks about 25% of its width behind the hero, scaled and angled about its own centre. */
+  .fzLeft { top: calc(50svh - var(--pw) * 1.053); left: calc(var(--fx) - var(--pw) * 1.21); rotate: -9deg; scale: 0.88; z-index: 2; }
+  .fzRight { top: calc(50svh - var(--pw) * 1.053); left: calc(var(--fx) + var(--pw) * 0.21); rotate: 9deg; scale: 0.88; z-index: 2; }
+  /* Outer pair: smallest and most angled, sitting a little lower, about a third tucked behind the blue phones. */
+  .fzFarLeft { top: calc(50svh - var(--pw) * 0.95); left: calc(var(--fx) - var(--pw) * 1.68); rotate: -15deg; scale: 0.74; filter: brightness(0.78); z-index: 1; }
+  .fzFarRight { top: calc(50svh - var(--pw) * 0.95); left: calc(var(--fx) + var(--pw) * 0.68); rotate: 15deg; scale: 0.74; filter: brightness(0.78); z-index: 1; }
+  .fzInfo { width: min(26rem, 26vw); }
+
+  /* 04 Reawakening: the calmest scene. A soft gradient, a faint glow of the photography, the website in focus. */
+  /* The sunset photo as atmosphere only: heavily blurred, very faint, fading out at every edge. */
+  .rwPhoto { top: 0; bottom: 0; left: 0; width: 72vw; mask-image: radial-gradient(ellipse 60% 60% at 45% 50%, #000 20%, transparent 75%); }
+  .rwPhoto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.14;
+    filter: blur(56px) saturate(0.85);
+    transform: scale(1.2);
+  }
+  /* Left edge eases in on smaller screens: 16vw on large monitors, nearer the gutter on laptops. */
+  .scene[data-scene="reawakening"] { --rx: clamp(var(--gutter), calc(48vw - 576px), 16vw); }
+  .rwBrowser { --bw: min(46vw, 88svh); top: 50%; translate: 0 -50%; left: var(--rx); width: var(--bw); }
+  .rwBrowser > * {
+    border-color: rgb(80 52 36 / 0.08);
+    box-shadow:
+      0 1px 4px rgb(80 52 36 / 0.06),
+      0 24px 60px -28px rgb(80 52 36 / 0.14),
+      0 60px 140px -50px rgb(80 52 36 / 0.26);
+  }
+  /* The phone overlaps the browser's lower-right corner, clear of the text column. */
+  .rwPhone {
+    --pw: min(9.5vw, 18svh);
+    top: calc(50svh + min(46vw, 88svh) * 0.36 + 4svh - var(--pw) * 2.1 + 16px);
+    left: calc(var(--rx) + min(46vw, 88svh) - var(--pw) * 0.6 - 24px);
+    width: var(--pw);
+    z-index: 2;
+  }
+  .rwPhone .phone { box-shadow: 0 2px 6px rgb(40 24 16 / 0.18), 0 36px 70px -26px rgb(40 24 16 / 0.5); }
+  /* Browser and project information share the viewport's vertical centre. */
+  .rwInfo {
+    left: auto;
+    right: calc(var(--gutter) + 3vw);
+    top: 50%;
+    width: min(24rem, 24vw);
+  }
+  .rwInfo .title { font-size: clamp(36px, 3.7vw, 68px); }
+
+  /* Closing */
+  /* Invitation sits a little above centre; the footer row is pinned to the bottom. */
+  .closing {
+    top: 0;
+    right: var(--gutter);
+    bottom: clamp(18px, 3svh, 32px);
+    left: var(--gutter);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0;
+    padding: 0;
+  }
+  /* Centred in the space above the footer, nudged a little below centre to balance the whitespace. */
+  .closingHead { align-self: center; translate: 0 clamp(30px, 4.3svh, 48px); }
+
+  /* Project index: one quiet row under the project visuals. Inactive items recede; hover brings them up. */
+  .rail {
+    --rail-dim: rgb(18 18 17 / 0.24);
+    position: absolute;
+    z-index: 40;
+    right: var(--gutter);
+    bottom: clamp(10px, 2.1svh, 22px);
+    display: block;
+    color: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur) ease;
+  }
+  .rail[data-visible="true"] { opacity: 1; pointer-events: auto; }
+  .rail[data-theme="dark"] {
+    --rail-dim: rgb(243 242 238 / 0.24);
+    color: var(--night-text);
+  }
+
+  .railList {
+    display: flex;
+    gap: clamp(28px, 2.8vw, 48px);
+    list-style: none;
+  }
+  .railList a {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    padding-block: 6px;
+    color: var(--rail-dim);
+    font-size: 12.5px;
+    font-weight: 400;
+    line-height: 1.3;
+    white-space: nowrap;
+    transition: color var(--dur) var(--ease);
+  }
+  .railList a span {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 10px;
+    opacity: 0.8;
+  }
+  /* The rail's own colour is full white on dark scenes, ink on light ones. */
+  .railList a:hover,
+  .railList a[aria-current] { color: inherit; }
+  .railList a[aria-current] { font-weight: 500; }
+  .railList a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+}
+
+/* Narrow laptops: keep info and artwork apart. */
+@media (min-width: 900px) and (max-width: 1200px) and (prefers-reduced-motion: no-preference) {
+  .crDog { height: min(60svh, 46vw); }
+}

@@ -1,494 +1,550 @@
-"use client";
-
-import { useState } from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
-import SiteHeader from "../../../components/SiteHeader";
+import { Browser, CasePage, Figure, Img, NextProject, Placeholder, type Tone } from "../../../components/case/Case";
+import {
+  Block,
+  Bridge,
+  ChapterHero,
+  ChapterLayout,
+  ChapterSection,
+  ChipGroups,
+  Insight,
+  Lists,
+  Pair,
+  Panel,
+  PanelLabel,
+  Points,
+  Subhead,
+  type Chapter,
+} from "../../../components/case/Chapters";
+import MenuExplorer from "./MenuExplorer";
+import styles from "./page.module.css";
 
-// ── Redesign Highlights data ─────────────────────────────────────────────────
-// Add real screenshot paths to `img` when ready.
-// Each tab: pill label, headline, description, bullets, screenshot.
+export const metadata: Metadata = {
+  title: "LickLibrary Mega Menu — Jake Tansel",
+  description:
+    "Redesigning LickLibrary's navigation into a visual discovery system across desktop and mobile, from UX and system design to the admin tooling and production frontend.",
+};
 
-const HIGHLIGHTS = [
+const night: Tone = { bg: "#0a0a0a", fg: "#f3f2ee", muted: "rgb(243 242 238 / 0.62)" };
+const crumble: Tone = { bg: "#efe4d4", fg: "#3d2314", muted: "rgb(61 35 20 / 0.66)" };
+
+const LL = "/case/licklibrary";
+const shot = (src: string, alt: string, width = 2400, height = 1500) => ({ src, alt, width, height });
+
+const chapters: Chapter[] = [
+  { id: "overview", number: "01", title: "Overview" },
+  { id: "problem", number: "02", title: "Problem" },
+  { id: "system", number: "03", title: "System" },
+  { id: "experience", number: "04", title: "Experience" },
+  { id: "admin", number: "05", title: "Admin" },
+  { id: "build", number: "06", title: "Build" },
+  { id: "outcome", number: "07", title: "Outcome" },
+  { id: "next", number: "08", title: "What’s Next" },
+];
+const [overview, problem, system, experience, admin, build, outcome, next] = chapters;
+
+const menus = [
   {
-    id: "homepage",
-    label: "Homepage Redesign",
-    headline: "A clearer entry point to the platform",
-    desc: "The original homepage tried to surface everything at once. The redesign establishes a single hierarchy — understand the platform, find your path, start learning.",
-    img: null as string | null, // "/licklibrary/homepage-redesign.jpg"
-    placeholder: "Homepage redesign screenshot",
-    points: ["Improved hierarchy and visual clarity", "Clearer value proposition above the fold", "Discovery Assistant promoted as primary CTA"],
+    key: "lessons",
+    title: "Guitar Lessons",
+    src: `${LL}/live-mega-lessons.webp`,
+    source: "Live, licklibrary.com",
+    tabs: "Featured · New · Song Lessons · Genres · Artists · Tutors · Most Watched",
+    blocks: ["Browse & skill level", "Popular lessons", "Popular artists", "What's hot"],
   },
   {
-    id: "onboarding",
-    label: "Sign Up & Onboarding",
-    headline: "Converting momentum into membership",
-    desc: "Once users found the right content through Discovery, the sign-up flow needed to convert that momentum — not interrupt it with friction.",
-    img: null as string | null, // "/licklibrary/onboarding.jpg"
-    placeholder: "Sign up & onboarding screenshot",
-    points: ["Reduced from 6 steps to 3", "Simplified member journey", "Mobile-first layout throughout"],
+    key: "courses",
+    title: "Guitar Courses",
+    src: `${LL}/live-mega-courses.webp`,
+    source: "Live, licklibrary.com",
+    tabs: "Featured · New · Classic Albums · Technique · Song Courses · Beginners · Learning Paths · Licks · Genres",
+    blocks: ["Browse", "Featured courses, led by album artwork"],
   },
   {
-    id: "megamenu",
-    label: "Mega Menu",
-    headline: "Navigation that reflects how users think",
-    desc: "The original navigation was organised by content type. The redesign organises by user intent — making it faster to find the right section from anywhere in the platform.",
-    img: null as string | null, // "/licklibrary/megamenu.jpg"
-    placeholder: "Mega menu screenshot",
-    points: ["Improved navigation structure", "Better content organisation", "Faster path to discovery"],
+    key: "tracks",
+    title: "Backing Tracks",
+    src: `${LL}/mega-backing-tracks.webp`,
+    source: "Prototype",
+    tabs: "Featured · Genres · Jam Tracks · Song Tracks · Video Jams",
+    blocks: ["Browse", "Featured jam tracks"],
   },
-  {
-    id: "learningpaths",
-    label: "Learning Paths",
-    headline: "A structured route through the library",
-    desc: "Instead of individual lessons existing in isolation, Learning Paths give users a clear progression — a beginning, middle and end to their guitar journey.",
-    img: null as string | null, // "/licklibrary/learning-paths.jpg"
-    placeholder: "Learning paths screenshot",
-    points: ["Clear progression through content", "More structured learning experience", "Reduces user overwhelm"],
-  },
-] as const;
+  { key: "paths", title: "Learning Paths", src: `${LL}/mega-learning-paths.webp`, source: "Prototype", tabs: "Single view", blocks: ["Browse", "Featured learning paths"] },
+  { key: "tutors", title: "Tutors", src: `${LL}/mega-tutors.webp`, source: "Prototype", tabs: "Single view", blocks: ["Browse", "Featured tutors with lesson counts"] },
+];
 
-type HighlightId = (typeof HIGHLIGHTS)[number]["id"];
+// Issues called out on the old navigation. x / y place each marker over the screenshot (percent).
+const oldNavIssues = [
+  { text: "Text-heavy navigation", x: 18, y: 22 },
+  { text: "Limited visual hierarchy", x: 80, y: 24 },
+  { text: "Lots of content competing for attention", x: 82, y: 76 },
+  { text: "Important content hard to surface", x: 20, y: 78 },
+];
 
-export default function LickLibraryPage() {
-  const [showAfter, setShowAfter] = useState(true);
-  const [activeHighlight, setActiveHighlight] = useState<HighlightId>("homepage");
+// Menu → Tab → Block → Item, and the same path through the live Guitar Lessons menu.
+const levels = [
+  { name: "Menu", role: "One per area of the library", example: "Guitar Lessons" },
+  { name: "Tab", role: "A way to browse that area", example: "Featured" },
+  { name: "Block", role: "A group of content inside a tab", example: "Popular artists" },
+  { name: "Item", role: "A real lesson, course, artist or tutor", example: "John Mayer" },
+];
 
-  const highlight = HIGHLIGHTS.find((h) => h.id === activeHighlight)!;
+const coverage = [
+  { title: "Lessons", tabs: "7 tabs", blocks: "4 blocks" },
+  { title: "Courses", tabs: "9 tabs", blocks: "2 blocks" },
+  { title: "Backing Tracks", tabs: "5 tabs", blocks: "2 blocks" },
+  { title: "Learning Paths", tabs: "Single view", blocks: "2 blocks" },
+  { title: "Tutors", tabs: "Single view", blocks: "2 blocks" },
+];
 
+const decisions = [
+  { title: "Visual discovery", text: "Content imagery replaces walls of text links and makes browsing easier." },
+  { title: "Flexible content", text: "Reusable blocks hold courses, artists, lessons and learning paths alike." },
+  { title: "Clear destinations", text: "Find content right in the menu, or move into the full collection." },
+];
+
+const tiers: { step: string; line: string; src?: string; video?: string; note: string }[] = [
+  { step: "Main", line: "The five areas", src: `${LL}/live-mobile-menu.webp`, note: "" },
+  { step: "Section", line: "One area opened", note: "e.g. Guitar Lessons. Can also hold the interaction recording: tap → slide → tap → slide → back." },
+  { step: "Category", line: "Content to browse", note: "e.g. Featured, with its content." },
+];
+
+type CapKind = "reorder" | "lock" | "pool" | "random" | "search";
+
+const capabilities: { key: CapKind; title: string; text: string }[] = [
+  { key: "reorder", title: "Reorder", text: "Drag items into the order customers see." },
+  { key: "lock", title: "Lock", text: "Pin items that must always show." },
+  { key: "pool", title: "Content pools", text: "Give a block a pool of items to draw from." },
+  { key: "random", title: "Randomise", text: "Rotate a pool so the menu stays fresh." },
+  { key: "search", title: "Search & add", text: "Find real lessons, courses, artists and tutors." },
+];
+
+const pipeline = [
+  { step: "Design", who: "me" },
+  { step: "Frontend model", who: "me" },
+  { step: "Mock service", who: "me" },
+  { step: "Backend integration", who: "both" },
+  { step: "QA", who: "both" },
+  { step: "Production", who: "both" },
+];
+
+const owned = ["UX/UI", "Interaction design", "Responsive behaviour", "Frontend content architecture", "Desktop storefront", "Mobile storefront", "Admin frontend", "Manual QA"];
+const backend = ["Production data model", "API", "Migrations", "Backend logic", "Automated tests", "Integration support"];
+
+const forCustomers = ["More visual discovery", "Reduced information overload", "Easier access to important content", "A dedicated mobile experience"];
+const forTeam = [
+  "Self-managed navigation",
+  "Content curation",
+  "Reordering and locking",
+  "Randomised content pools",
+  "Less reliance on developers for everyday navigation changes",
+];
+
+/* Tiny line icons for the admin capability illustrations. */
+const icon = { width: 14, height: 14, viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", strokeWidth: 1.5, "aria-hidden": true } as const;
+const Grip = () => (
+  <svg {...icon}>
+    <path d="M6 4h.01M10 4h.01M6 8h.01M10 8h.01M6 12h.01M10 12h.01" strokeWidth={2.4} strokeLinecap="round" />
+  </svg>
+);
+const Lock = () => (
+  <svg {...icon}>
+    <rect x="3.5" y="7" width="9" height="6.5" rx="1.5" />
+    <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" />
+  </svg>
+);
+const Shuffle = () => (
+  <svg {...icon} width={18} height={18}>
+    <path d="M2 4h3l6 8h3M2 12h3l6-8h3M12 2l2 2-2 2M12 10l2 2-2 2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+const Search = () => (
+  <svg {...icon}>
+    <circle cx="7" cy="7" r="4.5" />
+    <path d="M10.5 10.5 14 14" strokeLinecap="round" />
+  </svg>
+);
+
+/** A small abstract picture of each admin capability, drawn in the page's own type and rules. */
+function CapArt({ kind }: { kind: CapKind }) {
+  if (kind === "reorder")
+    return (
+      <div className={styles.capArt} aria-hidden="true">
+        <span className={styles.capRow}><Grip /><i /></span>
+        <span className={styles.capRow} data-lifted=""><Grip /><i /></span>
+        <span className={styles.capRow}><Grip /><i /></span>
+      </div>
+    );
+  if (kind === "lock")
+    return (
+      <div className={styles.capArt} aria-hidden="true">
+        <span className={styles.capRow} data-on=""><i /><Lock /></span>
+        <span className={styles.capRow}><i /></span>
+        <span className={styles.capRow}><i /></span>
+      </div>
+    );
+  if (kind === "pool")
+    return (
+      <div className={styles.capArt} aria-hidden="true">
+        <span className={styles.capPool}>
+          {Array.from({ length: 8 }, (_, i) => (
+            <b key={i} />
+          ))}
+        </span>
+      </div>
+    );
+  if (kind === "random")
+    return (
+      <div className={styles.capArt} aria-hidden="true">
+        <span className={styles.capShuffle}>
+          <span className={styles.capTiles}><b /><b /><b /></span>
+          <Shuffle />
+          <span className={styles.capTiles} data-mixed=""><b /><b /><b /></span>
+        </span>
+      </div>
+    );
   return (
-    <main className="min-h-screen overflow-hidden bg-[#080808] text-white">
-      <style>{`
-        html { scroll-behavior: smooth; }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up { animation: fadeUp 0.25s ease-out both; }
-      `}</style>
+    <div className={styles.capArt} aria-hidden="true">
+      <span className={styles.capSearch}><Search /> Search lessons</span>
+      <span className={styles.capRow} data-result=""><i /><em>+</em></span>
+      <span className={styles.capRow} data-result=""><i /><em>+</em></span>
+    </div>
+  );
+}
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[620px] bg-[radial-gradient(circle_at_50%_4%,rgba(214,158,88,0.2),transparent_34%),radial-gradient(circle_at_50%_0%,rgba(89,105,255,0.12),transparent_42%)]" />
+export default function LickLibraryCaseStudy() {
+  return (
+    <CasePage tone={night} maxWidth="1240px">
+      <ChapterLayout chapters={chapters} title="LickLibrary Mega Menu" accent="#ee7267" panel="#121213" fill="rgb(255 255 255 / 0.05)">
+        {/* ───────── 01 Overview ───────── */}
+        <ChapterHero
+          chapter={overview}
+          brand={<Image src="/licklibrary-logo.png" alt="LickLibrary" width={597} height={120} preload unoptimized />}
+          label="Mega Menu · Navigation & admin"
+          title="Making thousands of guitar lessons easier to discover."
+          about="LickLibrary is an online guitar-learning platform with thousands of lessons, courses and backing tracks taught by professional guitarists."
+          role="I redesigned its navigation into a visual discovery system across desktop and mobile, then designed and built the internal tools that let the team manage it."
+          facts={[
+            { label: "Role", value: "Product Design · UX/UI · Frontend Development" },
+            { label: "Scope", value: "Navigation · Responsive UX · Admin tooling · Production delivery" },
+            { label: "Status", value: "Live on licklibrary.com", live: true },
+          ]}
+        >
+          <Figure caption="The Guitar Lessons mega menu, live on licklibrary.com.">
+            <Browser url="licklibrary.com" shot={shot(`${LL}/live-mega-lessons.webp`, "The LickLibrary Guitar Lessons mega menu")} aspect="16 / 9.4" priority />
+          </Figure>
+        </ChapterHero>
 
-      <SiteHeader variant="dark" />
-
-      <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10">
-
-        {/* ── 01. Hero ── */}
-        <section className="page-hero case-study-hero mx-auto max-w-5xl pb-0 text-center">
-          <div className="mb-7 flex justify-center">
-            <Image src="/licklibrary-logo.png" alt="LickLibrary logo" width={179} height={36} priority className="h-auto w-[179px]" />
-          </div>
-          <p className="mb-5 text-sm font-medium text-white/38">Guitar Learning Platform</p>
-          <h1 className="heading-xl text-white">LickLibrary Redesign</h1>
-          <p className="mx-auto mt-6 max-w-2xl text-xl leading-8 text-white/60 sm:text-2xl sm:leading-9">
-            Discovery flow, homepage and onboarding — redesigned and shipped as a working product.
-          </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
-              href="https://licklibrary-sandbox.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-medium text-[#080808] transition-colors hover:bg-white/90"
-            >
-              View prototype
-            </a>
-            <a
-              href="#transformation"
-              className="inline-flex h-11 items-center justify-center rounded-full border border-white/14 px-5 text-sm font-medium text-white/82 transition-colors hover:border-white/28 hover:text-white"
-            >
-              Read case study
-            </a>
-          </div>
-          <div className="mt-10 flex items-center justify-center gap-3">
-            {["Designed", "Built", "Shipped"].map((word, i) => (
-              <div key={word} className="flex items-center gap-3">
-                <span className={`text-sm font-medium ${i === 2 ? "text-[#d4a15f]" : "text-white/55"}`}>{word}</span>
-                {i < 2 && <span className="text-white/20">→</span>}
-              </div>
-            ))}
-          </div>
-          <div className="mt-2 flex items-center justify-center gap-3">
-            {["Figma", "Vue 3 + Vite", "Vercel"].map((tool, i) => (
-              <div key={tool} className="flex items-center gap-3">
-                <span className="text-xs text-white/28">{tool}</span>
-                {i < 2 && <span className="text-white/12">·</span>}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── 02. Before & After toggle ── */}
-        <section id="transformation" className="border-t border-white/10 py-16 sm:py-20 lg:py-24">
-          <div className="mb-10">
-            <p className="mb-3 text-sm font-medium text-white/38">The transformation</p>
-            <h2 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
-              From content library<br />to learning journey.
-            </h2>
-          </div>
-
-          <div className="mb-6 flex items-center gap-4">
-            <button
-              onClick={() => setShowAfter(false)}
-              className={`text-sm font-medium transition-colors ${!showAfter ? "text-white" : "text-white/35 hover:text-white/60"}`}
-            >
-              Before
-            </button>
-            <button
-              onClick={() => setShowAfter((v) => !v)}
-              className="relative h-7 w-12 rounded-full border border-white/15 bg-white/[0.06] transition-colors hover:bg-white/10 focus:outline-none"
-            >
-              <span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all duration-300 ${showAfter ? "left-6" : "left-1"}`} />
-            </button>
-            <button
-              onClick={() => setShowAfter(true)}
-              className={`flex items-center gap-2 text-sm font-medium transition-colors ${showAfter ? "text-[#d4a15f]" : "text-white/35 hover:text-white/60"}`}
-            >
-              After
-              {showAfter && (
-                <span className="rounded-full border border-[#d4a15f]/30 bg-[#d4a15f]/10 px-2 py-0.5 text-[10px] text-[#d4a15f]">
-                  Discovery Assistant
+        {/* ───────── 02 Problem: old navigation → problems → insight → reasoning ───────── */}
+        <ChapterSection
+          chapter={problem}
+          title="Too much content. Not enough hierarchy."
+          intro={
+            <p>
+              Lessons, courses, artists, tutors and backing tracks had outgrown a navigation made of text. The brief: make it
+              more visual, with ASOS as the reference.
+            </p>
+          }
+        >
+          <figure className={styles.annotated}>
+            <div className={styles.annotatedMedia}>
+              <Placeholder label="Old navigation" note="The text-heavy menu before the redesign, open on a dense section." aspect="16 / 8" />
+              {oldNavIssues.map((issue, i) => (
+                <span key={issue.text} className={styles.pin} style={{ left: `${issue.x}%`, top: `${issue.y}%` }} aria-hidden="true">
+                  {i + 1}
                 </span>
-              )}
-            </button>
-          </div>
-
-          <div className="relative overflow-hidden rounded-[20px] border border-white/10 shadow-[0_32px_80px_rgba(0,0,0,0.5)]">
-            {showAfter && (
-              <div className="flex items-center gap-3 border-b border-white/8 bg-[#0d0b09] px-4 py-3">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-white/10" />
-                  <div className="h-3 w-3 rounded-full bg-white/10" />
-                  <div className="h-3 w-3 rounded-full bg-white/10" />
-                </div>
-                <div className="mx-auto flex h-6 w-56 items-center justify-center rounded-md bg-white/[0.05] text-[11px] text-white/30">
-                  licklibrary-sandbox.vercel.app
-                </div>
-                <div className="w-12" />
-              </div>
-            )}
-            <div key={showAfter ? "after" : "before"} className="relative w-full" style={{ aspectRatio: "16/9" }}>
-              <Image
-                src={showAfter ? "/licklibrary/guided-discovery1.jpg" : "/licklibrary/old-homepage.png"}
-                alt={showAfter ? "Redesigned LickLibrary — Discovery Assistant" : "Original LickLibrary homepage"}
-                fill
-                className="object-cover object-top"
-                priority
-              />
+              ))}
             </div>
-          </div>
+            <ol className={styles.issues}>
+              {oldNavIssues.map((issue, i) => (
+                <li key={issue.text}>
+                  <span>{i + 1}</span>
+                  {issue.text}
+                </li>
+              ))}
+            </ol>
+          </figure>
 
-          <div className="mt-6 grid grid-cols-2 gap-6">
-            <div className={`transition-opacity duration-300 ${!showAfter ? "opacity-100" : "opacity-35"}`}>
-              <p className="mb-1 text-sm font-semibold text-white/50">Before</p>
-              <p className="text-sm leading-6 text-white/38">A content catalogue. Users arrived and didn't know where to start.</p>
+          <Insight label="Key insight">Rather than adding imagery to the old menu, I saw a chance to turn navigation into a discovery experience.</Insight>
+
+          <div className={styles.reasoning}>
+            <div className={styles.reasoningText}>
+              <h3>Why not just make the existing menu prettier?</h3>
+              <p>
+                The catalogue holds fundamentally different things: courses, artists, lessons, tutors, learning paths. Treating
+                each as another link wouldn&rsquo;t fix discovery.
+              </p>
             </div>
-            <div className={`transition-opacity duration-300 ${showAfter ? "opacity-100" : "opacity-35"}`}>
-              <p className="mb-1 text-sm font-semibold text-[#d4a15f]">After</p>
-              <p className="text-sm leading-6 text-white/55">A guided learning experience. Four questions. Personalised recommendations.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 03. Discovery Assistant — deep dive ─────────────────────────────
-            Visual storytelling: problem → journey → outcome.
-            The flow cards show each step of the recommendation journey.
-            No walls of text — the cards do the explaining.
-        ── */}
-        <section id="discovery" className="border-t border-white/10 py-16 sm:py-20 lg:py-24">
-
-          {/* Section header */}
-          <div className="mb-4">
-            <span className="rounded-full border border-[#d4a15f]/30 bg-[#d4a15f]/10 px-3 py-1 text-xs font-medium text-[#d4a15f]">
-              AI-assisted · Centrepiece feature
-            </span>
-          </div>
-          <div className="mb-6">
-            <h2 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
-              10,000+ lessons.<br />One place to start.
-            </h2>
-          </div>
-          <p className="mb-14 max-w-2xl text-base leading-7 text-white/55">
-            The problem wasn't a lack of content — it was helping users find the <em>right</em> content.
-            The Discovery Assistant was designed to reduce decision fatigue and create a guided path
-            into the platform through a personalised recommendation journey.
-          </p>
-
-          {/* Visual journey — 5 connected flow cards
-              Each card represents one step. The final card is the outcome.
-              On desktop: horizontal flow with connectors.
-              On mobile: vertical stack.
-          ── */}
-          <div className="mb-14">
-            <p className="mb-5 text-xs font-medium uppercase tracking-widest text-white/28">The recommendation journey</p>
-
-            {/* Desktop: horizontal row */}
-            <div className="hidden sm:flex sm:items-stretch sm:gap-0">
-              {[
-                { n: "01", label: "Goal",        q: "What brings you here?",          detail: "Learn songs · Improve technique · Get inspired" },
-                { n: "02", label: "Level",        q: "How would you rate yourself?",   detail: "Beginner · Intermediate · Advanced" },
-                { n: "03", label: "Time",         q: "How long can you practise?",     detail: "15 min · 30 min · 1 hour+" },
-                { n: "04", label: "Artists",      q: "Who inspires your playing?",     detail: "Genre & artist preferences" },
-                { n: "→",  label: "Results",      q: "Your personalised lessons",      detail: "Powered by recommendation API", highlight: true },
-              ].map((step, i) => (
-                <div key={step.n} className="flex flex-1 items-stretch">
-                  <div className={`flex flex-1 flex-col rounded-[16px] border p-4 ${
-                    step.highlight
-                      ? "border-[#d4a15f]/40 bg-[#d4a15f]/[0.07]"
-                      : "border-white/8 bg-white/[0.025]"
-                  }`}>
-                    <span className={`mb-3 text-[10px] font-semibold ${step.highlight ? "text-[#d4a15f]" : "text-white/25"}`}>
-                      {step.n}
+            <div className={styles.compare}>
+              <figure className={styles.option} data-chosen="false">
+                <figcaption>
+                  <strong>Prettier links</strong>
+                  <span>Every item looks the same</span>
+                </figcaption>
+                <div className={styles.optionArt} aria-hidden="true">
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <span key={i} className={styles.linkRow}>
+                      <b />
+                      <i style={{ width: `${[62, 48, 70, 54, 66, 44][i]}%` }} />
                     </span>
-                    <p className={`mb-1 text-sm font-semibold ${step.highlight ? "text-[#f2cf9d]" : "text-white"}`}>{step.label}</p>
-                    <p className={`mb-2 text-xs leading-5 ${step.highlight ? "text-[#f2cf9d]/70" : "text-white/55"}`}>{step.q}</p>
-                    <p className="mt-auto text-[10px] leading-4 text-white/30">{step.detail}</p>
-                  </div>
-                  {/* Connector — not after last card */}
-                  {i < 4 && (
-                    <div className="flex w-5 shrink-0 items-center justify-center">
-                      <span className="text-xs text-white/15">→</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Mobile: vertical stack */}
-            <div className="flex flex-col gap-2 sm:hidden">
-              {[
-                { n: "01", label: "Goal",    q: "What brings you here?",        detail: "Learn songs · Improve · Get inspired",    highlight: false },
-                { n: "02", label: "Level",   q: "How would you rate yourself?", detail: "Beginner · Intermediate · Advanced",       highlight: false },
-                { n: "03", label: "Time",    q: "How long can you practise?",   detail: "15 min · 30 min · 1 hour+",               highlight: false },
-                { n: "04", label: "Artists", q: "Who inspires your playing?",   detail: "Genre and artist preferences",             highlight: false },
-                { n: "→",  label: "Results", q: "Your personalised lessons",    detail: "Powered by recommendation API",            highlight: true  },
-              ].map((step) => (
-                <div key={step.n} className={`flex items-start gap-4 rounded-[14px] border px-4 py-3 ${
-                  step.highlight ? "border-[#d4a15f]/40 bg-[#d4a15f]/[0.07]" : "border-white/8 bg-white/[0.025]"
-                }`}>
-                  <span className={`mt-0.5 shrink-0 text-xs font-semibold ${step.highlight ? "text-[#d4a15f]" : "text-white/25"}`}>{step.n}</span>
-                  <div>
-                    <p className={`text-sm font-medium ${step.highlight ? "text-[#f2cf9d]" : "text-white/80"}`}>{step.label} — {step.q}</p>
-                    <p className="text-xs leading-5 text-white/35">{step.detail}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Three pillars: UX / Product / Technical */}
-          <div className="mb-14 grid gap-4 sm:grid-cols-3">
-            {[
-              {
-                label: "UX thinking",
-                icon: "↓",
-                points: [
-                  "Progressive disclosure — one question at a time",
-                  "Reduces cognitive load through guided conversation",
-                  "Avoids dead ends with flexible, optional steps",
-                ],
-              },
-              {
-                label: "Product thinking",
-                icon: "◎",
-                points: [
-                  "Balances guidance with user flexibility",
-                  "New users guided, experienced users unblocked",
-                  "Recommendation logic accounts for content gaps",
-                ],
-              },
-              {
-                label: "Technical build",
-                icon: "{ }",
-                points: [
-                  "Vue 3 component-driven architecture",
-                  "Recommendation API wired to user inputs",
-                  "Dynamic result generation in real time",
-                ],
-              },
-            ].map((pillar) => (
-              <div key={pillar.label} className="rounded-[20px] border border-white/8 bg-white/[0.025] p-6">
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="text-base text-white/20">{pillar.icon}</span>
-                  <p className="text-xs font-medium uppercase tracking-widest text-white/30">{pillar.label}</p>
-                </div>
-                <ul className="grid gap-3">
-                  {pillar.points.map((pt) => (
-                    <li key={pt} className="flex gap-2.5 text-sm leading-6 text-white/55">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#d4a15f]/50" />
-                      {pt}
-                    </li>
                   ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Prototype CTA */}
-          <div className="flex items-center gap-5 rounded-[20px] border border-white/8 bg-white/[0.02] px-6 py-5">
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-white">See it in action</p>
-              <p className="mt-1 text-sm text-white/45">The full recommendation flow is live and interactive in the prototype.</p>
-            </div>
-            <a
-              href="https://licklibrary-sandbox.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 rounded-full border border-[#d4a15f]/30 bg-[#d4a15f]/10 px-4 py-2 text-sm font-medium text-[#d4a15f] transition-all hover:border-[#d4a15f]/50 hover:bg-[#d4a15f]/15"
-            >
-              Explore prototype →
-            </a>
-          </div>
-        </section>
-
-        {/* ── 04. How I Built It ── */}
-        <section id="build" className="border-t border-white/10 py-16 sm:py-20 lg:py-24">
-          <div className="mb-12">
-            <p className="mb-3 text-sm font-medium text-white/38">Process</p>
-            <h2 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
-              Most designers stop at Figma.
-            </h2>
-            <p className="mt-5 max-w-xl text-base leading-7 text-white/55">
-              I designed and built a working prototype — real interactions, a live recommendation
-              flow, and deployed on Vercel.
-            </p>
-          </div>
-
-          <div className="mb-10 grid gap-3 sm:grid-cols-4">
-            {[
-              { step: "01", tool: "Figma",        label: "Design",  desc: "Components, flows and visual system defined before any code." },
-              { step: "02", tool: "Vue 3 + Vite", label: "Build",   desc: "Working app with real routing, state and component architecture." },
-              { step: "03", tool: "APIs",          label: "Connect", desc: "Recommendation endpoint integrated and wired to user inputs." },
-              { step: "04", tool: "Vercel",        label: "Ship",    desc: "Live URL. Shareable and indistinguishable from a real product." },
-            ].map((stage, i) => (
-              <div key={stage.step} className="relative rounded-[20px] border border-white/8 bg-white/[0.025] p-6">
-                {i < 3 && (
-                  <div className="absolute -right-3 top-1/2 hidden -translate-y-1/2 text-white/15 sm:block">→</div>
-                )}
-                <p className="mb-1 text-xs font-medium text-white/22">{stage.step}</p>
-                <p className="mb-1 text-base font-semibold text-white">{stage.tool}</p>
-                <p className="mb-3 text-xs font-medium uppercase tracking-widest text-[#d4a15f]/60">{stage.label}</p>
-                <p className="text-sm leading-6 text-white/50">{stage.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <p className="mr-2 self-center text-xs text-white/28">Stack:</p>
-            {["Vue 3", "Tailwind CSS", "Vite", "Vercel", "Recommendation API"].map((t) => (
-              <span key={t} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/50">{t}</span>
-            ))}
-          </div>
-        </section>
-
-        {/* ── 05. Redesign Highlights ──────────────────────────────────────────
-            Tabbed showcase. Four pills. Screenshot + description + bullets swap
-            on click. key= on the content div triggers fade-up on switch.
-            Add real screenshot paths to the HIGHLIGHTS array at the top of file.
-        ── */}
-        <section id="highlights" className="border-t border-white/10 py-16 sm:py-20 lg:py-24">
-          <div className="mb-10">
-            <p className="mb-3 text-sm font-medium text-white/38">Platform work</p>
-            <h2 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
-              Redesign highlights
-            </h2>
-            <p className="mt-5 max-w-xl text-base leading-7 text-white/55">
-              Beyond the Discovery Assistant, the redesign touched every major surface of the platform.
-            </p>
-          </div>
-
-          {/* Pill tabs */}
-          <div className="mb-8 flex flex-wrap gap-2">
-            {HIGHLIGHTS.map((h) => (
-              <button
-                key={h.id}
-                onClick={() => setActiveHighlight(h.id)}
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none ${
-                  activeHighlight === h.id
-                    ? "border-[#d4a15f]/50 bg-[#d4a15f]/10 text-[#f2cf9d]"
-                    : "border-white/10 bg-white/[0.03] text-white/50 hover:border-white/20 hover:text-white/80"
-                }`}
-              >
-                {h.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Content — swaps on tab change */}
-          <div key={activeHighlight} className="fade-up grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-12">
-
-            {/* Screenshot */}
-            <div className="overflow-hidden rounded-[20px] border border-white/8 bg-[#0d0b09]">
-              {highlight.img ? (
-                <Image src={highlight.img} alt={highlight.label} width={800} height={500} className="w-full" />
-              ) : (
-                <div className="flex h-72 items-center justify-center px-6 text-center lg:h-full lg:min-h-[320px]">
-                  <p className="text-xs text-white/20">{highlight.placeholder}</p>
                 </div>
-              )}
+              </figure>
+              <figure className={styles.option} data-chosen="true">
+                <figcaption>
+                  <strong>Content-led discovery</strong>
+                  <span>Each type shown its own way</span>
+                </figcaption>
+                <div className={styles.optionArt} aria-hidden="true">
+                  <span className={styles.typeRow}>
+                    <em>Courses</em>
+                    <span className={styles.squares}><b /><b /><b /></span>
+                  </span>
+                  <span className={styles.typeRow}>
+                    <em>Artists</em>
+                    <span className={styles.circles}><b /><b /><b /></span>
+                  </span>
+                  <span className={styles.typeRow}>
+                    <em>Lessons</em>
+                    <span className={styles.lines}><i /><i /></span>
+                  </span>
+                  <span className={styles.typeRow}>
+                    <em>Paths</em>
+                    <span className={styles.steps}><b /><b /><b /><b /></span>
+                  </span>
+                </div>
+              </figure>
             </div>
+          </div>
+        </ChapterSection>
 
-            {/* Copy */}
-            <div className="flex flex-col justify-center">
-              <p className="mb-2 text-xs font-medium uppercase tracking-widest text-white/30">{highlight.label}</p>
-              <h3 className="mb-4 text-2xl font-semibold leading-tight text-white sm:text-3xl">
-                {highlight.headline}
-              </h3>
-              <p className="mb-6 text-base leading-7 text-white/55">{highlight.desc}</p>
-              <ul className="grid gap-3">
-                {highlight.points.map((pt) => (
-                  <li key={pt} className="flex gap-2.5 text-sm leading-6 text-white/55">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#d4a15f]/60" />
-                    {pt}
+        {/* ───────── 03 System ───────── */}
+        <ChapterSection
+          chapter={system}
+          title="Designing something that could scale."
+          intro={<p>Before any pixels, a content structure: four levels every area of the library could share.</p>}
+        >
+          <Panel>
+            <ol className={styles.levels} aria-label="Menu, tab, block, item">
+              {levels.map((level, i) => (
+                <li key={level.name}>
+                  <span className={styles.levelIndex}>{String(i + 1).padStart(2, "0")}</span>
+                  <strong>{level.name}</strong>
+                  <span className={styles.levelRole}>{level.role}</span>
+                </li>
+              ))}
+            </ol>
+            <div className={styles.example}>
+              <PanelLabel>In the product</PanelLabel>
+              <ol aria-label="Guitar Lessons, Featured, Popular artists, John Mayer">
+                {levels.map((level, i) => (
+                  <li key={level.name} data-last={i === levels.length - 1 || undefined}>
+                    {i === levels.length - 1 ? <span className={styles.avatar} aria-hidden="true" /> : null}
+                    {level.example}
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className={styles.coverage}>
+              <PanelLabel>One structure, five menus</PanelLabel>
+              <ul>
+                {coverage.map((menu) => (
+                  <li key={menu.title}>
+                    <strong>{menu.title}</strong>
+                    <span>{menu.tabs}</span>
+                    <span>{menu.blocks}</span>
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
-        </section>
+          </Panel>
+        </ChapterSection>
 
-        {/* ── 06. Key Learnings ── */}
-        <section id="learnings" className="border-t border-white/10 py-16 sm:py-20 lg:py-24">
-          <div className="mb-12">
-            <p className="mb-3 text-sm font-medium text-white/38">Reflection</p>
-            <h2 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">Key learnings</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              { n: "01", title: "Designing for discovery",  body: "When content is vast, the interface's job is to narrow — not to show everything. One good question is worth ten filters." },
-              { n: "02", title: "Prototyping with code",    body: "Static screens can't communicate flow, timing or delight. Building in Vue meant I could validate decisions that Figma can't answer." },
-              { n: "03", title: "AI-assisted experiences",  body: "AI works best when it removes a decision rather than adding one. The Discovery Assistant succeeds because it asks less, not more." },
-            ].map((card) => (
-              <div key={card.n} className="rounded-[20px] border border-white/8 bg-white/[0.025] p-6">
-                <p className="mb-4 text-xs font-medium text-white/22">{card.n}</p>
-                <p className="mb-3 text-base font-semibold text-white">{card.title}</p>
-                <p className="text-sm leading-6 text-white/50">{card.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* ───────── 04 Experience ───────── */}
+        <ChapterSection
+          chapter={experience}
+          title="One system. Two browsing experiences."
+          intro={<p>On desktop, every area opens into a visual menu built on the same pattern.</p>}
+        >
+          <MenuExplorer menus={menus} />
+          <Points items={decisions} />
 
-        {/* ── 07. Final CTA ── */}
-        <section className="border-t border-white/10 py-16 sm:py-24 lg:py-32">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="mb-4 text-sm font-medium text-white/38">See it live</p>
-            <h2 className="mb-6 text-4xl font-semibold leading-tight text-white sm:text-5xl">
-              Explore the prototype
-            </h2>
-            <p className="mb-10 text-base leading-7 text-white/55">
-              The full discovery flow, homepage redesign, and onboarding — working, interactive, and deployed.
+          <Subhead title="Rethinking it for mobile.">
+            <p>
+              I deliberately didn&rsquo;t compress the desktop menu onto a phone. Mobile is its own browsing experience, built on
+              the same information architecture.
             </p>
-            <a
-              href="https://licklibrary-sandbox.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-12 items-center justify-center rounded-full bg-white px-8 text-base font-semibold text-[#080808] transition-all hover:bg-[#f2cf9d] hover:shadow-[0_0_40px_rgba(212,161,95,0.3)]"
-            >
-              Open prototype →
-            </a>
-            <p className="mt-5 text-xs text-white/28">Live on Vercel · Vue 3 · No login required</p>
+          </Subhead>
+          <div className={styles.mobileStage}>
+            <ol className={styles.tiers} aria-label="Mobile navigation: Main, Section, Category">
+              {tiers.map((tier, i) => (
+                <li key={tier.step}>
+                  <p className={styles.tierLabel}>
+                    <span>{i + 1}</span>
+                    <strong>{tier.step}</strong>
+                    <em>{tier.line}</em>
+                  </p>
+                  <div className={styles.phone}>
+                    {tier.video ? (
+                      <video src={tier.video} autoPlay muted loop playsInline />
+                    ) : tier.src ? (
+                      <Img {...shot(tier.src, `${tier.step}: ${tier.line.toLowerCase()}`, 900, 1948)} aspect="9 / 19.5" position="top" />
+                    ) : (
+                      <Placeholder label={tier.step} note={tier.note} aspect="9 / 19.5" className={styles.phonePlaceholder} />
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
-        </section>
+        </ChapterSection>
 
-      </div>
-    </main>
+        {/* ───────── 05 Admin: the reveal ───────── */}
+        <ChapterSection
+          chapter={admin}
+          lead={<Bridge lead="The navigation worked. But it created another problem." question="How does the content team control what users see?" />}
+          title="Designing the hidden half of the product."
+          intro={<p>I designed and built the admin the LickLibrary team uses to run every menu.</p>}
+        >
+          <Figure caption="The mega menu admin editor.">
+            <Placeholder label="Admin editor" note="A menu open on a tab, showing a block's items with search, drag handles, locks and the randomise toggle." aspect="16 / 9.5" />
+          </Figure>
+          <ul className={styles.caps}>
+            {capabilities.map((cap) => (
+              <li key={cap.key}>
+                <CapArt kind={cap.key} />
+                <h3>{cap.title}</h3>
+                <p>{cap.text}</p>
+              </li>
+            ))}
+          </ul>
+
+          <Subhead title="From one editor to a system.">
+            <p>As more menu types needed an editor, the first one became shared components and editor logic, reused by every menu.</p>
+          </Subhead>
+          <Panel className={styles.evolution}>
+            <div>
+              <PanelLabel>One editor</PanelLabel>
+              <div className={styles.evoOne}>Menu editor</div>
+            </div>
+            <span className={styles.evoArrow} aria-hidden="true">
+              &rarr;
+            </span>
+            <div>
+              <PanelLabel>Shared system</PanelLabel>
+              <ul className={styles.evoShared}>
+                {["Tabs", "Blocks", "Search & add", "Reorder & lock", "Pools", "Limits", "Save"].map((part) => (
+                  <li key={part}>{part}</li>
+                ))}
+              </ul>
+            </div>
+            <span className={styles.evoArrow} aria-hidden="true">
+              &rarr;
+            </span>
+            <div>
+              <PanelLabel>Menu editors</PanelLabel>
+              <ul className={styles.evoMany}>
+                {["Guitar Lessons", "Guitar Courses", "Backing Tracks", "Learning Paths", "Tutors"].map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+            </div>
+          </Panel>
+        </ChapterSection>
+
+        {/* ───────── 06 Build ───────── */}
+        <ChapterSection
+          chapter={build}
+          title="From prototype to production."
+          intro={<p>I didn&rsquo;t stop at handoff. I built the frontends against a mock service, then integrated and shipped with backend engineering.</p>}
+        >
+          <Panel>
+            <ol className={styles.pipeline}>
+              {pipeline.map((item, i) => (
+                <li key={item.step} data-who={item.who}>
+                  <span className={styles.levelIndex}>{String(i + 1).padStart(2, "0")}</span>
+                  <strong>{item.step}</strong>
+                </li>
+              ))}
+            </ol>
+            <div className={styles.key}>
+              <span data-who="me">Me</span>
+              <span data-who="both">With backend engineering</span>
+            </div>
+          </Panel>
+          <ChipGroups
+            groups={[
+              { title: "I owned", items: owned },
+              { title: "Backend engineering", items: backend },
+            ]}
+          />
+        </ChapterSection>
+
+        {/* ───────── 07 Outcome ───────── */}
+        <ChapterSection chapter={outcome} title="One system for customers and the team behind the product.">
+          <Lists
+            groups={[
+              { title: "For customers", items: forCustomers },
+              { title: "For the LickLibrary team", items: forTeam },
+            ]}
+          />
+          <Pair>
+            <Placeholder label="Team quote" note="A line from the LickLibrary team on running the menu themselves." aspect="16 / 7" />
+            <Placeholder label="Analytics" note="Navigation engagement before and after, once there's data to share." aspect="16 / 7" />
+          </Pair>
+        </ChapterSection>
+
+        {/* ───────── 08 What's Next ───────── */}
+        <ChapterSection
+          chapter={next}
+          title="The menu is one part of a wider redesign."
+          intro={
+            <p>
+              I&rsquo;m working through LickLibrary page by page, modernising an established product and evolving the design
+              system this work started. The homepage is next.
+            </p>
+          }
+        >
+          <Block>
+            <ol className={styles.progress}>
+              <li data-state="done">
+                <div className={styles.progressMedia}>
+                  <Img {...shot(`${LL}/live-mega-lessons.webp`, "The live mega menu")} aspect="16 / 10" position="30% 20%" />
+                </div>
+                <p>
+                  <strong>Mega Menu</strong>
+                  <span>Shipped &#10003;</span>
+                </p>
+              </li>
+              <li data-state="next">
+                <div className={styles.progressMedia}>
+                  <Img {...shot(`${LL}/prototype-home.webp`, "The homepage redesign in progress")} aspect="16 / 10" />
+                </div>
+                <p>
+                  <strong>Homepage</strong>
+                  <span>In progress</span>
+                </p>
+              </li>
+              <li data-state="later">
+                <div className={styles.progressMedia} data-empty="" />
+                <p>
+                  <strong>Wider platform</strong>
+                  <span>Ongoing</span>
+                </p>
+              </li>
+            </ol>
+          </Block>
+        </ChapterSection>
+      </ChapterLayout>
+
+      <NextProject
+        number="02"
+        title="Crumble & Co"
+        href="/work/crumble-and-co"
+        line="Taking a new dog-accessories brand from a logo to a launched Shopify store."
+        tone={crumble}
+        media={<Browser url="crumbleandco.club" scheme="light" shot={shot("/case/crumble/home-desktop.webp", "Crumble & Co homepage")} />}
+      />
+    </CasePage>
   );
 }

@@ -1,0 +1,98 @@
+/*
+ * Reawakening the Feminine: soft, editorial, warm. Layout, rail and chapters come from
+ * components/case/Chapters; this file holds the project's own compositions.
+ */
+
+.photo { border-radius: 6px; }
+
+/* Hero: the desktop page with the phone tucked over its corner. */
+.heroStage { position: relative; padding-bottom: 5%; }
+.heroPhone {
+  position: absolute;
+  right: -2%;
+  bottom: -4%;
+  width: 17%;
+}
+
+/* Direction: three photos, the middle one dropped. */
+.photoTrio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--col-gap);
+  align-items: start;
+}
+.photoTrio > :nth-child(2) { margin-top: clamp(32px, 4.5vw, 80px); }
+
+.identity {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: var(--col-gap);
+  align-items: start;
+}
+.palette {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  font-size: 13px;
+}
+.palette li { display: grid; gap: 10px; }
+.palette span {
+  aspect-ratio: 1;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+.typeSample {
+  font-size: clamp(28px, 2.6vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.typeSample span { display: block; color: var(--muted); }
+.typeNote { margin-top: 12px; color: var(--muted); font-size: 14px; }
+
+/* Structure: running order beside a stack of overlapping sections. */
+.structure {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: var(--col-gap);
+  align-items: start;
+}
+.order {
+  columns: 2;
+  column-gap: 24px;
+  list-style: none;
+}
+.order li {
+  display: flex;
+  gap: 10px;
+  padding-block: 7px;
+  border-top: 1px solid var(--rule);
+  break-inside: avoid;
+  font-size: 13.5px;
+  line-height: 1.35;
+}
+.order span {
+  color: var(--accent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.structureShots { display: grid; }
+.structureShots > * { grid-area: 1 / 1; width: 82%; }
+.structureShots > :nth-child(2) { margin: 20% 0 0 9%; }
+.structureShots > :nth-child(3) { margin: 40% 0 0 18%; }
+
+@media (max-width: 1100px) {
+  .structure { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 800px) {
+  .identity { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .heroPhone { width: 26%; }
+  .photoTrio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .photoTrio > :nth-child(3) { display: none; }
+  .order { columns: 1; }
+}
