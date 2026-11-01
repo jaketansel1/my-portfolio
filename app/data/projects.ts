@@ -247,20 +247,4 @@ export const projects: Project[] = [
       position: "center",
     },
   },
-  {
-    title: "Inspect Design",
-    description:
-      "Upload any screenshot and receive a structured breakdown of layout, typography, spacing, and UX patterns.",
-    label: "Coming soon",
-    image: "/inspect-design.png",
-    cover: "/placeholders/inspect-design.jpg",
-    category: "AI design tool",
-    tags: ["Product Design", "AI", "Front-end"],
-    showcase: {
-      image: "/placeholders/inspect-architecture.jpg",
-      background: "#dfe6ea",
-      theme: "light",
-      position: "center 40%",
-    },
-  },
 ];

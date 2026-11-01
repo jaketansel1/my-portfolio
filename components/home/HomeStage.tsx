@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import SiteHeader from "../SiteHeader";
-import ExperimentLauncher from "../experiments/ExperimentLauncher";
+import { Browser, Phone } from "../ui/Device";
+import TypedLine from "./TypedLine";
+import { contact } from "../../app/data/contact";
 import home from "../../app/home.module.css";
 import styles from "./HomeStage.module.css";
 
@@ -35,6 +37,8 @@ const SCENES: Scene[] = [
   { key: "closing", theme: "light" },
 ];
 const PROJECTS = SCENES.filter((s) => s.label);
+/** Hero second line: what I do, then a nudge towards the work. */
+const HERO_LINES = ["who builds and ships.", "scroll to see what I’ve built ↓"];
 /** Share of each transition segment spent settled at either end. */
 const HOLD = 0.32;
 const IMMERSIVE = "(min-width: 900px) and (prefers-reduced-motion: no-preference)";
@@ -61,28 +65,6 @@ function Layer({ m, className, children }: { m: Motion; className?: string; chil
   );
 }
 
-function Browser({ url, children, scheme = "dark" }: { url: string; children: ReactNode; scheme?: "dark" | "light" }) {
-  return (
-    <div className={styles.browser} data-scheme={scheme}>
-      <div className={styles.browserBar} aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <em>{url}</em>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function Phone({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) {
-  return (
-    <div className={styles.phone}>
-      <Image src={src} alt={alt} width={width} height={height} unoptimized />
-    </div>
-  );
-}
-
 /**
  * Makes the whole scene clickable. Hidden from keyboard and screen readers: the title and
  * "View case study" links are the accessible routes, so there is no duplicate tab stop.
@@ -92,14 +74,12 @@ function SceneLink({ href }: { href: string }) {
 }
 
 function Info({
-  index,
   title,
   href,
   meta,
   line,
   className,
 }: {
-  index: number;
   title: string;
   href: string;
   meta: string;
@@ -108,9 +88,6 @@ function Info({
 }) {
   return (
     <Layer m={{ yi: "6vh", yo: "-5vh", f: 2.4 }} className={`${styles.info} ${className ?? ""}`}>
-      <p className={styles.count}>
-        <span>{String(index).padStart(2, "0")}</span> / {String(PROJECTS.length).padStart(2, "0")}
-      </p>
       <h2 className={styles.title}>
         <Link href={href}>{title}</Link>
       </h2>
@@ -126,7 +103,7 @@ function Info({
 export default function HomeStage() {
   const trackRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const markersRef = useRef<HTMLDivElement>(null);
+  const markersRef = useRef<HTMLElement>(null);
   const activeRef = useRef(-1);
 
   const immersive = () => window.matchMedia(IMMERSIVE).matches;
@@ -164,8 +141,9 @@ export default function HomeStage() {
       });
       headerRef.current?.setAttribute("data-theme", SCENES[i].theme);
       markersRef.current?.setAttribute("data-theme", SCENES[i].theme);
-      markersRef.current?.setAttribute("data-visible", String(!!SCENES[i].label));
-      markersRef.current?.querySelectorAll("a").forEach((a, k) => {
+      markersRef.current?.setAttribute("data-visible", String(SCENES[i].key !== "closing"));
+      markersRef.current?.setAttribute("data-scene", SCENES[i].key);
+      markersRef.current?.querySelectorAll("ol a").forEach((a, k) => {
         if (PROJECTS[k].key === SCENES[i].key) a.setAttribute("aria-current", "true");
         else a.removeAttribute("aria-current");
       });
@@ -198,6 +176,7 @@ export default function HomeStage() {
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
+
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -206,6 +185,27 @@ export default function HomeStage() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
+  }, []);
+
+  /*
+   * Warm-up: once the page is idle, fetch and decode every scene's images, so a scene's first
+   * appearance doesn't stall on image decoding mid-transition.
+   */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const warm = () => {
+      for (const img of track.querySelectorAll("img")) {
+        img.loading = "eager";
+        img.decode().catch(() => {});
+      }
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(warm, { timeout: 2500 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(warm, 1200);
+    return () => window.clearTimeout(id);
   }, []);
 
   /*
@@ -327,6 +327,13 @@ export default function HomeStage() {
       }, 180);
     };
 
+    // The header name jumps home instantly: drop any paging animation in progress.
+    const onHomeReset = () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(settleTimer);
+      animating = false;
+    };
+    window.addEventListener("home:reset", onHomeReset);
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -336,6 +343,7 @@ export default function HomeStage() {
     return () => {
       cancelAnimationFrame(raf);
       window.clearTimeout(settleTimer);
+      window.removeEventListener("home:reset", onHomeReset);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("touchstart", onTouchStart);
@@ -377,7 +385,9 @@ export default function HomeStage() {
                     <span>Product designer</span>
                   </span>
                   <span className={`${styles.mask} ${styles.headlineMuted}`}>
-                    <span>who builds and ships.</span>
+                    <span>
+                      <TypedLine phrases={HERO_LINES} />
+                    </span>
                   </span>
                 </h1>
               </Layer>
@@ -386,7 +396,7 @@ export default function HomeStage() {
                 <div className={styles.introActions}>
                   <a
                     href="#licklibrary"
-                    className={styles.primary}
+                    className={home.primaryButton}
                     onClick={(e) => {
                       e.preventDefault();
                       goTo(1);
@@ -394,9 +404,8 @@ export default function HomeStage() {
                   >
                     Selected work <span aria-hidden="true">&darr;</span>
                   </a>
-                  <ExperimentLauncher />
-                  <Link href="/contact" className={styles.quietLink}>
-                    Get in touch <span aria-hidden="true">&#8599;</span>
+                  <Link href="/work" className={home.textLink}>
+                    View all work <span aria-hidden="true">&rarr;</span>
                   </Link>
                 </div>
               </Layer>
@@ -410,17 +419,16 @@ export default function HomeStage() {
                 <Image src="/licklibrary/scene-guitarist.webp" alt="" width={1951} height={1300} unoptimized />
               </Layer>
               <Layer m={{ xi: "14vw", yi: "4vh", xo: "-4vw", yo: "-10vh", s: 0.06 }} className={styles.llBrowser}>
-                <Browser url="licklibrary.com/learn">
+                <Browser url="licklibrary.com/learn" scheme="dark">
                   <div className={styles.videoBox} style={{ aspectRatio: "16 / 9" }}>
                     <video src="/licklibrary/ll-video.mp4" poster="/case/licklibrary/live-learn.webp" muted loop playsInline preload="metadata" aria-hidden="true" />
                   </div>
                 </Browser>
               </Layer>
               <Info
-                index={1}
                 title="LickLibrary"
                 href="/work/licklibrary"
-                meta="Product design · Front-end · 2026–now"
+                meta="Product design · Frontend · 2026–now"
                 line="Redesigning and rebuilding an established guitar-learning platform, one part at a time."
                 className={styles.llInfo}
               />
@@ -441,7 +449,6 @@ export default function HomeStage() {
                 <Image src="/crumble-and-co/scene-dog.webp" alt="Crumble the cocker spaniel wearing an Espresso harness" width={1007} height={1184} unoptimized />
               </Layer>
               <Info
-                index={2}
                 title="Crumble & Co"
                 href="/work/crumble-and-co"
                 meta="eCommerce · Design & Shopify build · 2026"
@@ -460,23 +467,32 @@ export default function HomeStage() {
               {/* One composition: Arsenal leads, the two blue clubs behind it, Celtic and West Ham smallest at the edges. Its own grid when stacked. */}
               <div className={styles.fzPhones}>
                 <Layer m={{ xi: "-12vw", yi: "26vh", xo: "-14vw", yo: "-10vh" }} className={`${styles.fzPhone} ${styles.fzFarLeft}`}>
-                  <Phone src="/fanzine/app-celtic.webp" alt="Celtic club app" width={1861} height={4041} />
+                  <Phone className={styles.phone}>
+                    <Image src="/fanzine/app-celtic.webp" alt="Celtic club app" width={900} height={1954} unoptimized />
+                  </Phone>
                 </Layer>
                 <Layer m={{ xi: "-8vw", yi: "30vh", xo: "-10vw", yo: "-12vh" }} className={`${styles.fzPhone} ${styles.fzLeft}`}>
-                  <Phone src="/fanzine/app-chelsea.webp" alt="Chelsea club app" width={2004} height={4359} />
+                  <Phone className={styles.phone}>
+                    <Image src="/fanzine/app-chelsea.webp" alt="Chelsea club app" width={900} height={1958} unoptimized />
+                  </Phone>
                 </Layer>
                 <Layer m={{ yi: "36vh", yo: "-22vh", s: 0.04 }} className={`${styles.fzPhone} ${styles.fzCentre}`}>
-                  <Phone src="/fanzine/app-arsenal.webp" alt="Arsenal club app" width={1998} height={4359} />
+                  <Phone className={styles.phone}>
+                    <Image src="/fanzine/app-arsenal.webp" alt="Arsenal club app" width={900} height={1964} unoptimized />
+                  </Phone>
                 </Layer>
                 <Layer m={{ xi: "8vw", yi: "42vh", xo: "8vw", yo: "-14vh" }} className={`${styles.fzPhone} ${styles.fzRight}`}>
-                  <Phone src="/fanzine/app-man-city.webp" alt="Manchester City club app" width={2004} height={4359} />
+                  <Phone className={styles.phone}>
+                    <Image src="/fanzine/app-man-city.webp" alt="Manchester City club app" width={900} height={1958} unoptimized />
+                  </Phone>
                 </Layer>
                 <Layer m={{ xi: "12vw", yi: "46vh", xo: "12vw", yo: "-10vh" }} className={`${styles.fzPhone} ${styles.fzFarRight}`}>
-                  <Phone src="/fanzine/app-west-ham.webp" alt="West Ham club app" width={1861} height={4042} />
+                  <Phone className={styles.phone}>
+                    <Image src="/fanzine/app-west-ham.webp" alt="West Ham club app" width={900} height={1955} unoptimized />
+                  </Phone>
                 </Layer>
               </div>
               <Info
-                index={3}
                 title="Fanzine"
                 href="/work/fanzine"
                 meta="Mobile product system · 2017–2025"
@@ -498,10 +514,11 @@ export default function HomeStage() {
                 </Browser>
               </Layer>
               <Layer m={{ yi: "22vh", xo: "-2vw", yo: "-14vh", s: 0.05 }} className={styles.rwPhone}>
-                <Phone src="/reawakening/screen-mobile.jpg" alt="She Who Mothers Herself on mobile" width={945} height={2048} />
+                <Phone className={styles.phone}>
+                    <Image src="/reawakening/screen-mobile.jpg" alt="She Who Mothers Herself on mobile" width={945} height={2048} unoptimized />
+                  </Phone>
               </Layer>
               <Info
-                index={4}
                 title="Reawakening the Feminine"
                 href="/work/reawakening-the-feminine"
                 meta="Website · Design & build · 2026"
@@ -514,42 +531,60 @@ export default function HomeStage() {
             <section {...sceneProps(5)} aria-labelledby="closing-heading">
               <div className={styles.bg} />
               <Layer m={{ yi: "10vh", f: 1.6 }} className={styles.closing}>
-                <h2 id="closing-heading" className={styles.closingTitle}>
-                  Let&rsquo;s make something good.
-                </h2>
-                <nav className={styles.closingLinks} aria-label="Next steps">
-                  <Link href="/contact">Get in touch</Link>
-                  <Link href="/about">About</Link>
-                  <Link href="/work">View all work</Link>
-                </nav>
-                <div className={styles.closingTry}>
-                  <ExperimentLauncher />
+                <div className={styles.closingHead}>
+                  <h2 id="closing-heading" className={styles.closingTitle}>
+                    <span>Let&rsquo;s make something</span> <span>good together.</span>
+                  </h2>
+                  <p className={styles.closingLine}>Have a project, role or idea in mind?</p>
+                  <a href={`mailto:${contact.email}`} className={styles.closingCta}>
+                    <span className={styles.closingCtaText}>Get in touch</span>
+                    <span className={styles.closingCtaArrow} aria-hidden="true">
+                      &#8599;
+                    </span>
+                  </a>
                 </div>
+
+                <footer className={styles.closingFoot}>
+                  <nav aria-label="Footer">
+                    <Link href="/work">Work</Link>
+                    <span aria-hidden="true">&middot;</span>
+                    <Link href="/about">About</Link>
+                    {contact.linkedin.href ? (
+                      <>
+                        <span aria-hidden="true">&middot;</span>
+                        <a href={contact.linkedin.href} target="_blank" rel="noreferrer">
+                          LinkedIn
+                        </a>
+                      </>
+                    ) : null}
+                  </nav>
+                  <p>&copy; {new Date().getFullYear()} Jake Tansel</p>
+                </footer>
               </Layer>
             </section>
 
-            {/* Minimal project index */}
-            <div ref={markersRef} className={styles.markers} data-theme="light" data-visible="false">
-              <ol aria-label="Projects">
-                {PROJECTS.map((p) => {
-                  const i = SCENES.indexOf(p);
+            {/* Project index: a quiet row of the four projects; click to jump to one. */}
+            <nav ref={markersRef} className={styles.rail} data-theme="light" data-visible="true" data-scene="intro" aria-label="Projects">
+              <ol className={styles.railList}>
+                {PROJECTS.map((project) => {
+                  const i = SCENES.indexOf(project);
                   return (
-                    <li key={p.key}>
+                    <li key={project.key}>
                       <a
-                        href={`#${p.key}`}
+                        href={`#${project.key}`}
                         onClick={(e) => {
                           e.preventDefault();
                           goTo(i);
                         }}
                       >
                         <span>{String(i).padStart(2, "0")}</span>
-                        <em>{p.label}</em>
+                        {project.label}
                       </a>
                     </li>
                   );
                 })}
               </ol>
-            </div>
+            </nav>
           </div>
         </div>
       </main>

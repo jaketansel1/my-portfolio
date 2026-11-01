@@ -1,12 +1,31 @@
-// Placeholder details — replace before launch.
-export const contact = {
-  email: "hello@example.com",
-  linkedin: "https://www.linkedin.com",
-  location: "near London, UK",
-  /** Hero photograph (portrait, workspace or candid). Unset shows a placeholder frame. */
-  image: undefined as string | undefined,
-  /** CSS object-position for the hero photograph's crop. */
-  imagePosition: undefined as string | undefined,
-};
+/*
+ * Contact details, in one place. Used by the global contact panel (components/contact/ContactPanel)
+ * and the site footer (components/SiteFooter).
+ *
+ * A link whose href is null isn't shown as a link: it reads "Coming soon" until the href is set.
+ */
 
-export const availability = ["Freelance / Contract", "Product roles", "Collaborations"];
+export type ContactLink = { label: string; href: string | null };
+
+export const contact = {
+  email: "hello@jaketansel.com",
+  linkedin: {
+    label: "Jake Tansel",
+    // TODO: replace with the full LinkedIn profile URL.
+    href: "https://www.linkedin.com",
+  } as ContactLink,
+  github: {
+    label: "GitHub",
+    // TODO: set to the GitHub profile URL.
+    href: null,
+  } as ContactLink,
+  cv: {
+    label: "Jake-Tansel-CV.pdf",
+    // TODO: add the PDF to public/ (e.g. public/Jake-Tansel-CV.pdf) and set href to "/Jake-Tansel-CV.pdf".
+    href: null,
+  } as ContactLink,
+  /** Short location, e.g. for the footer. */
+  location: "Essex, UK",
+  /** Fuller line for the contact panel. */
+  based: "Essex, UK · London / Remote",
+};

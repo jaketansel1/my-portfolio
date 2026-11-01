@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
+import SiteFooter from "../SiteFooter";
 import SiteHeader from "../SiteHeader";
 import ShowcaseVideo from "../ShowcaseVideo";
+import { Browser as DeviceBrowser, Phone as DevicePhone } from "../ui/Device";
 import home from "../../app/home.module.css";
 import styles from "./Case.module.css";
 
@@ -66,6 +68,7 @@ export function CasePage({
       <main id="main-content">
         <article>{children}</article>
       </main>
+      <SiteFooter />
     </div>
   );
 }
@@ -230,7 +233,7 @@ export function Img({
   );
 }
 
-/** Minimal floating browser: slim chrome, screenshot or looping recording flush beneath. */
+/** Browser frame (shared with the homepage and Work: components/ui/Device) with a screenshot or looping recording. */
 export function Browser({
   url,
   shot,
@@ -252,15 +255,7 @@ export function Browser({
   priority?: boolean;
 }) {
   return (
-    <div className={`${styles.browser} ${className ?? ""}`} data-scheme={scheme}>
-      <div className={styles.browserBar} aria-hidden="true">
-        <span className={styles.browserDots}>
-          <span />
-          <span />
-          <span />
-        </span>
-        <span className={styles.browserUrl}>{url}</span>
-      </div>
+    <DeviceBrowser url={url} scheme={scheme} className={className}>
       {video ? (
         <div className={styles.browserVideo} style={{ aspectRatio: aspect ?? `${video.width} / ${video.height}` }}>
           <ShowcaseVideo src={video.src} poster={video.poster} />
@@ -268,11 +263,11 @@ export function Browser({
       ) : shot ? (
         <Img {...shot} aspect={aspect} position={position} priority={priority} />
       ) : null}
-    </div>
+    </DeviceBrowser>
   );
 }
 
-/** Minimal phone: thin dark frame; the screenshot carries its own status bar. */
+/** Phone frame (shared: components/ui/Device); the screenshot carries its own status bar. */
 export function Phone({
   shot,
   className,
@@ -285,9 +280,9 @@ export function Phone({
   position?: string;
 }) {
   return (
-    <div className={`${styles.phone} ${className ?? ""}`}>
-      {shot ? <Img {...shot} aspect={aspect} position={position} /> : <span className={styles.phoneEmpty} style={{ aspectRatio: aspect }} />}
-    </div>
+    <DevicePhone className={className}>
+      {shot ? <Img {...shot} aspect={aspect} position={position} /> : null}
+    </DevicePhone>
   );
 }
 

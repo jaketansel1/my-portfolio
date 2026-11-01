@@ -4,8 +4,6 @@
  */
 
 .root {
-  --gutter: var(--home-gutter);
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   background: var(--home-paper);
 }
 
@@ -95,7 +93,7 @@
 
 .headline {
   display: grid;
-  font-size: clamp(48px, 7.4vw, 140px);
+  font-size: var(--text-display);
   font-weight: 500;
   line-height: 0.95;
   letter-spacing: -0.05em;
@@ -117,6 +115,32 @@
   animation: rise 1100ms var(--ease) both;
 }
 .headlineMuted > span { animation-delay: 90ms; }
+
+/* Typed second line: all phrases share one grid cell so the longest reserves the space. */
+.typed { display: inline-grid; }
+.typedGhost,
+.typedText { grid-area: 1 / 1; }
+.typedGhost { visibility: hidden; }
+/* A thin caret, only while the line is changing. */
+.caret {
+  display: inline-block;
+  width: 0.05em;
+  height: 0.78em;
+  margin-left: 0.06em;
+  vertical-align: -0.04em;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.caret[data-busy] { opacity: 0.7; }
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .facts { animation: fade 1100ms 250ms var(--ease) both; }
 .introActions { animation: fade 1100ms 350ms var(--ease) both; }
 @keyframes rise {
@@ -126,52 +150,18 @@
   from { opacity: 0; transform: translateY(12px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mask > span, .facts, .introActions { animation: none; }
+  .mask > span, .facts, .introActions, .caret { animation: none; }
 }
 .introActions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 12px 30px;
   margin-top: 24px;
 }
-.primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  min-height: 48px;
-  padding-inline: 22px;
-  background: #121211;
-  color: #f3f2ee;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 250ms var(--ease);
-}
-.primary:hover { background: #2b2b29; }
-.primary span { transition: transform 400ms var(--ease); }
-.primary:hover span { transform: translateY(3px); }
-.quietLink {
-  margin-left: 8px;
-  color: #121211;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: rgb(18 18 17 / 0.25);
-  text-underline-offset: 6px;
-  transition: text-decoration-color 250ms ease;
-}
-.quietLink:hover { text-decoration-color: currentColor; }
-
 /* ---------- Project info ---------- */
 
 .info { max-width: 34rem; }
-.count {
-  color: var(--muted);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-}
-.count span { color: var(--fg); }
 .title {
   margin-top: 16px;
   font-size: clamp(40px, 5.2vw, 96px);
@@ -223,36 +213,6 @@
 
 /* ---------- Devices ---------- */
 
-.browser {
-  overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  border-radius: clamp(8px, 0.8vw, 14px);
-  background: #161616;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 0.2), 0 50px 100px -40px rgb(0 0 0 / 0.7);
-}
-.browser[data-scheme="light"] {
-  border-color: rgb(40 28 20 / 0.1);
-  background: #fbf8f4;
-  box-shadow: 0 2px 4px rgb(60 40 25 / 0.06), 0 50px 100px -40px rgb(80 50 30 / 0.4);
-}
-.browserBar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: clamp(22px, 2vw, 32px);
-  padding-inline: 12px;
-  border-bottom: 1px solid rgb(127 127 127 / 0.15);
-}
-.browserBar span { width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; }
-.browserBar span:nth-child(2) { background: #febc2e; }
-.browserBar span:nth-child(3) { background: #28c840; }
-.browserBar em {
-  margin-inline: auto;
-  color: rgb(127 127 127 / 0.9);
-  font-size: clamp(9px, 0.7vw, 11px);
-  font-style: normal;
-}
-.browser img { display: block; width: 100%; height: auto; }
 .videoBox { position: relative; background: #0f0f0e; }
 .videoBox video {
   position: absolute;
@@ -263,50 +223,80 @@
   object-position: left top;
 }
 
-.phone {
-  padding: 2.6%;
-  border: 1px solid rgb(255 255 255 / 0.14);
-  border-radius: 13% / 6%;
-  background: #0b0b0d;
-  box-shadow: 0 40px 70px -28px rgb(0 0 0 / 0.65);
-}
-.phone img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 9 / 19.5;
-  object-fit: cover;
-  object-position: top;
-  border-radius: 11% / 5.2%;
-}
 
-/* ---------- Closing ---------- */
+/* ---------- Closing: a calm invitation, then a quiet footer row ---------- */
 
+.closing {
+  display: grid;
+  gap: 96px;
+  padding-block: 96px 32px;
+}
 .closingTitle {
-  max-width: 14ch;
-  font-size: clamp(44px, 6.6vw, 124px);
+  max-width: 18ch;
+  font-size: var(--text-1);
   font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -0.05em;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
 }
-.closingLinks {
+.closingTitle span { display: block; }
+.closingLine {
+  margin-top: clamp(16px, 1.8vw, 24px);
+  color: #4d4b46;
+  font-size: var(--text-lead);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+/* Contact: a blue filled button (the site's Fanzine blue), the one strong action on this screen. */
+.closingCta {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 56px;
+  margin-top: clamp(28px, 3.4vw, 44px);
+  padding-inline: 26px;
+  background: #2f62d9;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+.closingCta:hover { background: #2652bd; }
+.closingCtaArrow { transition: transform var(--dur) var(--ease); }
+.closingCta:hover .closingCtaArrow { transform: translate(3px, -3px); }
+.closingCta:focus-visible { outline: 2px solid #2f62d9; outline-offset: 4px; }
+
+/* Footer row: small and muted. */
+.closingFoot {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 32px;
-  margin-top: clamp(32px, 4vw, 56px);
-  font-size: clamp(20px, 1.8vw, 28px);
-  letter-spacing: -0.02em;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(18 18 17 / 0.06);
+  color: var(--muted);
+  font-size: 13px;
 }
-.closingLinks a {
-  border-bottom: 1px solid rgb(18 18 17 / 0.25);
-  transition: border-color 200ms ease;
+.closingFoot nav { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+.closingFoot nav span { color: var(--quiet); }
+/* Links: darken and draw a hairline underline across on hover. */
+.closingFoot a {
+  display: inline-block;
+  padding-block: 6px;
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 4px) / 0 1px no-repeat;
+  transition: color var(--dur-fast) var(--ease), background-size var(--dur) var(--ease);
 }
-.closingLinks a:hover { border-color: currentColor; }
-.closingTry { margin-top: 28px; }
+.closingFoot a:hover { color: var(--ink); background-size: 100% 1px; }
+.closingFoot p { padding-block: 6px; }
+.closingFoot a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .closingCta, .closingCtaArrow, .closingFoot a { transition: none; }
+}
 
 /* ---------- Project markers ---------- */
 
-.markers { display: none; }
+.rail { display: none; }
 
 /* ---------- Stacked layout (default): one strong visual per project ---------- */
 
@@ -499,57 +489,65 @@
   .rwInfo .title { font-size: clamp(36px, 3.7vw, 68px); }
 
   /* Closing */
-  .closing { left: var(--gutter); right: var(--gutter); top: 30%; }
+  /* Invitation sits a little above centre; the footer row is pinned to the bottom. */
+  .closing {
+    top: 0;
+    right: var(--gutter);
+    bottom: clamp(18px, 3svh, 32px);
+    left: var(--gutter);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0;
+    padding: 0;
+  }
+  /* Centred in the space above the footer, nudged a little below centre to balance the whitespace. */
+  .closingHead { align-self: center; translate: 0 clamp(30px, 4.3svh, 48px); }
 
-  /* Markers */
-  .markers {
+  /* Project index: one quiet row under the project visuals. Inactive items recede; hover brings them up. */
+  .rail {
+    --rail-dim: rgb(18 18 17 / 0.24);
     position: absolute;
     z-index: 40;
     right: var(--gutter);
-    bottom: clamp(24px, 4svh, 40px);
+    bottom: clamp(10px, 2.1svh, 22px);
     display: block;
-    color: #121211;
+    color: var(--ink);
     opacity: 0;
-    transition: opacity 400ms ease, color 400ms ease;
+    pointer-events: none;
+    transition: opacity var(--dur) ease;
   }
-  .markers[data-visible="true"] { opacity: 1; }
-  .markers[data-theme="dark"] { color: #f3f2ee; }
-  .markers ol { display: flex; gap: 18px; list-style: none; }
-  .markers a {
+  .rail[data-visible="true"] { opacity: 1; pointer-events: auto; }
+  .rail[data-theme="dark"] {
+    --rail-dim: rgb(243 242 238 / 0.24);
+    color: var(--night-text);
+  }
+
+  .railList {
     display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    gap: 10px;
-    min-height: 28px;
-    font-family: var(--font-geist-mono), monospace;
-    font-size: 11px;
-    opacity: 0.4;
-    transition: opacity 250ms ease;
+    gap: clamp(28px, 2.8vw, 48px);
+    list-style: none;
   }
-  .markers a::after {
-    width: 18px;
-    height: 1px;
-    background: currentColor;
-    transition: width 300ms var(--ease);
-    content: "";
-  }
-  .markers em {
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    font-family: var(--font-geist-sans), sans-serif;
-    font-size: 12px;
-    font-style: normal;
+  .railList a {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    padding-block: 6px;
+    color: var(--rail-dim);
+    font-size: 12.5px;
+    font-weight: 400;
+    line-height: 1.3;
     white-space: nowrap;
-    opacity: 0;
-    translate: 0 4px;
-    transition: opacity 250ms ease, translate 300ms var(--ease);
+    transition: color var(--dur) var(--ease);
   }
-  .markers li { position: relative; }
-  .markers a:hover, .markers a[aria-current] { opacity: 1; }
-  .markers a[aria-current]::after { width: 36px; height: 2px; }
-  .markers a:hover em, .markers a:focus-visible em { opacity: 1; translate: 0 0; }
-  .markers a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+  .railList a span {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 10px;
+    opacity: 0.8;
+  }
+  /* The rail's own colour is full white on dark scenes, ink on light ones. */
+  .railList a:hover,
+  .railList a[aria-current] { color: inherit; }
+  .railList a[aria-current] { font-weight: 500; }
+  .railList a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 }
 
 /* Narrow laptops: keep info and artwork apart. */

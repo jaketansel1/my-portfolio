@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f5f0;
-  --foreground: #11100e;
+  /* Mapped to the design tokens in tokens.css. */
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {

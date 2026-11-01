@@ -1,16 +1,17 @@
 import Link from "next/link";
+import HomeLink from "./HomeLink";
+import ContactTrigger from "./contact/ContactTrigger";
 import styles from "./SiteHeader.module.css";
 
 type SiteHeaderProps = {
   variant?: "light" | "dark";
   editorial?: boolean;
-  current?: "work" | "about" | "contact";
+  current?: "work" | "about";
 };
 
 const editorialLinks = [
   { key: "work", href: "/work", label: "Work" },
   { key: "about", href: "/about", label: "About" },
-  { key: "contact", href: "/contact", label: "Contact" },
 ] as const;
 
 export default function SiteHeader({ variant = "light", editorial = false, current }: SiteHeaderProps) {
@@ -23,15 +24,19 @@ export default function SiteHeader({ variant = "light", editorial = false, curre
   if (editorial) {
     return (
       <header className={styles.header}>
-        <Link href="/" className={styles.wordmark} aria-label="Jake Tansel, home">
+        <HomeLink className={styles.wordmark} aria-label="Jake Tansel, home">
           Jake Tansel
-        </Link>
+        </HomeLink>
         <nav aria-label="Main navigation" className={styles.navigation}>
           {editorialLinks.map((link) => (
             <Link key={link.key} href={link.href} aria-current={current === link.key ? "page" : undefined}>
               {link.label}
             </Link>
           ))}
+          {/* Contact opens the global panel rather than a page. */}
+          <ContactTrigger nav className={styles.contact}>
+            Contact
+          </ContactTrigger>
         </nav>
       </header>
     );
@@ -40,12 +45,9 @@ export default function SiteHeader({ variant = "light", editorial = false, curre
   return (
     <header className="relative z-10">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-7 text-sm sm:px-8 lg:px-10">
-        <Link
-          href="/"
-          className={`font-medium ${isDark ? "text-white/82 hover:text-white" : "text-black hover:text-black"}`}
-        >
+        <HomeLink className={`font-medium ${isDark ? "text-white/82 hover:text-white" : "text-black hover:text-black"}`}>
           Jake Tansel
-        </Link>
+        </HomeLink>
         <nav aria-label="Main navigation" className={`flex items-center gap-7 text-[13px] ${navColor}`}>
           <Link href="/work" className={linkClass}>
             Work
@@ -53,9 +55,9 @@ export default function SiteHeader({ variant = "light", editorial = false, curre
           <Link href="/about" className={linkClass}>
             About
           </Link>
-          <Link href="/contact" className={linkClass}>
+          <ContactTrigger nav className={linkClass}>
             Contact
-          </Link>
+          </ContactTrigger>
         </nav>
       </div>
     </header>

@@ -1,15 +1,16 @@
 .home {
-  --home-paper: #f3f2ee;
-  --home-ink: #121211;
-  --home-muted: #6b6962;
-  --home-quiet: #8f8c85;
-  --home-rule: rgba(18, 18, 17, 0.12);
-  --home-night: #0f0f0e;
-  --home-night-muted: #8f8c84;
-  --home-night-rule: rgba(243, 242, 238, 0.14);
-  --home-gutter: clamp(20px, 4.45vw, 88px);
-  --home-max: 1760px;
-  --home-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Aliases of the design tokens (app/tokens.css), kept so existing modules keep working. */
+  --home-paper: var(--paper);
+  --home-ink: var(--ink);
+  --home-muted: var(--muted);
+  --home-quiet: var(--quiet);
+  --home-rule: var(--rule);
+  --home-night: var(--night);
+  --home-night-muted: var(--night-muted);
+  --home-night-rule: var(--night-rule);
+  --home-gutter: var(--gutter);
+  --home-max: var(--max-wide);
+  --home-ease: var(--ease);
   min-height: 100svh;
   background: var(--home-paper);
   color: var(--home-ink);
@@ -104,24 +105,37 @@
   padding-inline: 22px;
   background: var(--home-ink);
   color: var(--home-paper);
-  font-size: 14px;
+  font-size: var(--text-small);
   font-weight: 500;
-  transition: background-color 250ms var(--home-ease);
+  transition: background-color var(--dur-fast) var(--ease);
 }
-.primaryButton span { transition: transform 400ms var(--home-ease); }
+.primaryButton span { transition: transform var(--dur) var(--ease); }
 .primaryButton:hover { background: #2b2b29; }
 .primaryButton:hover span { transform: translateY(3px); }
+/* Text link: underline from the rule colour to full ink on hover; a trailing arrow nudges in its direction. */
 .textLink {
-  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: var(--text-small);
   font-weight: 500;
   text-decoration: underline;
-  text-decoration-color: var(--home-rule);
+  text-decoration-color: var(--rule);
   text-underline-offset: 6px;
-  transition: text-decoration-color 250ms var(--home-ease);
+  cursor: pointer;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
 }
 .textLink:hover { text-decoration-color: currentColor; }
+.textLink span { transition: transform var(--dur) var(--ease); }
+.textLink:hover span { transform: translateX(3px); }
+.textLink:hover span[data-dir="down"] { transform: translateY(3px); }
 
-/* Selected work: curated preview built from ProjectShowcase cards. */
+/* Selected work. */
 
 .work {
   padding-block: clamp(24px, 3vw, 48px) clamp(80px, 9vw, 160px);

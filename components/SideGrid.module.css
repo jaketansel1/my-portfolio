@@ -1,0 +1,196 @@
+/* "A few sides of me" flip cards. Reads tokens from home.module.css (.home). */
+
+.grid {
+  --gap: clamp(16px, 1.7vw, 28px);
+  --radius: var(--radius-l);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: clamp(250px, 24.5vw, 420px);
+  gap: var(--gap);
+  list-style: none;
+}
+
+.tile {
+  position: relative;
+  min-width: 0;
+  perspective: 1600px;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.card:focus-visible { outline: 2px solid var(--home-ink); outline-offset: 4px; border-radius: calc(var(--radius) + 4px); }
+
+/* The two faces turn together around the vertical axis; the card keeps its exact size. */
+.inner {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-style: preserve-3d;
+  transition: transform 520ms cubic-bezier(0.45, 0, 0.2, 1);
+}
+@media (hover: hover) {
+  .card:hover .inner { transition-delay: 90ms; }
+}
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  backface-visibility: hidden;
+  /* Keeps the rounded clip crisp while the card is turning. */
+  transform: translateZ(0);
+}
+
+/* Flip: on hover where hover exists, on keyboard focus, or when tapped. */
+@media (hover: hover) {
+  .card:hover .inner { transform: rotateY(180deg); }
+}
+.card:focus-visible .inner,
+.card[data-flipped] .inner { transform: rotateY(180deg); }
+
+/* ---------- Front ---------- */
+
+.front {
+  display: block;
+  background: var(--surface);
+  color: #fff;
+}
+/* No photo yet: the card's own colour, with its title. */
+.front[data-plain] { background: var(--back-bg); color: var(--back-fg); }
+.front[data-plain]::after { display: none; }
+.photo {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--dur) var(--ease);
+}
+@media (hover: hover) {
+  .card:hover .photo { transform: scale(1.025); }
+}
+.photo img { object-fit: cover; }
+.front::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0.06) 45%, transparent 70%);
+  content: "";
+}
+.label {
+  position: absolute;
+  right: clamp(16px, 1.6vw, 24px);
+  bottom: clamp(16px, 1.6vw, 22px);
+  left: clamp(16px, 1.6vw, 24px);
+  z-index: 1;
+  display: grid;
+  gap: 4px;
+}
+.line {
+  margin-top: 2px;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  opacity: 0.85;
+}
+.number {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+}
+.title {
+  font-size: var(--text-3);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+/* ---------- Back ---------- */
+
+.back {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.4vw, 20px);
+  padding: clamp(20px, 2.2vw, 34px);
+  background: var(--back-bg);
+  color: var(--back-fg);
+  transform: rotateY(180deg) translateZ(0);
+}
+.kicker {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.backMain {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+}
+.heading {
+  font-size: var(--text-3);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.text {
+  max-width: 38ch;
+  font-size: clamp(14px, 1vw, 15.5px);
+  line-height: 1.5;
+  opacity: 0.82;
+  text-wrap: pretty;
+}
+.tags,
+.listLabel,
+.note {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+.lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px 20px;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--back-fg) 20%, transparent);
+}
+.list { display: grid; gap: 4px; }
+.listLabel { margin-bottom: 2px; }
+.listItem { font-size: 14px; line-height: 1.4; }
+
+/* Tablet: two columns. */
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: clamp(260px, 44vw, 340px); }
+}
+
+/* Phone: one column, tall enough for the back's text. */
+@media (max-width: 600px) {
+  .grid { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; }
+  .tile { height: clamp(300px, 82vw, 380px); }
+}
+
+/* Reduced motion: no rotation, just a quick crossfade between faces. */
+@media (prefers-reduced-motion: reduce) {
+  .inner { transition: none; transform: none !important; }
+  .photo { transition: none; transform: none !important; }
+  .front,
+  .back { backface-visibility: visible; transform: none; transition: opacity 150ms ease; }
+  .back { opacity: 0; }
+  .card:focus-visible .back,
+  .card[data-flipped] .back { opacity: 1; }
+  @media (hover: hover) {
+    .card:hover .back { opacity: 1; }
+  }
+}

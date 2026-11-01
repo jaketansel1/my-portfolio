@@ -1,0 +1,50 @@
+/*
+ * Design tokens: the single source for colour, type, spacing, radii and motion across the portfolio.
+ * Page and component CSS reads these; per-project colours (case studies, homepage scenes) are the
+ * only intentional exceptions.
+ */
+
+:root {
+  /* Colour: neutrals */
+  --paper: #f3f2ee; /* page */
+  --ink: #121211; /* text */
+  --muted: #6b6962; /* secondary text */
+  --quiet: #8f8c85; /* tertiary text, de-emphasised headline lines */
+  --rule: rgb(18 18 17 / 0.12); /* hairlines */
+  --surface: #e8e6e1; /* image frames, placeholders, quiet panels */
+  --raised: #fbfaf7; /* floating surfaces (contact panel) */
+  --night: #0f0f0e; /* dark bands (footer) */
+  --night-text: #f3f2ee;
+  --night-muted: rgb(243 242 238 / 0.55);
+  --night-quiet: rgb(243 242 238 / 0.38);
+  --night-rule: rgb(243 242 238 / 0.14);
+
+  /* Type scale */
+  --text-display: clamp(48px, 7.4vw, 140px); /* homepage hero only */
+  --text-1: clamp(40px, 4.4vw, 80px); /* page headings, footer statement */
+  --text-2: clamp(32px, 3.6vw, 60px); /* section headings */
+  --text-3: clamp(22px, 1.9vw, 30px); /* card titles, sub-headings */
+  --text-lead: clamp(18px, 1.4vw, 22px); /* intro paragraphs */
+  --text-body: 16px;
+  --text-small: 14px;
+  --text-label: 12px; /* mono uppercase labels */
+
+  /* Layout */
+  --gutter: clamp(20px, 4.45vw, 88px);
+  --max-wide: 1760px; /* homepage, Work, About, footer */
+  --max-content: 1240px; /* case-study reading column */
+  --space-section: clamp(80px, 9vw, 160px);
+  --space-block: clamp(32px, 3.4vw, 52px);
+
+  /* Radii: s for small controls, m for images and device frames, l for cards and floating panels.
+     Buttons stay square. */
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 18px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 250ms; /* hovers, colour changes */
+  --dur: 450ms; /* reveals, small movements */
+  --dur-slow: 1100ms; /* page-load headline rise, large media */
+}

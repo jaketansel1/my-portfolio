@@ -242,7 +242,7 @@ export default function ReawakeningCaseStudy() {
         </ChapterSection>
       </ChapterLayout>
 
-      <NextProject title="View all work" href="/work" label="That’s the four" line="SportSkins, Maison Augustin, Inspect Design and more." tone={paper} />
+      <NextProject title="View all work" href="/work" label="That’s the four" line="SportSkins, Maison Augustin and more." tone={paper} />
     </CasePage>
   );
 }

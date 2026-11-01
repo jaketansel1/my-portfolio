@@ -146,60 +146,7 @@
   object-fit: cover;
 }
 
-.browser {
-  --chrome: #161616;
-  --chrome-line: rgb(255 255 255 / 0.07);
-  --chrome-url-bg: rgb(255 255 255 / 0.06);
-  --chrome-url: rgb(255 255 255 / 0.5);
-  --chrome-border: rgb(255 255 255 / 0.1);
-  overflow: hidden;
-  border: 1px solid var(--chrome-border);
-  border-radius: clamp(8px, 0.9vw, 14px);
-  background: var(--chrome);
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.18),
-    0 40px 90px -40px rgb(0 0 0 / 0.55);
-}
-.browser[data-scheme="light"] {
-  --chrome: #fbf8f4;
-  --chrome-line: rgb(40 28 20 / 0.08);
-  --chrome-url-bg: rgb(40 28 20 / 0.05);
-  --chrome-url: rgb(40 28 20 / 0.5);
-  --chrome-border: rgb(40 28 20 / 0.1);
-  box-shadow:
-    0 1px 2px rgb(60 40 25 / 0.06),
-    0 40px 90px -40px rgb(80 50 30 / 0.35);
-}
-.browserBar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: clamp(24px, 2.2vw, 36px);
-  padding-inline: clamp(10px, 1vw, 16px);
-  border-bottom: 1px solid var(--chrome-line);
-}
-.browserDots { display: flex; gap: clamp(4px, 0.4vw, 7px); }
-.browserDots span {
-  width: clamp(7px, 0.62vw, 11px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #ff5f57;
-}
-.browserDots span:nth-child(2) { background: #febc2e; }
-.browserDots span:nth-child(3) { background: #28c840; }
-.browserUrl {
-  position: absolute;
-  left: 50%;
-  translate: -50% 0;
-  min-width: 30%;
-  padding: 0.25em 1.2em;
-  border-radius: 6px;
-  background: var(--chrome-url-bg);
-  color: var(--chrome-url);
-  font-size: clamp(9px, 0.72vw, 12px);
-  text-align: center;
-  white-space: nowrap;
-}
+/* Browser and phone frames live in components/ui/Device. */
 .browserVideo { position: relative; background: #0f0f0e; }
 .browserVideo video {
   position: absolute;
@@ -208,22 +155,6 @@
   height: 100%;
   object-fit: cover;
   object-position: left top;
-}
-
-.phone {
-  padding: 2.6%;
-  border: 1px solid rgb(255 255 255 / 0.12);
-  border-radius: 13% / 6%;
-  background: #0b0b0d;
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.3),
-    0 40px 70px -30px rgb(0 0 0 / 0.65);
-}
-.phone .img,
-.phoneEmpty {
-  display: block;
-  border-radius: 11% / 5.2%;
-  background: #1c1c20;
 }
 
 .placeholder {

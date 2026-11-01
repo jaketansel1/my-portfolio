@@ -1,141 +1,94 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import SiteFooter from "../../components/SiteFooter";
+import HeroShuffle from "../../components/HeroShuffle";
+import SideGrid from "../../components/SideGrid";
 import SiteHeader from "../../components/SiteHeader";
-import AboutPersonal from "../../components/AboutPersonal";
-import { capabilities, experience, journey, personalChapters } from "../data/about";
+import { career, heroPhotos, sides } from "../data/about";
 import home from "../home.module.css";
 import styles from "./about.module.css";
 
 export const metadata: Metadata = {
   title: "About — Jake Tansel",
   description:
-    "Jake Tansel designs and builds digital products: eight years across social and eCommerce, product design and front-end implementation.",
+    "Jake Tansel is a product designer based just outside London who designs, prototypes and builds digital products.",
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+/* Intro → "Pick a side of me" → how I got here → contact. Content lives in app/data/about.ts. */
 export default function AboutPage() {
   return (
     <div className={home.home}>
-
-      <div className={styles.night}>
-        <div className={home.container}>
-          <SiteHeader editorial current="about" />
-        </div>
+      <div className={home.container}>
+        <SiteHeader editorial current="about" />
       </div>
 
       <main id="main-content">
-        <section className={styles.personal} aria-labelledby="about-heading">
-          {/* The heading sits in the text column beside the photographs, so the whole scene is visible on arrival. */}
-          <div className={home.container}>
-            <AboutPersonal
-              chapters={personalChapters}
-              intro={
-                <div className={styles.personalHeader}>
-                  <p className={styles.eyebrow}>About</p>
-                  <h1 id="about-heading" className={styles.personalHeading}>
-                    <span className={home.line}>
-                      <span>The rest of the</span>
-                    </span>
-                    <span className={home.line}>
-                      <span>picture.</span>
-                    </span>
-                  </h1>
-                  <p className={styles.personalIntro}>Work and life, in no particular order.</p>
-                </div>
-              }
-            />
+        <section className={`${home.container} ${styles.intro}`} aria-labelledby="about-heading">
+          <div className={styles.introText}>
+            <p className={styles.eyebrow}>About</p>
+            <h1 id="about-heading" className={styles.heading}>
+              <span className={home.line}>
+                <span>A bit more</span>
+              </span>
+              <span className={`${home.line} ${home.lineMuted}`}>
+                <span>about me.</span>
+              </span>
+            </h1>
+            <p className={styles.lede}>
+              I&rsquo;m a product designer with 8+ years of experience across UX/UI, digital products and frontend
+              development, spanning sports, e-commerce and digital learning. My work ranges from large-scale product
+              platforms to websites and independent client projects.
+            </p>
           </div>
+          <HeroShuffle photos={heroPhotos} className={styles.portrait} />
         </section>
 
-        <section className={`${home.container} ${styles.intro}`} aria-labelledby="story-heading">
-          <h2 id="story-heading" className={styles.headline}>
-            <span className={home.line}>
-              <span>Started in social and eCommerce.</span>
-            </span>
-            <span className={`${home.line} ${home.lineMuted}`}>
-              <span>Now I design and build products.</span>
-            </span>
-          </h2>
+        <section className={`${home.container} ${styles.sides}`} aria-labelledby="sides-heading">
+          <div className={styles.sidesHead}>
+            <h2 id="sides-heading" className={styles.sectionHeading}>
+              A few sides of me.
+            </h2>
 
-          <div className={styles.story}>
-            <p className={styles.storyLabel}>The short version</p>
-            <div className={styles.storyBody}>
-              <p className={styles.lead}>
-                I&rsquo;ve spent eight years designing digital products, and the best of them came from
-                working right alongside the people building them.
-              </p>
-              <p>
-                I started out in social and eCommerce, where every design decision showed up in the
-                numbers: what people clicked, what they bought, what brought them back. It taught me to
-                care about outcomes, not just screens.
-              </p>
-              <p>
-                In 2017 I moved into product design, first at Fanzine designing apps for millions of
-                football fans, then real-money games at SportSkins and now a platform redesign at
-                LickLibrary. Along the way I started building what I design, using front-end code and
-                AI-assisted workflows to get ideas in front of real users faster.
-              </p>
+          </div>
+          <SideGrid sides={sides} />
+        </section>
+
+        <section className={`${home.container} ${styles.career}`} aria-labelledby="career-heading">
+          <div className={styles.careerHead}>
+            <h2 id="career-heading" className={styles.sectionHeading}>
+              How I got here.
+            </h2>
+            <p className={styles.sectionNote}>From social and eCommerce, to product design, to designing and building.</p>
+          </div>
+          {/* One continuous line: a node and year where each stage begins, and "now" at the end. */}
+          <div className={styles.journey}>
+            <div className={styles.track} aria-hidden="true">
+              {career.map((step) => (
+                <span key={step.from} className={styles.node}>
+                  {step.from}
+                </span>
+              ))}
+              <span className={styles.nodeNow}>Now</span>
             </div>
-          </div>
-        </section>
-
-        <section className={`${home.container} ${styles.path}`} aria-labelledby="path-heading">
-          <h2 id="path-heading" className={styles.sectionLabel}>How I got here</h2>
-          <ol className={styles.journey}>
-            {journey.map((step, index) => (
-              <li key={step.title}>
-                <p className={styles.journeyMeta}>
-                  <span>{pad(index + 1)}</span>
-                  {step.period}
-                  {index < journey.length - 1 && (
-                    <span className={styles.journeyArrow} aria-hidden="true">&rarr;</span>
-                  )}
-                </p>
-                <h3 className={styles.journeyTitle}>{step.title}</h3>
-                <p className={styles.journeyBody}>{step.body}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className={`${home.container} ${styles.detail}`} aria-label="Experience and capabilities">
-          <div>
-            <h2 className={styles.sectionLabel}>Where I&rsquo;ve worked</h2>
-            <ul className={styles.experience}>
-              {experience.map((item) => (
-                <li key={item.company}>
-                  <span className={styles.years}>{item.years}</span>
-                  <span className={styles.company}>{item.company}</span>
-                  <span className={styles.note}>{item.note}</span>
+            <ol className={styles.stages}>
+              {career.map((step, i) => (
+                <li key={step.title} className={styles.stage}>
+                  <p className={styles.stageMeta}>
+                    <span>{pad(i + 1)}</span>
+                    {step.years}
+                  </p>
+                  <h3 className={styles.stageTitle}>{step.title}</h3>
+                  <p className={styles.stageBody}>{step.body}</p>
+                  {step.places?.length ? <p className={styles.stagePlaces}>{step.places.join(" · ")}</p> : null}
                 </li>
               ))}
-            </ul>
-          </div>
-          <div>
-            <h2 className={styles.sectionLabel}>What I can do</h2>
-            <ul className={styles.capabilities}>
-              {capabilities.map((capability) => (
-                <li key={capability}>{capability}</li>
-              ))}
-            </ul>
+            </ol>
           </div>
         </section>
 
-        <section className={`${home.container} ${styles.closing}`} aria-labelledby="closing-heading">
-          <p className={styles.eyebrow}>Back to it</p>
-          <h2 id="closing-heading" className={styles.closingStatement}>
-            Anyway, back to the work.
-          </h2>
-          <p className={styles.closingText}>See how I turn ideas into shipped products.</p>
-          <div className={styles.closingActions}>
-            <Link href="/work" className={home.primaryButton}>
-              View selected work
-              <span aria-hidden="true">&rarr;</span>
-            </Link>
-          </div>
-        </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }

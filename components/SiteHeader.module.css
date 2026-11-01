@@ -21,17 +21,30 @@
   font-size: 14px;
 }
 
-.navigation a {
+.navigation a,
+.contact {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  transition: color 200ms ease;
+  transition: color var(--dur-fast) var(--ease);
 }
 
 .navigation a:hover,
-.navigation a[aria-current="page"] { color: var(--home-ink); }
+.navigation a[aria-current="page"],
+.contact:hover,
+.contact[aria-expanded="true"] { color: var(--home-ink); }
+.contact {
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
 
-.header a:focus-visible {
+.header a:focus-visible,
+.contact:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 6px;
 }
