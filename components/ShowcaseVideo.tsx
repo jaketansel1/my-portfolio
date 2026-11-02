@@ -105,7 +105,7 @@ export default function ShowcaseVideo({
     <video
       ref={ref}
       className={className}
-      style={{ ...style, objectFit: "contain", objectPosition: "center" }}
+      style={{ objectFit: "contain", objectPosition: "center", ...style }}
       width={width}
       height={height}
       poster={poster}

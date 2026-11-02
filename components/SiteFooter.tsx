@@ -68,9 +68,6 @@ export default function SiteFooter() {
           <Detail label="CV">
             <External link={contact.cv} />
           </Detail>
-          <Detail label="GitHub">
-            <External link={contact.github} />
-          </Detail>
         </dl>
         <span className={styles.visuallyHidden} role="status">
           {copied ? "Email address copied" : ""}

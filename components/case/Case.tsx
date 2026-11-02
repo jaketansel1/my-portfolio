@@ -293,10 +293,23 @@ export function Phone({
 }
 
 /** Clearly marked gap for a real asset that's still needed. */
-export function Placeholder({ label, note, aspect = "16 / 10", className }: { label: string; note?: string; aspect?: string; className?: string }) {
+export function Placeholder({
+  label,
+  note,
+  aspect = "16 / 10",
+  tag = "Asset needed",
+  className,
+}: {
+  label: string;
+  note?: string;
+  aspect?: string;
+  /** What's missing, e.g. "Write-up needed". */
+  tag?: string;
+  className?: string;
+}) {
   return (
     <div className={`${styles.placeholder} ${className ?? ""}`} style={{ aspectRatio: aspect }}>
-      <span className={styles.placeholderTag}>Asset needed</span>
+      <span className={styles.placeholderTag}>{tag}</span>
       <span className={styles.placeholderLabel}>{label}</span>
       {note ? <span className={styles.placeholderNote}>{note}</span> : null}
     </div>

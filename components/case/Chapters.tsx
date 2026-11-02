@@ -12,7 +12,8 @@ import styles from "./Chapters.module.css";
  * an accent, and optionally the panel and fill colours used by diagrams and quiet surfaces.
  */
 
-export type Chapter = NavChapter;
+/** `theme` is a short line beside an initiative opener's label, e.g. "Discovery & Navigation". */
+export type Chapter = NavChapter & { theme?: string };
 
 export function ChapterLayout({
   chapters,
@@ -127,6 +128,7 @@ export function ChapterOpener({
       <p className={styles.chapterLabel}>
         <span>{chapter.number} /</span>
         {chapter.title}
+        {chapter.theme ? <span className={styles.chapterTheme}>{chapter.theme}</span> : null}
       </p>
       <h2 id={`${chapter.id}-title`} className={styles.openerTitle}>
         {title}

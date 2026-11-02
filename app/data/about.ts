@@ -39,30 +39,28 @@ const photo = (name: string, width: number, height: number, alt = "", position?:
 });
 
 /**
- * About hero photos. Hover plays through them in this order; click (or tap) jumps to a random one.
- * Add, remove or reorder freely: the first is shown on load. Supplied at roughly 16:9 (1800 × 1062),
- * which matches the frame; use `position` to adjust a crop, e.g. "center 30%".
+ * About hero photos. They rotate on their own in this order, every few seconds, then loop; the first is
+ * shown on load (and is the only one shown with reduced motion). Add, remove or reorder freely.
+ * Supplied at roughly 16:9 (1800 × 1062), which matches the frame; use `position` to keep a subject in
+ * view if the crop ever tightens, e.g. "center 30%".
+ *
+ * Also in public/about but not in the rotation: hero-mountain, hero-beach, hero-party, hero-hike-group.
  */
 const hero = (name: string, alt: string, position?: string) => photo(`hero-${name}`, 1800, 1062, alt, position);
 
 export const heroPhotos: Photo[] = [
-  hero("mountain", "Jake on a mountain in the Scottish Highlands, a loch in the valley below"),
-  hero("wedding", "Jake walking back down the aisle on his wedding day"),
-  hero("summit", "Jake with his arms out at a summit above a lake"),
-  hero("beach", "Jake walking along a palm-lined beach"),
-  hero("groomsmen", "Jake laughing with his groomsmen on the beach"),
-  hero("carry", "Jake carrying a little one in a yellow cap"),
+  hero("wedding", "Jake and Billie walking back down the aisle on their wedding day", "center 30%"),
   hero("bjj", "Jake with his Brazilian Jiu-Jitsu class"),
+  hero("groomsmen", "Jake laughing with his groomsmen on the beach", "center 30%"),
   hero("desert", "Quad biking through the desert"),
-  hero("party", "Jake smiling at a party"),
-  hero("hike-group", "Jake with a group of friends at the start of a hike"),
+  hero("summit", "Jake with his arms out at a summit above a lake"),
+  hero("carry", "Jake carrying a little one in a yellow cap", "center 40%"),
 ];
 
 /*
  * Glimpses of life outside the work, in grid order (left to right, top to bottom).
  * To swap a photo, drop a file in public/about/ and point the card at it; a card without a photo shows
- * its colour instead. Travel, Football and Training currently use stock placeholders (see
- * public/placeholders/CREDITS.md); Making, Books & Film and Currently are waiting for personal photos.
+ * its colour instead. Currently still uses a stock placeholder (see public/placeholders/CREDITS.md).
  * List groups with no items are hidden, so they can be filled in whenever.
  */
 export const sides: Side[] = [
@@ -70,7 +68,7 @@ export const sides: Side[] = [
     key: "travel",
     title: "Travel",
     line: "Usually planning the next trip.",
-    photo: photo("travel-lipari", 1600, 1600, "Jake with arms out above a harbour town at sunset", "center 45%"),
+    photo: photo("travel-terrace", 1920, 1920, "Pizza and a Birra Messina on a terrace, with boats in the bay and a volcano on the horizon", "center 35%"),
     heading: "Getting away is important.",
     text: "New places, good food and somewhere completely different. I’m usually planning the next trip before the current one is over.",
     tags: ["New places", "Good food"],
@@ -97,27 +95,26 @@ export const sides: Side[] = [
     key: "training",
     title: "Training",
     line: "BJJ, the gym and football.",
-    photo: photo("training", 1400, 933),
+    photo: photo("training-bjj", 1920, 1920, "Jake with his BJJ teammates on the mats", "center 65%"),
     heading: "Usually training something.",
     text: "BJJ, the gym or a game of football. Mostly an excuse to stay active, learn something and switch my brain off for a bit.",
     tags: ["BJJ", "Gym", "Football"],
     tone: { bg: "#3a322a", fg: "#efe9e2" },
   },
   {
-    key: "making",
-    title: "Making",
-    line: "Design, code, AI and side projects.",
-    // TODO: a behind-the-scenes photo: laptop, Figma, VS Code, a prototype, something half-built.
-    heading: "I like making things.",
-    text: "Designing, coding, experimenting with AI and building side projects — turning ideas into something real, often over a weekend.",
-    tags: ["Design", "Code", "AI", "Side projects"],
+    key: "people",
+    title: "People",
+    line: "Friends, family and the good stuff.",
+    photo: { src: "/about/people-friends.jpg", width: 1600, height: 1200, alt: "Jake and a group of friends crowded together, laughing, on a night out", position: "center 45%" },
+    heading: "Friends, family and the good stuff.",
+    text: "Time with the people who matter, ideally somewhere warm with not much of a plan.",
     tone: { bg: "#1f2430", fg: "#eceef2" },
   },
   {
     key: "books-film",
     title: "Books & Film",
     line: "Sci-fi, history and psychology.",
-    // TODO: a photo of books, films or something cultural.
+    photo: photo("books-film-dune", 1254, 1254, "Two cloaked figures facing off on a dune at sunset", "center 70%"),
     heading: "Always reading or watching something.",
     text: "Usually sci-fi, history or psychology.",
     lists: [
@@ -129,20 +126,29 @@ export const sides: Side[] = [
   },
   {
     // The one to keep fresh: change, add or remove any group or item below.
-    // TODO: a candid photo of the current desk or a work in progress.
     key: "currently",
     title: "Currently",
-    line: "The LickLibrary homepage redesign.",
+    line: "Redesigning LickLibrary, feature by feature.",
+    // Placeholder (see public/placeholders/CREDITS.md). TODO: a real photo from the LickLibrary office.
+    photo: { src: "/placeholders/about-office.jpg", width: 1800, height: 1200, alt: "A desk with a monitor, keyboard and tablet" },
     heading: "On my desk right now.",
     text: "What I’m working on and building at the moment.",
     lists: [
-      { label: "Working on", items: ["The LickLibrary homepage redesign"] },
+      { label: "Working on", items: ["Redesigning LickLibrary, feature by feature"] },
       { label: "Building", items: ["Inspect Design"] },
       { label: "Learning", items: [] },
       { label: "Reading", items: [] },
     ],
     tone: { bg: "#3b2a25", fg: "#f3ebe6" },
   },
+];
+
+/** "How I work": design through to delivery, in order. One short line each. */
+export const workStages: { title: string; line: string }[] = [
+  { title: "Design", line: "UX, UI and product thinking." },
+  { title: "Build", line: "Frontend implementation and real codebases." },
+  { title: "Ship", line: "Git, testing and engineering collaboration." },
+  { title: "Learn", line: "Using AI to understand, iterate and improve faster." },
 ];
 
 export type CareerStep = {

@@ -14,11 +14,6 @@ export const contact = {
     // TODO: replace with the full LinkedIn profile URL.
     href: "https://www.linkedin.com",
   } as ContactLink,
-  github: {
-    label: "GitHub",
-    // TODO: set to the GitHub profile URL.
-    href: null,
-  } as ContactLink,
   cv: {
     label: "Jake-Tansel-CV.pdf",
     // TODO: add the PDF to public/ (e.g. public/Jake-Tansel-CV.pdf) and set href to "/Jake-Tansel-CV.pdf".

@@ -36,7 +36,7 @@
   text-wrap: pretty;
   animation: fade 1100ms 250ms var(--home-ease) both;
 }
-/* Wide hero photo (HeroShuffle): click to shuffle. */
+/* Wide hero photo (HeroRotator): rotates on its own. */
 .portrait {
   grid-column: 7 / -1;
   animation: reveal 1300ms 150ms var(--home-ease) both;
@@ -70,6 +70,110 @@
 
 
 .sides { padding-bottom: clamp(96px, 10vw, 176px); }
+
+/* ---------- How I work: the professional bridge ---------- */
+
+.work { padding-bottom: clamp(96px, 10vw, 176px); }
+.sectionEyebrow {
+  margin-bottom: 20px;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.workHead {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 28px clamp(16px, 2vw, 32px);
+  align-items: end;
+  margin-bottom: clamp(64px, 7vw, 120px);
+}
+.workHead > :first-child { grid-column: 1 / 7; }
+.workIntro {
+  display: grid;
+  gap: 1em;
+  grid-column: 7 / -1;
+  max-width: 50ch;
+  color: var(--muted);
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.workIntro p:first-child { color: var(--ink); }
+
+/* Design → Build → Ship → Learn: big words on one line that darkens stage by stage. */
+.flow {
+  --gap: clamp(24px, 3vw, 56px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--gap);
+  list-style: none;
+}
+.flowStage {
+  position: relative;
+  padding-top: clamp(20px, 2vw, 28px);
+  border-top: 2px solid color-mix(in srgb, var(--ink) var(--weight, 100%), transparent);
+}
+.flowStage:nth-child(1) { --weight: 22%; }
+.flowStage:nth-child(2) { --weight: 46%; }
+.flowStage:nth-child(3) { --weight: 72%; }
+/* An arrow on the line between stages. */
+.flowStage:not(:last-child)::after {
+  position: absolute;
+  top: -12px;
+  right: calc(var(--gap) / -2 - 7px);
+  color: var(--muted);
+  font-size: 15px;
+  content: "→";
+}
+.flowIndex {
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+}
+.flowTitle {
+  margin-top: clamp(12px, 1.2vw, 18px);
+  font-size: clamp(36px, 4.4vw, 76px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.flowLine {
+  max-width: 24ch;
+  margin-top: clamp(14px, 1.4vw, 20px);
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* A quiet aside on AI: label left, the thought right, under a hairline. */
+.aiNote {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px clamp(16px, 2vw, 32px);
+  margin-top: clamp(64px, 7vw, 112px);
+  padding-top: 20px;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+}
+.aiLabel {
+  grid-column: 1 / 7;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.aiNote > p:last-child {
+  grid-column: 7 / -1;
+  max-width: 46ch;
+  font-size: clamp(17px, 1.4vw, 22px);
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
 
 /* ---------- How I got here ---------- */
 
@@ -180,6 +284,20 @@
 @media (max-width: 900px) {
   .introText { grid-column: 1 / -1; }
   .portrait { grid-column: 1 / -1; margin-top: 40px; }
+  /* How I work: the stages stack down a line that darkens as it goes. */
+  .workHead > :first-child,
+  .workIntro,
+  .aiLabel,
+  .aiNote > p:last-child { grid-column: 1 / -1; }
+  .flow { grid-template-columns: minmax(0, 1fr); }
+  .flowStage {
+    padding: 0 0 clamp(32px, 6vw, 44px) 24px;
+    border-top: 0;
+    border-left: 2px solid color-mix(in srgb, var(--ink) var(--weight, 100%), transparent);
+  }
+  .flowStage:last-child { padding-bottom: 0; }
+  .flowStage:not(:last-child)::after { display: none; }
+  .flowTitle { margin-top: 8px; font-size: clamp(36px, 9vw, 56px); }
   /* The line turns vertical: it runs down the left with a node at each stage. */
   .track { display: none; }
   .stages {

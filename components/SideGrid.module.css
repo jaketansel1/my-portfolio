@@ -79,8 +79,8 @@
   .card:hover .photo:not(:has(video)) { transform: scale(1.025); }
 }
 .photo img { object-fit: cover; }
-.photo:has(video) { background: #0a0a0a; }
-.photo video { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; }
+/* Videos fill the card like the photos do (ShowcaseVideo's own default is contain). */
+.photo video { display: block; width: 100%; height: 100%; }
 .front::after {
   position: absolute;
   inset: 0;

@@ -51,14 +51,17 @@
   list-style: none;
   border-left: 1px solid var(--rule);
 }
+/* Chapter titles lead; their sections sit smaller and quieter beneath them. */
 .caseNav a {
   position: relative;
   display: flex;
   gap: 12px;
   align-items: baseline;
   padding: 9px 0 9px 18px;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--fg) 72%, transparent);
   font-size: 15.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   transition: color 200ms ease;
 }
@@ -79,12 +82,57 @@
   transition: transform 350ms var(--case-ease);
   content: "";
 }
-.caseNav a[data-sub] { padding-block: 7px; padding-left: 32px; font-size: 14.5px; }
+.caseNav a[data-sub] {
+  padding-block: 6px;
+  padding-left: 32px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+/* A short status beside a chapter, e.g. "Soon". */
+.caseNav a em {
+  align-self: center;
+  padding: 2px 7px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 .caseNav a:hover,
+.caseNav a[data-open],
 .caseNav a[aria-current] { color: var(--fg); }
+.caseNav a[data-open] span { opacity: 1; }
 .caseNav a[aria-current] span { opacity: 1; color: var(--accent); }
 .caseNav a[aria-current]::before { transform: scaleY(1); }
 .caseNav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.caseNav a[data-sub]:focus-visible { outline-offset: -2px; }
+
+/* Accordion: only the chapter being read shows its sections. Collapsed sections are inert. */
+.caseNavSections {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 400ms var(--case-ease),
+    opacity 250ms ease;
+}
+.caseNavSections[data-open] { grid-template-rows: 1fr; opacity: 1; }
+.caseNavSections > ol {
+  min-height: 0;
+  overflow: hidden;
+  /* Room for the active bar, which sits over the rail's line just outside the list. */
+  margin-left: -1px;
+  padding-left: 1px;
+  border-left: 0;
+}
+.caseNavSections > ol > li:first-child { padding-top: 2px; }
+.caseNavSections > ol > li:last-child { padding-bottom: 8px; }
 
 /* ---------- Chapters ---------- */
 
@@ -106,6 +154,8 @@
   text-transform: uppercase;
 }
 .chapterLabel span { color: var(--accent); }
+.chapterLabel .chapterTheme { color: var(--muted); opacity: 0.75; }
+.chapterLabel .chapterTheme::before { margin-right: 14px; content: "·"; }
 .chapterTitle {
   max-width: 18ch;
   font-size: var(--text-2);
@@ -220,6 +270,39 @@
   letter-spacing: -0.05em;
   text-wrap: balance;
 }
+
+/* ---------- Next chapter: the hand-off at the end of a chapter ---------- */
+
+.nextChapter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 24px;
+  align-items: end;
+  margin-top: clamp(72px, 7vw, 112px);
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+.nextChapterLabel {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.nextChapterTitle {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  font-size: clamp(24px, 2.2vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  transition: color 200ms ease;
+}
+.nextChapterTitle span { color: var(--accent); font-family: var(--font-geist-mono), monospace; font-size: 13px; letter-spacing: 0; }
+.nextChapterArrow { color: var(--muted); font-size: 20px; transition: translate 300ms var(--case-ease), color 200ms ease; }
+.nextChapter:hover .nextChapterArrow { translate: 0 4px; color: var(--fg); }
+.nextChapter:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
 
 /* ---------- Insight ---------- */
 
@@ -363,6 +446,8 @@
 @media (prefers-reduced-motion: reduce) {
   .caseNav { transition: none; }
   .caseNav a::before { transition: none; }
+  .caseNavSections { transition: none; }
+  .nextChapterArrow { transition: none; }
 }
 
 /* ---------- Responsive ---------- */
@@ -393,6 +478,13 @@
     scrollbar-width: none;
   }
   .caseNav ol::-webkit-scrollbar { display: none; }
+  /* The open chapter's sections follow it inline in the bar. */
+  .caseNav li { display: flex; flex: none; }
+  .caseNavSections { display: none; }
+  .caseNavSections[data-open] { display: flex; }
+  .caseNavSections > ol { overflow: visible; margin: 0; padding: 0; }
+  .caseNavSections > ol > li:first-child,
+  .caseNavSections > ol > li:last-child { padding-block: 0; }
   .caseNav a,
   .caseNav a[data-sub] { min-height: 48px; padding: 0 10px; align-items: center; font-size: 14px; }
   .caseNav a::before {

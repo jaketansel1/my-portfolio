@@ -44,7 +44,7 @@ export default function SideGrid({ sides }: { sides: Side[] }) {
                   {side.photo ? (
                     <span className={styles.photo}>
                       {side.video ? (
-                        <ShowcaseVideo {...side.video} />
+                        <ShowcaseVideo {...side.video} style={{ objectFit: "cover" }} />
                       ) : (
                         <Image
                           src={side.photo.src}
