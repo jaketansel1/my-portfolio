@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, type CSSProperties, type MouseEvent } from "react";
 import type { Side } from "../app/data/about";
+import ShowcaseVideo from "./ShowcaseVideo";
 import styles from "./SideGrid.module.css";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -42,14 +43,22 @@ export default function SideGrid({ sides }: { sides: Side[] }) {
                 <span className={styles.front} data-plain={!side.photo || undefined}>
                   {side.photo ? (
                     <span className={styles.photo}>
-                      <Image
-                        src={side.photo.src}
-                        alt=""
-                        fill
-                        sizes="(min-width: 900px) 30vw, (min-width: 600px) 46vw, 92vw"
-                        style={side.photo.position ? { objectPosition: side.photo.position } : undefined}
-                        unoptimized
-                      />
+                      {side.video ? (
+                        <ShowcaseVideo
+                          src={side.video}
+                          poster={side.photo.src}
+                          style={side.photo.position ? { objectPosition: side.photo.position } : undefined}
+                        />
+                      ) : (
+                        <Image
+                          src={side.photo.src}
+                          alt=""
+                          fill
+                          sizes="(min-width: 900px) 30vw, (min-width: 600px) 46vw, 92vw"
+                          style={side.photo.position ? { objectPosition: side.photo.position } : undefined}
+                          unoptimized
+                        />
+                      )}
                     </span>
                   ) : null}
                   <span className={styles.label}>

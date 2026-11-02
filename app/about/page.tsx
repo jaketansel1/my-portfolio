@@ -3,6 +3,7 @@ import SiteFooter from "../../components/SiteFooter";
 import HeroShuffle from "../../components/HeroShuffle";
 import SideGrid from "../../components/SideGrid";
 import SiteHeader from "../../components/SiteHeader";
+import StickyNav from "../../components/StickyNav";
 import { career, heroPhotos, sides } from "../data/about";
 import home from "../home.module.css";
 import styles from "./about.module.css";
@@ -19,9 +20,11 @@ const pad = (n: number) => String(n).padStart(2, "0");
 export default function AboutPage() {
   return (
     <div className={home.home}>
-      <div className={home.container}>
-        <SiteHeader editorial current="about" />
-      </div>
+      <StickyNav>
+        <div className={home.container}>
+          <SiteHeader editorial current="about" />
+        </div>
+      </StickyNav>
 
       <main id="main-content">
         <section className={`${home.container} ${styles.intro}`} aria-labelledby="about-heading">

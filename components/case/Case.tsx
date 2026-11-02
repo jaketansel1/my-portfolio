@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import SiteFooter from "../SiteFooter";
 import SiteHeader from "../SiteHeader";
 import ShowcaseVideo from "../ShowcaseVideo";
+import StickyNav from "../StickyNav";
 import { Browser as DeviceBrowser, Phone as DevicePhone } from "../ui/Device";
 import home from "../../app/home.module.css";
 import styles from "./Case.module.css";
@@ -52,19 +53,24 @@ export function CasePage({
   children: ReactNode;
 }) {
   // The editorial header reads --home-ink / --home-muted, so it follows the opening tone.
+  // Background and colour are set inline too: .home (paper) and .page have equal specificity, so in
+  // CSS alone whichever stylesheet loads last wins, and a cold load could paint the page as paper.
   const header = {
     ...toneStyle(tone),
+    background: tone.bg,
+    color: tone.fg,
     "--home-ink": tone.fg,
     "--home-muted": tone.muted ?? `color-mix(in srgb, ${tone.fg} 62%, transparent)`,
     ...(maxWidth ? { "--case-max": maxWidth } : {}),
   } as CSSProperties;
   return (
     <div className={`${home.home} ${styles.page} ${className ?? ""}`} style={header} data-contained={maxWidth ? "" : undefined}>
-      <div className={styles.headerBand}>
+      {/* Long pages: the header steps aside while reading down and comes back on the way up. */}
+      <StickyNav hideOnScroll className={styles.headerBand}>
         <div className={home.container}>
           <SiteHeader editorial current="work" />
         </div>
-      </div>
+      </StickyNav>
       <main id="main-content">
         <article>{children}</article>
       </main>

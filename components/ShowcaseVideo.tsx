@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 /**
  * Silent looping screen recording. Plays only while on screen, and never with reduced
  * motion, where the poster stands in.
  */
-export default function ShowcaseVideo({ src, poster, className }: { src: string; poster: string; className?: string }) {
+export default function ShowcaseVideo({
+  src,
+  poster,
+  className,
+  style,
+}: {
+  src: string;
+  poster: string;
+  className?: string;
+  style?: CSSProperties;
+}) {
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -25,6 +35,7 @@ export default function ShowcaseVideo({ src, poster, className }: { src: string;
     <video
       ref={ref}
       className={className}
+      style={style}
       src={src}
       poster={poster}
       muted

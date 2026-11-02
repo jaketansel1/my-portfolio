@@ -22,9 +22,11 @@
 
 .caseNav {
   position: sticky;
-  top: 0;
+  /* Sits beneath the global header while it's showing, and moves up with it when it hides. */
+  top: var(--site-nav-offset, 0px);
   align-self: start;
   z-index: 20;
+  transition: top 260ms var(--case-ease);
   padding-block: clamp(40px, 7vh, 104px) 32px;
 }
 .caseNavInner { display: grid; gap: 32px; }
@@ -77,6 +79,7 @@
   transition: transform 350ms var(--case-ease);
   content: "";
 }
+.caseNav a[data-sub] { padding-block: 7px; padding-left: 32px; font-size: 14.5px; }
 .caseNav a:hover,
 .caseNav a[aria-current] { color: var(--fg); }
 .caseNav a[aria-current] span { opacity: 1; color: var(--accent); }
@@ -159,7 +162,8 @@
 }
 .heroTitle {
   max-width: 15ch;
-  font-size: var(--text-1);
+  /* A case study can scale its headline by setting --hero-title on the layout. */
+  font-size: var(--hero-title, var(--text-1));
   font-weight: 500;
   line-height: 0.94;
   letter-spacing: -0.05em;
@@ -205,6 +209,17 @@
   content: "";
 }
 .heroFigure { margin-top: clamp(44px, 4.5vw, 72px); }
+
+/* Initiative opener: a step down from the page hero, a step up from a chapter. */
+.opener { padding-top: clamp(88px, 9vw, 152px); }
+.openerTitle {
+  max-width: 17ch;
+  font-size: clamp(36px, 4vw, 70px);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
 
 /* ---------- Insight ---------- */
 
@@ -346,6 +361,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .caseNav { transition: none; }
   .caseNav a::before { transition: none; }
 }
 
@@ -377,7 +393,8 @@
     scrollbar-width: none;
   }
   .caseNav ol::-webkit-scrollbar { display: none; }
-  .caseNav a { min-height: 48px; padding: 0 10px; align-items: center; font-size: 14px; }
+  .caseNav a,
+  .caseNav a[data-sub] { min-height: 48px; padding: 0 10px; align-items: center; font-size: 14px; }
   .caseNav a::before {
     top: auto;
     right: 10px;

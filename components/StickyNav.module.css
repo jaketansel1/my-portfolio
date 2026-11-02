@@ -1,0 +1,34 @@
+/*
+ * Sticky global header band. Transparent at the top of the page, so it looks exactly as it does in
+ * flow; once scrolled, a faint translucent wash of the page colour, a light blur and a hairline.
+ * Colour follows the page: a case study's --bg / --rule, otherwise the paper tokens.
+ */
+
+.bar {
+  --nav-bg: var(--bg, var(--home-paper));
+  --nav-rule: var(--rule, var(--home-rule));
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid transparent;
+  transition:
+    translate 260ms var(--ease),
+    opacity 260ms var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+.bar[data-scrolled] {
+  border-bottom-color: color-mix(in srgb, var(--nav-rule) 70%, transparent);
+  background-color: color-mix(in srgb, var(--nav-bg) 84%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+.bar[data-hidden] {
+  translate: 0 -100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+}

@@ -38,7 +38,7 @@ const SCENES: Scene[] = [
 ];
 const PROJECTS = SCENES.filter((s) => s.label);
 /** Hero second line: what I do, then a nudge towards the work. */
-const HERO_LINES = ["who builds and ships.", "scroll to see what I’ve built ↓"];
+const HERO_LINES = ["who builds and ships.", "scroll to see my work ↓"];
 /** Share of each transition segment spent settled at either end. */
 const HOLD = 0.32;
 const IMMERSIVE = "(min-width: 900px) and (prefers-reduced-motion: no-preference)";
@@ -429,7 +429,7 @@ export default function HomeStage() {
                 title="LickLibrary"
                 href="/work/licklibrary"
                 meta="Product design · Frontend · 2026–now"
-                line="Redesigning and rebuilding an established guitar-learning platform, one part at a time."
+                line="Redesigning and shipping new experiences across an established guitar-learning platform."
                 className={styles.llInfo}
               />
             </section>

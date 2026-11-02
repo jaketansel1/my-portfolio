@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import SiteFooter from "../../components/SiteFooter";
 import { Browser as DeviceBrowser, Phone as DevicePhone } from "../../components/ui/Device";
 import SiteHeader from "../../components/SiteHeader";
+import StickyNav from "../../components/StickyNav";
 import { projects, type Project } from "../data/projects";
 import home from "../home.module.css";
 import styles from "./work.module.css";
@@ -173,9 +174,11 @@ const keyOf = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
 export default function WorkPage() {
   return (
     <div className={home.home}>
-      <div className={home.container}>
-        <SiteHeader editorial current="work" />
-      </div>
+      <StickyNav>
+        <div className={home.container}>
+          <SiteHeader editorial current="work" />
+        </div>
+      </StickyNav>
 
       <main id="main-content">
         <section className={`${home.container} ${styles.intro}`} aria-labelledby="work-heading">

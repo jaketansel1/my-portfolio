@@ -1,5 +1,5 @@
 /*
- * LickLibrary: Mega Menu case study. Layout, rail, chapters and shared pieces come from
+ * LickLibrary: the wider redesign, and the Mega Menu deep dive. Layout, rail, chapters and shared pieces come from
  * components/case/Chapters; this file holds the project's own diagrams and showcases.
  */
 
@@ -63,10 +63,10 @@
 .coverage strong { font-size: 15px; font-weight: 500; }
 .coverage span { color: var(--muted); font-size: 13px; }
 
-/* Build: the route to production. */
+/* Delivery: the route from brief to production. */
 .pipeline {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
   list-style: none;
 }
@@ -129,44 +129,151 @@
 .phone video { display: block; width: 100%; aspect-ratio: 9 / 19.5; object-fit: cover; border-radius: clamp(14px, 1.6vw, 26px); }
 .phone :global(img) { border-radius: clamp(14px, 1.6vw, 26px); }
 
-/* ---------- What's next ---------- */
+/* ---------- Overview: platform scale and the initiative navigator ---------- */
 
-.progress {
+/* About 13% under the shared case-study headline, so the hero leads without crowding the page. */
+.layout { --hero-title: clamp(36px, 3.85vw, 70px); }
+
+.overviewMeta { display: grid; gap: clamp(40px, 4vw, 64px); }
+.metaLabel {
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.platform {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--col-gap);
+  gap: 24px var(--col-gap);
+}
+.platform > div,
+.results > div { padding-top: 16px; border-top: 1px solid var(--rule); }
+/* LickLibrary's own scale: kept a clear step below the hero and the Mega Menu's Impact figures. */
+.platform dd {
+  font-size: clamp(22px, 1.9vw, 30px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+.platform dt,
+.results dt { margin-top: 10px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+.platform dt { margin-top: 8px; font-size: 13px; }
+
+.navigator {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px var(--col-gap);
   list-style: none;
 }
-.progress li { position: relative; }
-.progress li:not(:last-child)::after {
-  position: absolute;
-  top: calc(50% - 24px);
-  right: calc(var(--col-gap) / -2 - 7px);
-  color: var(--muted);
-  content: "→";
+.navigator a,
+.navigator li > div {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  height: 100%;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
 }
-.progressMedia {
+.navigator a { border-top-color: var(--accent); }
+.navigator a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.navTitle { display: flex; gap: 8px; align-items: baseline; padding-right: 20px; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+.navTitle span { color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: 12px; font-weight: 400; }
+.navigator a .navTitle span { color: var(--accent); }
+.navArrow {
+  position: absolute;
+  top: 16px;
+  right: 0;
+  color: var(--muted);
+  transition: translate 300ms var(--case-ease), color 200ms ease;
+}
+.navigator a:hover .navArrow { translate: 0 3px; color: var(--fg); }
+
+/* Status: a dot and a word. Live is green, in progress takes the accent, the rest stay quiet. */
+.status { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; }
+.status::before { flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; content: ""; }
+.status[data-status="live"] { color: #5fd38d; }
+.status[data-status="live"]::before { box-shadow: 0 0 0 3px rgb(95 211 141 / 0.18); }
+.status[data-status="progress"] { color: var(--accent); }
+.status[data-status="next"]::before { background: transparent; box-shadow: inset 0 0 0 1px currentColor; }
+
+/* ---------- Impact ---------- */
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px var(--col-gap);
+}
+.results dd {
+  font-size: clamp(30px, 3vw, 48px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+/* Placeholder figures, until analytics are in. */
+.results [data-pending] dd { color: var(--muted); }
+
+/* ---------- Admin: customer experience → content system → admin tooling ---------- */
+
+.layers ol { display: grid; gap: 28px; list-style: none; }
+.layers li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 15rem) minmax(0, 1fr);
+  gap: 8px 16px;
+  align-items: baseline;
+  padding: 18px 20px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.04);
+}
+.layers li:last-child { background: rgb(238 114 103 / 0.12); }
+.layers li:not(:last-child)::after {
+  position: absolute;
+  bottom: -25px;
+  left: 20px;
+  color: var(--muted);
+  font-size: 14px;
+  content: "↓";
+}
+.layers strong { font-size: clamp(18px, 1.5vw, 22px); font-weight: 500; letter-spacing: -0.02em; }
+.layers li > span:last-child { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+/* ---------- What's next: previews of the initiatives still to come ---------- */
+
+.upcoming {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px var(--col-gap);
+  list-style: none;
+}
+.upcomingMedia {
   overflow: hidden;
   aspect-ratio: 16 / 10;
   border: 1px solid var(--rule);
   border-radius: 10px;
   background: var(--panel);
 }
-.progressMedia[data-empty] {
-  background: repeating-linear-gradient(135deg, transparent 0 12px, rgb(255 255 255 / 0.03) 12px 13px), #121213;
+.upcomingMedia[data-empty] { display: grid; place-items: center; }
+.upcomingMedia[data-empty] span {
+  color: color-mix(in srgb, var(--fg) 14%, transparent);
+  font-size: clamp(48px, 5vw, 88px);
+  font-weight: 500;
+  letter-spacing: -0.05em;
 }
-.progress li[data-state="later"] .progressMedia { border-style: dashed; }
-.progress p {
+.upcomingHead {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: baseline;
+  margin-top: 18px;
   font-size: 16px;
 }
-.progress strong { font-weight: 500; }
-.progress span { color: var(--muted); font-size: 14px; }
-.progress li[data-state="done"] span { color: #5fd38d; }
-.progress li[data-state="next"] span { color: var(--accent); }
+.upcomingHead > span:first-child { color: var(--accent); font-family: var(--font-geist-mono), monospace; font-size: 12px; }
+.upcomingHead strong { font-weight: 500; }
+.upcomingHead .status { margin-left: auto; }
+.upcomingLine { max-width: 34ch; margin-top: 6px; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
 /* ---------- Problem: annotated old navigation ---------- */
 
@@ -517,6 +624,7 @@
 
 @media (max-width: 1100px) {
   .caps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pipeline { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 @media (max-width: 800px) {
@@ -529,14 +637,17 @@
   .issues { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .example ol { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
   .example li:nth-child(2)::after { display: none; }
-  .pipeline { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .navigator,
+  .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .layers li { grid-template-columns: 32px minmax(0, 1fr); }
+  .layers li > span:last-child { grid-column: 2; }
   .explorerMeta { grid-template-columns: minmax(0, 1fr); }
   .tiers { padding-inline: clamp(16px, 4vw, 28px); }
 }
 
 @media (max-width: 600px) {
-  .progress { grid-template-columns: minmax(0, 1fr); }
-  .progress li::after { display: none; }
+  .platform,
+  .upcoming { grid-template-columns: minmax(0, 1fr); }
   .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pipeline li { min-height: 96px; }
   .tiers { gap: 12px; padding: 16px; }
