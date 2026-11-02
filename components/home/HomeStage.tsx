@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, type CSSProperties, type ReactNode } fr
 import SiteHeader from "../SiteHeader";
 import { Browser, Phone } from "../ui/Device";
 import TypedLine from "./TypedLine";
+import ShowcaseVideo from "../ShowcaseVideo";
 import { contact } from "../../app/data/contact";
 import home from "../../app/home.module.css";
 import styles from "./HomeStage.module.css";
@@ -134,10 +135,6 @@ export default function HomeStage() {
       els.forEach((el, k) => {
         if (!el) return;
         el.toggleAttribute("data-active", k === i);
-        for (const video of el.querySelectorAll("video")) {
-          if (k === i) video.play().catch(() => {});
-          else video.pause();
-        }
       });
       headerRef.current?.setAttribute("data-theme", SCENES[i].theme);
       markersRef.current?.setAttribute("data-theme", SCENES[i].theme);
@@ -152,7 +149,10 @@ export default function HomeStage() {
     const update = () => {
       frame = 0;
       if (!immersive()) {
-        els.forEach((el) => el?.removeAttribute("style"));
+        els.forEach((el) => {
+          el?.removeAttribute("style");
+          el?.removeAttribute("data-video-near");
+        });
         setActive(0);
         return;
       }
@@ -170,6 +170,7 @@ export default function HomeStage() {
         el.style.setProperty("--a", Math.abs(t).toFixed(4));
         el.style.setProperty("--in", Math.max(0, -t).toFixed(4));
         el.style.setProperty("--out", Math.max(0, t).toFixed(4));
+        el.toggleAttribute("data-video-near", p > 0 && Math.abs(p - i) < 1);
       });
       setActive(Math.round(p));
     };
@@ -421,7 +422,7 @@ export default function HomeStage() {
               <Layer m={{ xi: "14vw", yi: "4vh", xo: "-4vw", yo: "-10vh", s: 0.06 }} className={styles.llBrowser}>
                 <Browser url="licklibrary.com/learn" scheme="dark">
                   <div className={styles.videoBox} style={{ aspectRatio: "16 / 9" }}>
-                    <video src="/licklibrary/ll-video.mp4" poster="/case/licklibrary/live-learn.webp" muted loop playsInline preload="metadata" aria-hidden="true" />
+                    <ShowcaseVideo src="/licklibrary/ll-video.mp4" webmSrc="/licklibrary/ll-video.webm" poster="/licklibrary/ll-video-poster.webp" width={1280} height={720} sceneControlled />
                   </div>
                 </Browser>
               </Layer>
@@ -440,8 +441,8 @@ export default function HomeStage() {
               <SceneLink href="/work/crumble-and-co" />
               <Layer m={{ xi: "12vw", xo: "6vw", yo: "-12vh", s: 0.05 }} className={styles.crBrowser}>
                 <Browser url="crumbleandco.club" scheme="light">
-                  <div className={styles.videoBox} style={{ aspectRatio: "16 / 9.1" }}>
-                    <video src="/crumble-and-co/crumble-video.mp4" poster="/crumble-and-co/crumble-video-poster.webp" muted loop playsInline preload="none" aria-hidden="true" />
+                  <div className={styles.videoBox} style={{ aspectRatio: "16 / 9" }}>
+                    <ShowcaseVideo src="/crumble-and-co/crumble-video.mp4" webmSrc="/crumble-and-co/crumble-video.webm" poster="/crumble-and-co/crumble-video-poster.webp" sceneControlled />
                   </div>
                 </Browser>
               </Layer>

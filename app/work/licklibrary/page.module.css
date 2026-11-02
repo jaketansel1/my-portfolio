@@ -126,7 +126,7 @@
 }
 .phonePlaceholder { border-radius: clamp(14px, 1.6vw, 26px); }
 .phone { padding: 3%; background: #050506; box-shadow: 0 50px 90px -50px rgb(0 0 0 / 0.9); }
-.phone video { display: block; width: 100%; aspect-ratio: 9 / 19.5; object-fit: cover; border-radius: clamp(14px, 1.6vw, 26px); }
+.phone video { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; border-radius: clamp(14px, 1.6vw, 26px); }
 .phone :global(img) { border-radius: clamp(14px, 1.6vw, 26px); }
 
 /* ---------- Overview: platform scale and the initiative navigator ---------- */
@@ -134,9 +134,54 @@
 /* About 13% under the shared case-study headline, so the hero leads without crowding the page. */
 .layout { --hero-title: clamp(36px, 3.85vw, 70px); }
 
-.overviewMeta { display: grid; gap: clamp(40px, 4vw, 64px); }
+.layout .megaMenuFigure {
+  width: min(100%, 880px);
+  margin-inline: auto;
+}
+
+.layout .megaMenuVideo video {
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Overview grouping is local to LickLibrary; shared chapters and navigation stay intact. */
+.layout section[id="overview"] { padding-bottom: clamp(48px, 5vw, 80px); }
+.layout section[id="overview"] > dl {
+  grid-template-columns: 1.15fr 1.4fr 0.8fr 1.3fr;
+  gap: 0;
+  margin-top: clamp(36px, 4vw, 56px);
+  padding-top: 0;
+  border-top: 0;
+}
+.layout section[id="overview"] > dl > div { min-width: 0; padding-inline: 20px; }
+.layout section[id="overview"] > dl > div:first-child { padding-left: 0; }
+.layout section[id="overview"] > dl > div:last-child { padding-right: 0; }
+.layout section[id="overview"] > dl > div + div { border-left: 1px solid var(--rule); }
+.layout section[id="mega-menu"] > dl {
+  margin-top: clamp(24px, 2.5vw, 36px);
+  padding-top: 16px;
+  row-gap: 16px;
+}
+.layout section[id="overview"] > div:last-child { margin-top: clamp(36px, 4vw, 56px); }
+.layout section[id="mega-menu"] { padding-top: clamp(40px, 4vw, 64px); }
+
+.overviewMeta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: clamp(32px, 3.5vw, 48px);
+  align-items: start;
+}
+.overviewMeta > * { min-width: 0; }
+.platformPanel {
+  grid-column: 1 / -1;
+  padding: clamp(24px, 2.5vw, 36px);
+  border: 1px solid var(--rule);
+  border-radius: clamp(10px, 1vw, 16px);
+  background: var(--panel);
+}
+.platformPanel > .metaLabel { margin-bottom: 24px; }
 .metaLabel {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
@@ -146,9 +191,12 @@
 .platform {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px var(--col-gap);
+  gap: 0;
 }
-.platform > div,
+.platform > div { min-width: 0; padding-inline: clamp(20px, 3vw, 40px); }
+.platform > div:first-child { padding-left: 0; }
+.platform > div:last-child { padding-right: 0; }
+.platform > div + div { border-left: 1px solid var(--rule); }
 .results > div { padding-top: 16px; border-top: 1px solid var(--rule); }
 /* LickLibrary's own scale: kept a clear step below the hero and the Mega Menu's Impact figures. */
 .platform dd {
@@ -161,30 +209,45 @@
 .results dt { margin-top: 10px; color: var(--muted); font-size: 14px; line-height: 1.4; }
 .platform dt { margin-top: 8px; font-size: 13px; }
 
+.businessModel > p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.businessModel h2 { font-weight: 400; }
+.businessTitle { margin-bottom: 6px; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+
 .navigator {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px var(--col-gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   list-style: none;
 }
 .navigator a,
 .navigator li > div {
   position: relative;
   display: grid;
-  gap: 8px;
+  align-content: start;
+  gap: 12px;
   height: 100%;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
+  padding: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--panel);
 }
-.navigator a { border-top-color: var(--accent); }
+.navigator a {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--panel));
+}
 .navigator a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.navTitle { display: flex; gap: 8px; align-items: baseline; padding-right: 20px; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
-.navTitle span { color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: 12px; font-weight: 400; }
+.navTitle { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+.navigator a .navTitle { padding-right: 12px; }
+.navTitle span { flex: none; color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: 12px; font-weight: 400; }
 .navigator a .navTitle span { color: var(--accent); }
 .navArrow {
   position: absolute;
   top: 16px;
-  right: 0;
+  right: 12px;
   color: var(--muted);
   transition: translate 300ms var(--case-ease), color 200ms ease;
 }
@@ -275,51 +338,54 @@
 .upcomingHead .status { margin-left: auto; }
 .upcomingLine { max-width: 34ch; margin-top: 6px; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
-/* ---------- Problem: annotated old navigation ---------- */
+/* ---------- Problem: original navigation and concise findings ---------- */
 
-.annotated { margin: 0; }
-.annotatedMedia { position: relative; }
-.pin {
-  position: absolute;
+.layout section[id="problem"] { padding-block: clamp(40px, 4vw, 64px); }
+.layout section[id="problem"] > header { margin-bottom: clamp(20px, 2vw, 28px); }
+.layout section[id="problem"] > header > h2 { max-width: none; }
+.layout section[id="problem"] > header > div { max-width: 58ch; margin-top: 16px; }
+.beforeExamples {
   display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #0a0a0a;
-  box-shadow: 0 0 0 6px rgb(238 114 103 / 0.18);
-  font-family: var(--font-geist-mono), monospace;
+  grid-template-columns: minmax(0, 3.2fr) minmax(0, 1fr);
+  gap: 10px var(--col-gap);
+  align-items: end;
+  margin: 0;
+}
+.beforeCaption {
+  grid-column: 2;
+  color: var(--muted);
   font-size: 12px;
-  font-weight: 600;
+  line-height: 1.5;
 }
 .issues {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px var(--col-gap);
-  margin-top: 20px;
+  gap: 16px var(--col-gap);
+  margin-top: 28px;
+  padding-block: 4px;
   list-style: none;
 }
 .issues li {
   display: flex;
   gap: 10px;
   align-items: baseline;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: 15px;
   line-height: 1.4;
 }
 .issues span { color: var(--accent); font-family: var(--font-geist-mono), monospace; font-size: 12px; }
 
 /* Problem: the reasoning beside a simple comparison. */
+.layout section[id="problem"] > blockquote {
+  max-width: 28ch;
+  margin-block: clamp(40px, 4vw, 56px);
+  font-size: clamp(20px, 1.97vw, 33px);
+}
 .reasoning {
   display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-  gap: var(--col-gap);
-  align-items: center;
-  margin-top: clamp(48px, 5vw, 80px);
-  padding-top: clamp(28px, 3vw, 44px);
-  border-top: 1px solid var(--rule);
+  gap: 28px;
 }
+.reasoningText { max-width: 62ch; }
 .reasoningText h3 {
   font-size: clamp(22px, 1.9vw, 30px);
   font-weight: 500;
@@ -330,27 +396,19 @@
 .reasoningText p { margin-top: 14px; color: var(--muted); font-size: 15px; line-height: 1.6; }
 .compare {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.4fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: center;
+  max-width: 760px;
 }
-.option {
-  margin: 0;
-  padding: 20px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--panel);
-}
-.option[data-chosen="true"] { border-color: rgb(238 114 103 / 0.45); }
-.option figcaption { display: grid; gap: 2px; margin-bottom: 18px; }
-.option figcaption strong { font-size: 15px; font-weight: 500; }
-.option figcaption span { color: var(--muted); font-size: 13px; }
-.option[data-chosen="false"] .optionArt { opacity: 0.55; }
-.optionArt { display: grid; gap: 10px; }
-.linkRow { display: flex; gap: 10px; align-items: center; }
-.linkRow b { flex: none; width: 18px; height: 18px; border-radius: 4px; background: rgb(255 255 255 / 0.14); }
+.approachTitle { font-size: 15px; font-weight: 500; }
+.compareArrow { color: var(--accent); font-size: 24px; }
+.linkList { display: grid; gap: 12px; margin-top: 24px; opacity: 0.55; }
+.linkRow { display: flex; align-items: center; }
 .linkRow i { height: 8px; border-radius: 4px; background: rgb(255 255 255 / 0.2); }
-.typeRow { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; }
-.typeRow em { color: var(--muted); font-size: 11px; font-style: normal; }
+.contentTypes { display: grid; gap: 12px; margin-top: 24px; }
+.typeRow { display: grid; grid-template-columns: 100px 1fr; gap: 10px; align-items: center; }
+.typeRow dt { color: var(--muted); font-size: 12px; }
 .squares,
 .circles,
 .steps { display: flex; gap: 6px; }
@@ -622,12 +680,22 @@
 
 /* ---------- Responsive ---------- */
 
+@media (min-width: 1600px) {
+  .navigator { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
 @media (max-width: 1100px) {
   .caps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .pipeline { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 @media (max-width: 800px) {
+  .overviewMeta { grid-template-columns: minmax(0, 1fr); }
+  .layout section[id="overview"] > dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 24px;
+  }
+  .layout section[id="overview"] > dl > div:nth-child(3) { padding-left: 0; border-left: 0; }
   .levels { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; }
   .levels li:nth-child(2)::after { display: none; }
   .coverage ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -646,6 +714,14 @@
 }
 
 @media (max-width: 600px) {
+  .beforeExamples { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .beforeExamples > :nth-child(2) { width: min(100%, 260px); justify-self: center; }
+  .beforeCaption { grid-column: 1; max-width: 260px; justify-self: center; margin-top: -14px; }
+  .layout section[id="overview"] > dl { grid-template-columns: minmax(0, 1fr); }
+  .layout section[id="overview"] > dl > div { padding-inline: 0; border-left: 0; }
+  .platform { gap: 24px; }
+  .platform > div { padding-inline: 0; border-left: 0; }
+  .platform > div + div { border-left: 0; }
   .platform,
   .upcoming { grid-template-columns: minmax(0, 1fr); }
   .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -659,6 +735,7 @@
   .example ol { grid-template-columns: minmax(0, 1fr); }
   .example li::after { display: none; }
   .compare { grid-template-columns: minmax(0, 1fr); }
+  .compareArrow { rotate: 90deg; justify-self: start; }
   .caps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .issues { grid-template-columns: minmax(0, 1fr); }
   .tierLabel strong { font-size: 16px; }

@@ -252,7 +252,7 @@ export function Browser({
 }: {
   url: string;
   shot?: Shot;
-  video?: { src: string; poster: string; width: number; height: number };
+  video?: { src: string; webmSrc?: string; poster: string; width: number; height: number };
   scheme?: "dark" | "light";
   /** Crop the screen to this ratio instead of showing the whole screenshot. */
   aspect?: string;
@@ -263,8 +263,8 @@ export function Browser({
   return (
     <DeviceBrowser url={url} scheme={scheme} className={className}>
       {video ? (
-        <div className={styles.browserVideo} style={{ aspectRatio: aspect ?? `${video.width} / ${video.height}` }}>
-          <ShowcaseVideo src={video.src} poster={video.poster} />
+        <div className={styles.browserVideo} style={{ aspectRatio: `${video.width} / ${video.height}` }}>
+          <ShowcaseVideo src={video.src} webmSrc={video.webmSrc} poster={video.poster} width={video.width} height={video.height} />
         </div>
       ) : shot ? (
         <Img {...shot} aspect={aspect} position={position} priority={priority} />

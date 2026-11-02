@@ -18,6 +18,7 @@ import {
   type Chapter,
 } from "../../../components/case/Chapters";
 import MenuExplorer from "./MenuExplorer";
+import ShowcaseVideo from "../../../components/ShowcaseVideo";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -55,9 +56,9 @@ const [overview, megaMenu, problem, system, experience, admin, impact, delivery,
  * Placeholders until the real figures are confirmed: just replace the values.
  */
 const platform = [
-  { value: "XXk+", label: "Members" },
-  { value: "XXk+", label: "Lessons & courses" },
-  { value: "XX+ years", label: "Guitar education" },
+  { value: "5,000+", label: "Active members" },
+  { value: "~10,000", label: "Lessons & courses" },
+  { value: "34 years", label: "Guitar education" },
 ];
 
 type Status = "live" | "progress" | "next" | "ongoing";
@@ -112,12 +113,11 @@ const menus = [
   { key: "tutors", title: "Tutors", src: `${LL}/mega-tutors.webp`, source: "Prototype", tabs: "Single view", blocks: ["Browse", "Featured tutors with lesson counts"] },
 ];
 
-// Issues called out on the old navigation. x / y place each marker over the screenshot (percent).
-const oldNavIssues = [
-  { text: "Text-heavy navigation", x: 18, y: 22 },
-  { text: "Limited visual hierarchy", x: 80, y: 24 },
-  { text: "Lots of content competing for attention", x: 82, y: 76 },
-  { text: "Important content hard to surface", x: 20, y: 78 },
+const oldNavFindings = [
+  "Text-heavy navigation",
+  "Limited visual hierarchy",
+  "Too many competing choices",
+  "Key content buried",
 ];
 
 // Menu → Tab → Block → Item, and the same path through the live Guitar Lessons menu.
@@ -300,7 +300,7 @@ export default function LickLibraryCaseStudy() {
           ]}
         >
           <div className={styles.overviewMeta}>
-            <div>
+            <div className={styles.platformPanel}>
               <p className={styles.metaLabel}>Platform at a glance</p>
               <dl className={styles.platform}>
                 {platform.map((item) => (
@@ -310,6 +310,14 @@ export default function LickLibraryCaseStudy() {
                   </div>
                 ))}
               </dl>
+            </div>
+            <div className={styles.businessModel}>
+              <h2 className={styles.metaLabel}>Business model</h2>
+              <h3 className={styles.businessTitle}>Membership + individual purchases</h3>
+              <p>
+                Subscribers can access the wider catalogue through membership, while courses and lessons can also be purchased
+                individually.
+              </p>
             </div>
             <nav aria-label="LickLibrary work">
               <p className={styles.metaLabel}>The work so far</p>
@@ -357,95 +365,88 @@ export default function LickLibraryCaseStudy() {
             </p>
           }
           facts={[
-            { label: "Role", value: "Product Design · UX/UI · Frontend Development" },
-            { label: "Scope", value: "Navigation · Responsive UX · Admin tooling · Production delivery" },
-            { label: "Status", value: "Live on licklibrary.com", live: true },
+            { label: "Scope", value: "UX/UI · Frontend · Admin" },
+            { label: "Shipped", value: "2026" },
+            { label: "Status", value: "Live", live: true },
           ]}
         >
-          <Figure caption="The Guitar Lessons mega menu, live on licklibrary.com.">
-            <Browser url="licklibrary.com" shot={shot(`${LL}/live-mega-lessons.webp`, "The LickLibrary Guitar Lessons mega menu")} aspect="16 / 9.4" priority />
+          <Figure caption="The Guitar Lessons mega menu, live on licklibrary.com." className={styles.megaMenuFigure}>
+            <Browser url="licklibrary.com" video={{ src: "/licklibrary/mega-menu.mp4", webmSrc: "/licklibrary/mega-menu.webm", poster: "/licklibrary/mega-menu-poster.webp", width: 1920, height: 1080 }} className={styles.megaMenuVideo} />
           </Figure>
         </ChapterOpener>
 
         {/* ───────── 1.1 Problem: old navigation → problems → insight → reasoning ───────── */}
         <ChapterSection
           chapter={problem}
-          title="Too much content. Not enough hierarchy."
+          title={<>Too much content.<br />Not enough hierarchy.</>}
           intro={
             <p>
-              Lessons, courses, artists, tutors and backing tracks had outgrown a navigation made of text. The brief: make it
-              more visual, with ASOS as the reference.
+              As LickLibrary&apos;s catalogue grew, its navigation became increasingly dense and difficult to scan. The brief was
+              simple: make discovery more visual, using ASOS as an initial reference.
             </p>
           }
         >
-          <figure className={styles.annotated}>
-            <div className={styles.annotatedMedia}>
-              <Placeholder label="Old navigation" note="The text-heavy menu before the redesign, open on a dense section." aspect="16 / 8" />
-              {oldNavIssues.map((issue, i) => (
-                <span key={issue.text} className={styles.pin} style={{ left: `${issue.x}%`, top: `${issue.y}%` }} aria-hidden="true">
-                  {i + 1}
-                </span>
-              ))}
-            </div>
+          <div>
+            <figure className={styles.beforeExamples}>
+              <Img {...shot(`${LL}/mega-menu-before.webp`, "LickLibrary's old desktop navigation, with dense columns of text links for guitar lessons", 1585, 992)} />
+              <Img {...shot(`${LL}/mobile-menu-before.webp`, "LickLibrary's old mobile navigation showing stacked expandable text categories", 852, 1846)} />
+              <figcaption className={styles.beforeCaption}>The previous mobile navigation, with Guitar Lessons expanded.</figcaption>
+            </figure>
             <ol className={styles.issues}>
-              {oldNavIssues.map((issue, i) => (
-                <li key={issue.text}>
-                  <span>{i + 1}</span>
-                  {issue.text}
+              {oldNavFindings.map((finding, i) => (
+                <li key={finding}>
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  {finding}
                 </li>
               ))}
             </ol>
-          </figure>
+          </div>
 
-          <Insight label="Key insight">Rather than adding imagery to the old menu, I saw a chance to turn navigation into a discovery experience.</Insight>
+          <Insight label="Key insight">Rather than adding imagery to the old menu, I saw an opportunity to turn navigation into a discovery experience.</Insight>
 
           <div className={styles.reasoning}>
             <div className={styles.reasoningText}>
               <h3>Why not just make the existing menu prettier?</h3>
               <p>
-                The catalogue holds fundamentally different things: courses, artists, lessons, tutors, learning paths. Treating
-                each as another link wouldn&rsquo;t fix discovery.
+                The catalogue contains fundamentally different content &mdash; courses, artists, lessons, tutors and learning paths.
+                Treating everything as another text link wouldn&rsquo;t solve discovery.
               </p>
             </div>
-            <div className={styles.compare}>
-              <figure className={styles.option} data-chosen="false">
-                <figcaption>
-                  <strong>Prettier links</strong>
-                  <span>Every item looks the same</span>
-                </figcaption>
-                <div className={styles.optionArt} aria-hidden="true">
+            <div className={styles.compare} role="group" aria-label="From uniform links to content-led presentation">
+              <div className={styles.oldApproach}>
+                <p className={styles.metaLabel}>Old approach</p>
+                <p className={styles.approachTitle}>Everything treated as a link</p>
+                <div className={styles.linkList} aria-hidden="true">
                   {Array.from({ length: 6 }, (_, i) => (
                     <span key={i} className={styles.linkRow}>
-                      <b />
                       <i style={{ width: `${[62, 48, 70, 54, 66, 44][i]}%` }} />
                     </span>
                   ))}
                 </div>
-              </figure>
-              <figure className={styles.option} data-chosen="true">
-                <figcaption>
-                  <strong>Content-led discovery</strong>
-                  <span>Each type shown its own way</span>
-                </figcaption>
-                <div className={styles.optionArt} aria-hidden="true">
-                  <span className={styles.typeRow}>
-                    <em>Courses</em>
-                    <span className={styles.squares}><b /><b /><b /></span>
-                  </span>
-                  <span className={styles.typeRow}>
-                    <em>Artists</em>
-                    <span className={styles.circles}><b /><b /><b /></span>
-                  </span>
-                  <span className={styles.typeRow}>
-                    <em>Lessons</em>
-                    <span className={styles.lines}><i /><i /></span>
-                  </span>
-                  <span className={styles.typeRow}>
-                    <em>Paths</em>
-                    <span className={styles.steps}><b /><b /><b /><b /></span>
-                  </span>
-                </div>
-              </figure>
+              </div>
+              <span className={styles.compareArrow} aria-hidden="true">&rarr;</span>
+              <div>
+                <p className={styles.metaLabel}>New approach</p>
+                <p className={styles.approachTitle}>Content determines presentation</p>
+                <dl className={styles.contentTypes}>
+                  <div className={styles.typeRow}>
+                    <dt>Courses</dt>
+                    <dd className={styles.squares} role="img" aria-label="Cards"><b /><b /><b /></dd>
+                  </div>
+                  <div className={styles.typeRow}>
+                    <dt>Artists</dt>
+                    <dd className={styles.circles} role="img" aria-label="Circular imagery"><b /><b /><b /></dd>
+                  </div>
+                  <div className={styles.typeRow}>
+                    <dt>Lessons</dt>
+                    <dd className={styles.lines} role="img" aria-label="Compact rows"><i /><i /></dd>
+                  </div>
+                  <div className={styles.typeRow}>
+                    <dt>Learning paths</dt>
+                    <dd className={styles.steps} role="img" aria-label="Progression through steps"><b /><b /><b /><b /></dd>
+                  </div>
+                </dl>
+              </div>
             </div>
           </div>
         </ChapterSection>
@@ -518,7 +519,7 @@ export default function LickLibraryCaseStudy() {
                   </p>
                   <div className={styles.phone}>
                     {tier.video ? (
-                      <video src={tier.video} autoPlay muted loop playsInline />
+                      <ShowcaseVideo src={tier.video} poster={tier.src ?? `${LL}/live-mobile-menu.webp`} width={900} height={1948} />
                     ) : tier.src ? (
                       <Img {...shot(tier.src, `${tier.step}: ${tier.line.toLowerCase()}`, 900, 1948)} aspect="9 / 19.5" position="top" />
                     ) : (

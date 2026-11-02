@@ -16,8 +16,8 @@ export type Side = {
    * card's colour instead, until a photo is added.
    */
   photo?: Photo;
-  /** Optional silent loop for the front, played over the photo (which becomes its poster). */
-  video?: string;
+  /** Optional silent loop with a lightweight poster and the source's native dimensions. */
+  video?: { src: string; webmSrc?: string; poster: string; width: number; height: number };
   /** Back of the card: a short heading, two or three sentences and optional tags. */
   heading: string;
   text: string;
@@ -81,7 +81,13 @@ export const sides: Side[] = [
     title: "Football",
     line: "Chelsea, and playing every week.",
     photo: photo("football", 1400, 933),
-    video: "/about/football-video.mp4",
+    video: {
+      src: "/about/football-video.mp4",
+      webmSrc: "/about/football-video.webm",
+      poster: "/about/football-video-poster.webp",
+      width: 1200,
+      height: 1600,
+    },
     heading: "Football, always.",
     text: "Chelsea supporter. I play every week and have spent an unreasonable amount of my life watching and playing football.",
     tags: ["Chelsea", "Playing", "Watching"],

@@ -83,7 +83,7 @@ export default function CrumbleCaseStudy() {
             <Browser
               url="crumbleandco.club"
               scheme="light"
-              video={{ src: "/crumble-and-co/crumble-video.mp4", poster: "/crumble-and-co/crumble-video-poster.webp", width: 1600, height: 1000 }}
+              video={{ src: "/crumble-and-co/crumble-video.mp4", webmSrc: "/crumble-and-co/crumble-video.webm", poster: "/crumble-and-co/crumble-video-poster.webp", width: 1920, height: 1080 }}
             />
           </Figure>
         </ChapterHero>
