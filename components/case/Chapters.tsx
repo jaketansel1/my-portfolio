@@ -86,14 +86,53 @@ export function ChapterHero({
         <p>{about}</p>
         <p>{role}</p>
       </div>
-      <dl className={styles.facts} style={{ "--facts": facts.length } as CSSProperties}>
-        {facts.map((fact) => (
-          <div key={fact.label}>
-            <dt>{fact.label}</dt>
-            <dd className={fact.live ? styles.live : undefined}>{fact.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <Facts facts={facts} />
+      {children ? <div className={styles.heroFigure}>{children}</div> : null}
+    </section>
+  );
+}
+
+function Facts({ facts }: { facts: Fact[] }) {
+  return (
+    <dl className={styles.facts} style={{ "--facts": facts.length } as CSSProperties}>
+      {facts.map((fact) => (
+        <div key={fact.label}>
+          <dt>{fact.label}</dt>
+          <dd className={fact.live ? styles.live : undefined}>{fact.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/**
+ * Opens one initiative inside a wider case study (e.g. "01 / Mega Menu"): a larger headline than a
+ * chapter, a short intro, facts and a lead visual. The chapters that follow tell its story.
+ */
+export function ChapterOpener({
+  chapter,
+  title,
+  intro,
+  facts,
+  children,
+}: {
+  chapter: Chapter;
+  title: ReactNode;
+  intro?: ReactNode;
+  facts?: Fact[];
+  children?: ReactNode;
+}) {
+  return (
+    <section id={chapter.id} className={`${styles.chapter} ${styles.opener}`} aria-labelledby={`${chapter.id}-title`}>
+      <p className={styles.chapterLabel}>
+        <span>{chapter.number} /</span>
+        {chapter.title}
+      </p>
+      <h2 id={`${chapter.id}-title`} className={styles.openerTitle}>
+        {title}
+      </h2>
+      {intro ? <div className={styles.heroLede}>{intro}</div> : null}
+      {facts ? <Facts facts={facts} /> : null}
       {children ? <div className={styles.heroFigure}>{children}</div> : null}
     </section>
   );

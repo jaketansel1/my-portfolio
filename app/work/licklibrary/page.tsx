@@ -6,11 +6,11 @@ import {
   Bridge,
   ChapterHero,
   ChapterLayout,
+  ChapterOpener,
   ChapterSection,
   ChipGroups,
   Insight,
   Lists,
-  Pair,
   Panel,
   PanelLabel,
   Points,
@@ -21,9 +21,9 @@ import MenuExplorer from "./MenuExplorer";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "LickLibrary Mega Menu — Jake Tansel",
+  title: "LickLibrary — Jake Tansel",
   description:
-    "Redesigning LickLibrary's navigation into a visual discovery system across desktop and mobile, from UX and system design to the admin tooling and production frontend.",
+    "Ongoing product work redesigning LickLibrary, one experience at a time: navigation, homepage, checkout and email, from UX and UI to frontend implementation.",
 };
 
 const night: Tone = { bg: "#0a0a0a", fg: "#f3f2ee", muted: "rgb(243 242 238 / 0.62)" };
@@ -32,17 +32,56 @@ const crumble: Tone = { bg: "#efe4d4", fg: "#3d2314", muted: "rgb(61 35 20 / 0.6
 const LL = "/case/licklibrary";
 const shot = (src: string, alt: string, width = 2400, height = 1500) => ({ src, alt, width, height });
 
+/*
+ * The page tells two stories: the wider LickLibrary redesign (Overview, What's next) and a deep dive into
+ * each initiative as it ships. The Mega Menu is the first; its sections sit under it in the rail. When
+ * another initiative ships, give it an opener and its own nested chapters in the same way.
+ */
 const chapters: Chapter[] = [
-  { id: "overview", number: "01", title: "Overview" },
-  { id: "problem", number: "02", title: "Problem" },
-  { id: "system", number: "03", title: "System" },
-  { id: "experience", number: "04", title: "Experience" },
-  { id: "admin", number: "05", title: "Admin" },
-  { id: "build", number: "06", title: "Build" },
-  { id: "outcome", number: "07", title: "Outcome" },
-  { id: "next", number: "08", title: "What’s Next" },
+  { id: "overview", number: "00", title: "Overview" },
+  { id: "mega-menu", number: "01", title: "Mega Menu" },
+  { id: "problem", number: "1.1", title: "Problem", sub: true },
+  { id: "system", number: "1.2", title: "System", sub: true },
+  { id: "experience", number: "1.3", title: "Experience", sub: true },
+  { id: "admin", number: "1.4", title: "Admin", sub: true },
+  { id: "impact", number: "1.5", title: "Impact", sub: true },
+  { id: "delivery", number: "1.6", title: "Delivery", sub: true },
+  { id: "next", number: "→", title: "What’s Next" },
 ];
-const [overview, problem, system, experience, admin, build, outcome, next] = chapters;
+const [overview, megaMenu, problem, system, experience, admin, impact, delivery, next] = chapters;
+
+/*
+ * The scale of LickLibrary itself, for context. These are not results of this work.
+ * Placeholders until the real figures are confirmed: just replace the values.
+ */
+const platform = [
+  { value: "XXk+", label: "Members" },
+  { value: "XXk+", label: "Lessons & courses" },
+  { value: "XX+ years", label: "Guitar education" },
+];
+
+type Status = "live" | "progress" | "next" | "ongoing";
+
+/** Every LickLibrary initiative, in order. Drives the navigator in the hero and the "What's next" previews. */
+const initiatives: { number: string; title: string; status: Status; statusLabel: string; line: string; href?: string; preview?: string }[] = [
+  { number: "01", title: "Mega Menu", status: "live", statusLabel: "Live", line: "Making thousands of guitar lessons easier to discover.", href: "#mega-menu" },
+  {
+    number: "02",
+    title: "Homepage",
+    status: "progress",
+    statusLabel: "In progress",
+    line: "Improving the platform’s primary discovery and conversion experience.",
+    preview: `${LL}/prototype-home.webp`,
+  },
+  { number: "03", title: "Checkout", status: "next", statusLabel: "Coming next", line: "Reducing friction between discovering content and purchasing it." },
+  {
+    number: "04",
+    title: "Email Marketing",
+    status: "ongoing",
+    statusLabel: "Ongoing",
+    line: "Building a more consistent system for campaigns, product launches and customer retention.",
+  },
+];
 
 const menus = [
   {
@@ -119,16 +158,45 @@ const capabilities: { key: CapKind; title: string; text: string }[] = [
   { key: "search", title: "Search & add", text: "Find real lessons, courses, artists and tutors." },
 ];
 
+// What customers see, the structure underneath it, and the tools the team runs it with.
+const layers = [
+  { name: "Customer experience", text: "Five visual menus customers browse, on desktop and mobile." },
+  { name: "Content system", text: "Menu → Tab → Block → Item: one structure behind every menu." },
+  { name: "Admin tooling", text: "The editor the LickLibrary team uses to decide what customers see." },
+];
+
+/*
+ * Mega Menu results. Entries marked `pending` are placeholders until analytics are in:
+ * replace the value and drop the flag.
+ */
+const results: { value: string; label: string; pending?: boolean }[] = [
+  { value: "+XX%", label: "Navigation engagement", pending: true },
+  { value: "+XX%", label: "Content discovery", pending: true },
+  { value: "5", label: "Catalogue areas unified" },
+  { value: "Desktop + mobile", label: "Shipped to production" },
+];
+
 const pipeline = [
-  { step: "Design", who: "me" },
-  { step: "Frontend model", who: "me" },
-  { step: "Mock service", who: "me" },
-  { step: "Backend integration", who: "both" },
-  { step: "QA", who: "both" },
+  { step: "Brief", who: "me" },
+  { step: "UX", who: "me" },
+  { step: "UI", who: "me" },
+  { step: "System design", who: "me" },
+  { step: "Frontend", who: "me" },
+  { step: "Backend collaboration", who: "both" },
   { step: "Production", who: "both" },
 ];
 
-const owned = ["UX/UI", "Interaction design", "Responsive behaviour", "Frontend content architecture", "Desktop storefront", "Mobile storefront", "Admin frontend", "Manual QA"];
+const owned = [
+  "UX/UI",
+  "Interaction design",
+  "Responsive behaviour",
+  "Frontend content architecture",
+  "Mock service",
+  "Desktop storefront",
+  "Mobile storefront",
+  "Admin frontend",
+  "Manual QA",
+];
 const backend = ["Production data model", "API", "Migrations", "Backend logic", "Automated tests", "Integration support"];
 
 const forCustomers = ["More visual discovery", "Reduced information overload", "Easier access to important content", "A dedicated mobile experience"];
@@ -215,15 +283,79 @@ function CapArt({ kind }: { kind: CapKind }) {
 export default function LickLibraryCaseStudy() {
   return (
     <CasePage tone={night} maxWidth="1240px">
-      <ChapterLayout chapters={chapters} title="LickLibrary Mega Menu" accent="#ee7267" panel="#121213" fill="rgb(255 255 255 / 0.05)">
-        {/* ───────── 01 Overview ───────── */}
+      <ChapterLayout chapters={chapters} title="LickLibrary" accent="#ee7267" panel="#121213" fill="rgb(255 255 255 / 0.05)" className={styles.layout}>
+        {/* ───────── 00 Overview: the wider LickLibrary work ───────── */}
         <ChapterHero
           chapter={overview}
           brand={<Image src="/licklibrary-logo.png" alt="LickLibrary" width={597} height={120} preload unoptimized />}
-          label="Mega Menu · Navigation & admin"
+          label="Ongoing product work"
+          title="Redesigning LickLibrary, one experience at a time."
+          about="LickLibrary is a long-established guitar-learning platform with thousands of lessons, courses and backing tracks."
+          role="I’m redesigning its core customer experience — from how players discover content to how they purchase, learn and return."
+          facts={[
+            { label: "My role", value: "Product Designer + Frontend" },
+            { label: "Disciplines", value: "UX/UI · Frontend · eCommerce · Email" },
+            { label: "Timeline", value: "2026 — Present" },
+            { label: "Status", value: "Ongoing — updated as each experience ships", live: true },
+          ]}
+        >
+          <div className={styles.overviewMeta}>
+            <div>
+              <p className={styles.metaLabel}>Platform at a glance</p>
+              <dl className={styles.platform}>
+                {platform.map((item) => (
+                  <div key={item.label}>
+                    <dd>{item.value}</dd>
+                    <dt>{item.label}</dt>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            <nav aria-label="LickLibrary work">
+              <p className={styles.metaLabel}>The work so far</p>
+              <ol className={styles.navigator}>
+                {initiatives.map((item) => {
+                  const inner = (
+                    <>
+                      <span className={styles.navTitle}>
+                        <span>{item.number} —</span>
+                        {item.title}
+                      </span>
+                      <span className={styles.status} data-status={item.status}>
+                        {item.statusLabel}
+                      </span>
+                    </>
+                  );
+                  return (
+                    <li key={item.number}>
+                      {item.href ? (
+                        <a href={item.href}>
+                          {inner}
+                          <span className={styles.navArrow} aria-hidden="true">
+                            &darr;
+                          </span>
+                        </a>
+                      ) : (
+                        <div>{inner}</div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+          </div>
+        </ChapterHero>
+
+        {/* ───────── 01 Mega Menu: the first initiative ───────── */}
+        <ChapterOpener
+          chapter={megaMenu}
           title="Making thousands of guitar lessons easier to discover."
-          about="LickLibrary is an online guitar-learning platform with thousands of lessons, courses and backing tracks taught by professional guitarists."
-          role="I redesigned its navigation into a visual discovery system across desktop and mobile, then designed and built the internal tools that let the team manage it."
+          intro={
+            <p>
+              I redesigned LickLibrary&rsquo;s navigation into a visual discovery system across desktop and mobile, then designed and
+              built the internal tools that let the team manage it.
+            </p>
+          }
           facts={[
             { label: "Role", value: "Product Design · UX/UI · Frontend Development" },
             { label: "Scope", value: "Navigation · Responsive UX · Admin tooling · Production delivery" },
@@ -233,9 +365,9 @@ export default function LickLibraryCaseStudy() {
           <Figure caption="The Guitar Lessons mega menu, live on licklibrary.com.">
             <Browser url="licklibrary.com" shot={shot(`${LL}/live-mega-lessons.webp`, "The LickLibrary Guitar Lessons mega menu")} aspect="16 / 9.4" priority />
           </Figure>
-        </ChapterHero>
+        </ChapterOpener>
 
-        {/* ───────── 02 Problem: old navigation → problems → insight → reasoning ───────── */}
+        {/* ───────── 1.1 Problem: old navigation → problems → insight → reasoning ───────── */}
         <ChapterSection
           chapter={problem}
           title="Too much content. Not enough hierarchy."
@@ -318,7 +450,7 @@ export default function LickLibraryCaseStudy() {
           </div>
         </ChapterSection>
 
-        {/* ───────── 03 System ───────── */}
+        {/* ───────── 1.2 System ───────── */}
         <ChapterSection
           chapter={system}
           title="Designing something that could scale."
@@ -360,7 +492,7 @@ export default function LickLibraryCaseStudy() {
           </Panel>
         </ChapterSection>
 
-        {/* ───────── 04 Experience ───────── */}
+        {/* ───────── 1.3 Experience ───────── */}
         <ChapterSection
           chapter={experience}
           title="One system. Two browsing experiences."
@@ -399,16 +531,34 @@ export default function LickLibraryCaseStudy() {
           </div>
         </ChapterSection>
 
-        {/* ───────── 05 Admin: the reveal ───────── */}
+        {/* ───────── 1.4 Admin: the reveal ───────── */}
         <ChapterSection
           chapter={admin}
           lead={<Bridge lead="The navigation worked. But it created another problem." question="How does the content team control what users see?" />}
           title="Designing the hidden half of the product."
-          intro={<p>I designed and built the admin the LickLibrary team uses to run every menu.</p>}
+          intro={
+            <p>
+              The Mega Menu wasn&rsquo;t only a customer-facing redesign. I also designed and built the admin the LickLibrary team
+              uses to run every menu, on the same content system customers browse.
+            </p>
+          }
         >
-          <Figure caption="The mega menu admin editor.">
-            <Placeholder label="Admin editor" note="A menu open on a tab, showing a block's items with search, drag handles, locks and the randomise toggle." aspect="16 / 9.5" />
-          </Figure>
+          <Panel className={styles.layers} caption="Customers browse the menus. The team runs them, through the same content system.">
+            <ol aria-label="Customer experience, content system, admin tooling">
+              {layers.map((layer, i) => (
+                <li key={layer.name}>
+                  <span className={styles.levelIndex}>{String(i + 1).padStart(2, "0")}</span>
+                  <strong>{layer.name}</strong>
+                  <span>{layer.text}</span>
+                </li>
+              ))}
+            </ol>
+          </Panel>
+          <Block>
+            <Figure caption="The mega menu admin editor.">
+              <Placeholder label="Admin editor" note="A menu open on a tab, showing a block's items with search, drag handles, locks and the randomise toggle." aspect="16 / 9.5" />
+            </Figure>
+          </Block>
           <ul className={styles.caps}>
             {capabilities.map((cap) => (
               <li key={cap.key}>
@@ -452,11 +602,42 @@ export default function LickLibraryCaseStudy() {
           </Panel>
         </ChapterSection>
 
-        {/* ───────── 06 Build ───────── */}
+        {/* ───────── 1.5 Impact ───────── */}
         <ChapterSection
-          chapter={build}
-          title="From prototype to production."
-          intro={<p>I didn&rsquo;t stop at handoff. I built the frontends against a mock service, then integrated and shipped with backend engineering.</p>}
+          chapter={impact}
+          title="One system for customers and the team behind the product."
+          intro={<p>The redesign has to prove itself in use, not just look finished. These are the measures it&rsquo;s tracked against.</p>}
+        >
+          <dl className={styles.results}>
+            {results.map((item) => (
+              <div key={item.label} data-pending={item.pending || undefined}>
+                <dd>{item.value}</dd>
+                <dt>{item.label}</dt>
+              </div>
+            ))}
+          </dl>
+          <Lists
+            groups={[
+              { title: "For customers", items: forCustomers },
+              { title: "For the LickLibrary team", items: forTeam },
+            ]}
+          />
+          <Block>
+            <Placeholder label="Team quote" note="A line from the LickLibrary team on running the menu themselves." aspect="16 / 5" />
+          </Block>
+        </ChapterSection>
+
+        {/* ───────── 1.6 Delivery ───────── */}
+        <ChapterSection
+          chapter={delivery}
+          title="From brief to production."
+          intro={
+            <p>
+              I took the Mega Menu from an open brief through UX exploration, system design, responsive interaction and frontend
+              implementation, before working with LickLibrary&rsquo;s backend developer to integrate and ship it into the production
+              platform.
+            </p>
+          }
         >
           <Panel>
             <ol className={styles.pipeline}>
@@ -469,7 +650,7 @@ export default function LickLibraryCaseStudy() {
             </ol>
             <div className={styles.key}>
               <span data-who="me">Me</span>
-              <span data-who="both">With backend engineering</span>
+              <span data-who="both">With LickLibrary&rsquo;s backend developer</span>
             </div>
           </Panel>
           <ChipGroups
@@ -480,60 +661,40 @@ export default function LickLibraryCaseStudy() {
           />
         </ChapterSection>
 
-        {/* ───────── 07 Outcome ───────── */}
-        <ChapterSection chapter={outcome} title="One system for customers and the team behind the product.">
-          <Lists
-            groups={[
-              { title: "For customers", items: forCustomers },
-              { title: "For the LickLibrary team", items: forTeam },
-            ]}
-          />
-          <Pair>
-            <Placeholder label="Team quote" note="A line from the LickLibrary team on running the menu themselves." aspect="16 / 7" />
-            <Placeholder label="Analytics" note="Navigation engagement before and after, once there's data to share." aspect="16 / 7" />
-          </Pair>
-        </ChapterSection>
-
-        {/* ───────── 08 What's Next ───────── */}
+        {/* ───────── What's next: back to the wider redesign ───────── */}
         <ChapterSection
           chapter={next}
-          title="The menu is one part of a wider redesign."
+          title="The redesign continues."
           intro={
             <p>
-              I&rsquo;m working through LickLibrary page by page, modernising an established product and evolving the design
-              system this work started. The homepage is next.
+              The Mega Menu is one part of a broader redesign of the LickLibrary experience. I&rsquo;m continuing to work through the
+              platform feature by feature.
             </p>
           }
         >
-          <Block>
-            <ol className={styles.progress}>
-              <li data-state="done">
-                <div className={styles.progressMedia}>
-                  <Img {...shot(`${LL}/live-mega-lessons.webp`, "The live mega menu")} aspect="16 / 10" position="30% 20%" />
-                </div>
-                <p>
-                  <strong>Mega Menu</strong>
-                  <span>Shipped &#10003;</span>
-                </p>
-              </li>
-              <li data-state="next">
-                <div className={styles.progressMedia}>
-                  <Img {...shot(`${LL}/prototype-home.webp`, "The homepage redesign in progress")} aspect="16 / 10" />
-                </div>
-                <p>
-                  <strong>Homepage</strong>
-                  <span>In progress</span>
-                </p>
-              </li>
-              <li data-state="later">
-                <div className={styles.progressMedia} data-empty="" />
-                <p>
-                  <strong>Wider platform</strong>
-                  <span>Ongoing</span>
-                </p>
-              </li>
-            </ol>
-          </Block>
+          <ol className={styles.upcoming}>
+            {initiatives
+              .filter((item) => item.status !== "live")
+              .map((item) => (
+                <li key={item.number}>
+                  <div className={styles.upcomingMedia} data-empty={!item.preview || undefined}>
+                    {item.preview ? (
+                      <Img {...shot(item.preview, `The ${item.title.toLowerCase()} redesign in progress`)} aspect="16 / 10" />
+                    ) : (
+                      <span aria-hidden="true">{item.number}</span>
+                    )}
+                  </div>
+                  <p className={styles.upcomingHead}>
+                    <span>{item.number}</span>
+                    <strong>{item.title}</strong>
+                    <span className={styles.status} data-status={item.status}>
+                      {item.statusLabel}
+                    </span>
+                  </p>
+                  <p className={styles.upcomingLine}>{item.line}</p>
+                </li>
+              ))}
+          </ol>
         </ChapterSection>
       </ChapterLayout>
 

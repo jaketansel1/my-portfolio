@@ -9,9 +9,9 @@ import styles from "./HomeStage.module.css";
  * longest one and nothing around it moves. Screen readers get the first phrase only.
  * With reduced motion the first phrase simply stays.
  */
-const HOLD = 3000;
-const DELETE_MS = 38;
-const TYPE_MS = 70;
+const HOLD = 1500;
+const DELETE_MS = 25;
+const TYPE_MS = 50;
 const START_DELAY = 1100; // let the headline's rise-in finish first
 
 export default function TypedLine({ phrases }: { phrases: string[] }) {

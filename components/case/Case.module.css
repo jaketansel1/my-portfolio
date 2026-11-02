@@ -12,10 +12,8 @@
   background: var(--bg);
   color: var(--fg);
 }
+/* Position and layering come from <StickyNav>. */
 .headerBand {
-  position: relative;
-  z-index: 2;
-  background: var(--bg);
   color: var(--fg);
 }
 

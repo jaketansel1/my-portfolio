@@ -16,6 +16,8 @@ export type Side = {
    * card's colour instead, until a photo is added.
    */
   photo?: Photo;
+  /** Optional silent loop for the front, played over the photo (which becomes its poster). */
+  video?: string;
   /** Back of the card: a short heading, two or three sentences and optional tags. */
   heading: string;
   text: string;
@@ -79,6 +81,7 @@ export const sides: Side[] = [
     title: "Football",
     line: "Chelsea, and playing every week.",
     photo: photo("football", 1400, 933),
+    video: "/about/football-video.mp4",
     heading: "Football, always.",
     text: "Chelsea supporter. I play every week and have spent an unreasonable amount of my life watching and playing football.",
     tags: ["Chelsea", "Playing", "Watching"],

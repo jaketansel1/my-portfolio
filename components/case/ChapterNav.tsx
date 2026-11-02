@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { HIDE_NAV_EVENT } from "../StickyNav";
 import styles from "./Chapters.module.css";
 
-export type NavChapter = { id: string; number: string; title: string };
+/** `sub` nests a chapter under the one before it, e.g. the sections of a single initiative. */
+export type NavChapter = { id: string; number: string; title: string; sub?: boolean };
 
 /**
  * Case-study section index. A quiet sticky rail beside the content on wide screens, a slim
@@ -66,7 +68,12 @@ export default function ChapterNav({ chapters, title }: { chapters: NavChapter[]
         <ol ref={listRef}>
           {chapters.map((chapter) => (
             <li key={chapter.id}>
-              <a href={`#${chapter.id}`} aria-current={active === chapter.id ? "true" : undefined} onClick={(event) => smoothTo(event, chapter.id)}>
+              <a
+                href={`#${chapter.id}`}
+                aria-current={active === chapter.id ? "true" : undefined}
+                data-sub={chapter.sub || undefined}
+                onClick={(event) => smoothTo(event, chapter.id)}
+              >
                 <span>{chapter.number}</span>
                 {chapter.title}
               </a>
@@ -78,11 +85,15 @@ export default function ChapterNav({ chapters, title }: { chapters: NavChapter[]
   );
 }
 
-/** Smooth scroll to a section, respecting reduced motion, and keep the hash in the URL. */
+/**
+ * Smooth scroll to a section, respecting reduced motion, and keep the hash in the URL. The global
+ * header is tucked away for the jump, so the section lands at the top whichever way it scrolls.
+ */
 export function smoothTo(event: React.MouseEvent<HTMLAnchorElement>, id: string) {
   const target = document.getElementById(id);
   if (!target) return;
   event.preventDefault();
+  window.dispatchEvent(new Event(HIDE_NAV_EVENT));
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   history.replaceState(null, "", `#${id}`);

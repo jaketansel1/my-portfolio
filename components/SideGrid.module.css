@@ -79,6 +79,7 @@
   .card:hover .photo { transform: scale(1.025); }
 }
 .photo img { object-fit: cover; }
+.photo video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .front::after {
   position: absolute;
   inset: 0;
