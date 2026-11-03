@@ -2,7 +2,7 @@
 
 .grid {
   --gap: clamp(16px, 1.7vw, 28px);
-  --radius: var(--radius-l);
+  --radius: var(--radius-m); /* Matches the hero photo above. */
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-auto-rows: clamp(250px, 24.5vw, 420px);
@@ -84,7 +84,7 @@
 .front::after {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0.06) 45%, transparent 70%);
+  background: linear-gradient(to top, rgb(0 0 0 / 0.52), rgb(0 0 0 / 0.14) 38%, transparent 62%);
   content: "";
 }
 .label {

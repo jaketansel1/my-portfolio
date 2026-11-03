@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteFooter from "../../components/SiteFooter";
 import HeroRotator from "../../components/HeroRotator";
+import ProcessFlow from "../../components/ProcessFlow";
 import SideGrid from "../../components/SideGrid";
 import SiteHeader from "../../components/SiteHeader";
 import StickyNav from "../../components/StickyNav";
@@ -76,19 +77,12 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          {/* Design → Build → Ship → Learn. The line beneath darkens stage by stage: more of the product is mine. */}
-          <ol className={styles.flow} aria-label="Design, then build, then ship, then learn">
-            {workStages.map((stage, i) => (
-              <li key={stage.title} className={styles.flowStage}>
-                <span className={styles.flowIndex}>{pad(i + 1)}</span>
-                <h3 className={styles.flowTitle}>{stage.title}</h3>
-                <p className={styles.flowLine}>{stage.line}</p>
-              </li>
-            ))}
-          </ol>
+          {/* Design → Build → Ship → Learn: one continuous journey line, drawn once on entering view. */}
+          <ProcessFlow stages={workStages} />
+          {/* A quiet footnote to the whole journey. */}
           <aside className={styles.aiNote} aria-label="A note on AI">
             <p className={styles.aiLabel}>A note on AI</p>
-            <p>
+            <p className={styles.aiText}>
               AI has accelerated how quickly I can learn and build, but I use it to deepen my understanding rather than replace
               it. I still want to understand the code, the product decisions and how everything fits together.
             </p>

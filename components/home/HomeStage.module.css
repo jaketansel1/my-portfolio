@@ -554,3 +554,8 @@
 @media (min-width: 900px) and (max-width: 1200px) and (prefers-reduced-motion: no-preference) {
   .crDog { height: min(60svh, 46vw); }
 }
+
+/* Large desktops: the guitarist steps back a little so he doesn't crowd the title. */
+@media (min-width: 1600px) and (prefers-reduced-motion: no-preference) {
+  .llGhost { width: min(70vw, 152svh); }
+}

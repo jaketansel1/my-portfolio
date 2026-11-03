@@ -60,7 +60,7 @@ export const heroPhotos: Photo[] = [
 /*
  * Glimpses of life outside the work, in grid order (left to right, top to bottom).
  * To swap a photo, drop a file in public/about/ and point the card at it; a card without a photo shows
- * its colour instead. Currently still uses a stock placeholder (see public/placeholders/CREDITS.md).
+ * its colour instead.
  * List groups with no items are hidden, so they can be filled in whenever.
  */
 export const sides: Side[] = [
@@ -129,8 +129,13 @@ export const sides: Side[] = [
     key: "currently",
     title: "Currently",
     line: "Redesigning LickLibrary, feature by feature.",
-    // Placeholder (see public/placeholders/CREDITS.md). TODO: a real photo from the LickLibrary office.
-    photo: { src: "/placeholders/about-office.jpg", width: 1800, height: 1200, alt: "A desk with a monitor, keyboard and tablet" },
+    photo: photo(
+      "currently-office",
+      1920,
+      1440,
+      "Jake's desk at the LickLibrary office: the new membership checkout on one screen, its code open in VS Code on the other",
+      "center 40%",
+    ),
     heading: "On my desk right now.",
     text: "What I’m working on and building at the moment.",
     lists: [

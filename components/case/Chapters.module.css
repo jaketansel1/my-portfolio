@@ -165,7 +165,7 @@
   text-wrap: balance;
 }
 .chapterIntro {
-  max-width: 42ch;
+  max-width: var(--copy-width, 42ch);
   margin-top: clamp(18px, 1.8vw, 28px);
   color: var(--muted);
   font-size: clamp(16px, 1.15vw, 18px);
@@ -211,8 +211,8 @@
   letter-spacing: -0.02em;
 }
 .heroTitle {
-  max-width: 15ch;
-  /* A case study can scale its headline by setting --hero-title on the layout. */
+  /* A case study can scale its headline, and widen its measure, by setting --hero-title(-width) on the layout. */
+  max-width: var(--hero-title-width, 15ch);
   font-size: var(--hero-title, var(--text-1));
   font-weight: 500;
   line-height: 0.94;
@@ -222,7 +222,7 @@
 .heroLede {
   display: grid;
   gap: 0.75em;
-  max-width: 50ch;
+  max-width: var(--copy-width, 50ch);
   margin-top: clamp(22px, 2.2vw, 32px);
   color: var(--muted);
   font-size: var(--text-lead);

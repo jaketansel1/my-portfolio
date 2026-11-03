@@ -12,7 +12,14 @@
 /* ---------- Overview: platform scale and business model ---------- */
 
 /* About 13% under the shared case-study headline, so the hero leads without crowding the page. */
-.layout { --hero-title: clamp(36px, 3.85vw, 70px); }
+/* One measure for every block of copy on the page, read by the shared chapter styles. */
+.layout { --hero-title: clamp(36px, 3.85vw, 70px); --copy-width: 48ch; }
+/* Desktop: the headline sits on two lines, breaking after the comma. Smaller screens wrap naturally. */
+.titleBreak { display: none; }
+@media (min-width: 1101px) {
+  .layout { --hero-title-width: none; }
+  .titleBreak { display: inline; }
+}
 
 /* Overview grouping is local to LickLibrary; shared chapters and navigation stay intact. */
 .layout section[id="overview"] { padding-bottom: clamp(48px, 5vw, 80px); }
@@ -85,9 +92,13 @@
   row-gap: 16px;
 }
 
-/* 1.1 Problem: the old navigation, then the opportunity. Kept deliberately short. */
-.layout section[id="problem"] > header > h2 { max-width: none; }
-.layout section[id="problem"] > header > div { max-width: 58ch; }
+/* Product visuals step a little past the copy column on desktop, never more than a fixed amount, so they
+   stay in proportion on very wide screens. */
+@media (min-width: 1101px) {
+  .wide { margin-right: calc(-1 * min(64px, var(--home-gutter) - 24px)); }
+}
+
+/* 1.1 Problem: the old navigation, then a small statement of what it was missing. */
 .beforeExamples {
   display: grid;
   grid-template-columns: minmax(0, 3.2fr) minmax(0, 1fr);
@@ -101,7 +112,25 @@
   font-size: 12px;
   line-height: 1.5;
 }
-.layout section[id="problem"] > blockquote { max-width: 26ch; margin-top: clamp(56px, 5.5vw, 88px); }
+.problemNote {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px var(--col-gap);
+  align-items: start;
+  margin-top: clamp(36px, 3.6vw, 56px);
+}
+.problemStatement {
+  font-size: clamp(22px, 2vw, 32px);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+.problemNote > p:last-child {
+  max-width: 44ch;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
 
 /* 1.2 System: Menu ↓ Tab ↓ Block ↓ Item, each beside its path through the live product. */
 .hierarchy { display: grid; list-style: none; }
@@ -152,88 +181,30 @@
   background: url("/case/licklibrary/live-mega-lessons.webp") -255px -85px / 501px auto no-repeat;
 }
 
-/* A few of the presentations a block can take: small abstract pictures, no boxes. */
-.presentations {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 32px var(--col-gap);
-  list-style: none;
-}
-.presentations li {
-  padding-top: 18px;
-  border-top: 1px solid var(--rule);
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-.presentationArt { display: flex; align-items: center; height: 48px; margin-bottom: 16px; }
-.squares,
-.circles,
-.steps,
-.wave { display: flex; gap: 6px; }
-.squares b { width: 30px; height: 30px; border-radius: 4px; background: rgb(238 114 103 / 0.5); }
-.squares b:nth-child(2) { background: rgb(243 242 238 / 0.35); }
-.squares b:nth-child(3) { background: rgb(243 242 238 / 0.2); }
-.circles b { width: 30px; height: 30px; border-radius: 50%; background: rgb(243 242 238 / 0.3); }
-.circles b:first-child { background: rgb(238 114 103 / 0.5); }
-.lines { display: grid; gap: 6px; width: min(100%, 112px); }
-.lines i { height: 7px; border-radius: 4px; background: rgb(255 255 255 / 0.3); }
-.lines i:nth-child(2) { width: 75%; background: rgb(255 255 255 / 0.2); }
-.lines i:nth-child(3) { width: 50%; background: rgb(255 255 255 / 0.12); }
-.steps { align-items: center; gap: 14px; }
-.steps b { position: relative; width: 10px; height: 10px; border-radius: 50%; background: rgb(243 242 238 / 0.35); }
-.steps b:first-child { background: var(--accent); }
-.steps b + b::before {
-  position: absolute;
-  top: 4px;
-  right: 12px;
-  width: 12px;
-  height: 2px;
-  background: rgb(255 255 255 / 0.15);
-  content: "";
-}
-.wave { align-items: center; gap: 4px; height: 36px; }
-.wave b { width: 4px; border-radius: 2px; background: rgb(243 242 238 / 0.35); }
-.wave b:nth-child(4) { background: var(--accent); }
-
-/* 1.3 Experience: the live video leads; mobile and the admin follow. */
+/* 1.3 Desktop: the live video, as large as the page allows. */
 .layout .megaMenuVideo video {
   object-fit: contain;
   object-position: center;
 }
 
-/* Mobile showcase: three big phones on one stage. */
-.mobileStage {
-  padding: clamp(28px, 3.6vw, 56px);
-  overflow: hidden;
-  border: 1px solid var(--rule);
-  border-radius: clamp(10px, 1vw, 16px);
-  background: var(--panel);
-}
+/* 1.4 Mobile: three large phones straight on the page, no stage around them. */
 .tiers {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Phones stop growing at a comfortable inspecting size; wider screens just get more space around them. */
+  grid-template-columns: repeat(3, minmax(0, 340px));
   gap: clamp(20px, 3vw, 48px);
   list-style: none;
 }
-.tiers li { position: relative; }
-.tiers li:not(:last-child)::after {
-  position: absolute;
-  top: 52%;
-  font-size: 20px;
-  right: calc(clamp(20px, 3vw, 48px) / -2 - 7px);
-  color: var(--muted);
-  content: "→";
-}
+.tiers li { position: relative; min-width: 0; }
 .tierLabel {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 4px 12px;
-  margin-bottom: clamp(16px, 1.6vw, 24px);
+  margin-bottom: clamp(14px, 1.4vw, 20px);
 }
 .tierLabel span { color: var(--accent); font-family: var(--font-geist-mono), monospace; font-size: 12px; }
-.tierLabel strong { font-size: clamp(20px, 1.8vw, 28px); font-weight: 500; letter-spacing: -0.03em; }
+.tierLabel strong { font-size: clamp(18px, 1.5vw, 24px); font-weight: 500; letter-spacing: -0.03em; }
 .tierLabel em { color: var(--muted); font-size: 14px; font-style: normal; }
 .phone {
   overflow: hidden;
@@ -247,68 +218,47 @@
 .phone video { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; border-radius: clamp(14px, 1.6vw, 26px); }
 .phone :global(img) { border-radius: clamp(14px, 1.6vw, 26px); }
 
-/* The admin opens the last part of Experience: the bridge, then its headline. */
-.adminLead { margin-top: clamp(96px, 9vw, 152px); }
-.adminLead > :last-child { margin-top: 0; }
+/* 1.5 Admin: the editor, then one paragraph on my part in it. */
+.ownership {
+  max-width: var(--copy-width);
+  margin-top: clamp(32px, 3.4vw, 52px);
+  color: var(--muted);
+  font-size: clamp(15px, 1.1vw, 17px);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.stack {
+  margin-top: 16px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 
-/* 1.4 Delivery: a simple route to production, then what it changed. */
-.flow {
+/* 1.6 Outcome: three small points under a hairline, then the hand-off to Checkout. */
+.outcomes {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px var(--col-gap);
   list-style: none;
 }
-.flow li {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: 10px;
+.outcomes li {
   padding-top: 16px;
-  border-top: 2px solid rgb(243 242 238 / 0.7);
-  font-size: clamp(16px, 1.3vw, 20px);
+  border-top: 1px solid var(--rule);
+  font-size: clamp(15px, 1.15vw, 17px);
   font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
 }
-.flow li:last-child { border-top-color: var(--accent); }
-.flow li:not(:last-child)::after {
-  position: absolute;
-  top: -11px;
-  right: calc(var(--col-gap) / -2 - 6px);
-  color: var(--muted);
-  font-size: 14px;
-  content: "→";
-}
-.stack {
-  margin-top: 28px;
-  color: var(--muted);
+.outcomes li::before {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent);
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.outcomes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 40px var(--col-gap);
-  margin-top: clamp(72px, 7vw, 112px);
-}
-.outcomes > div { padding-top: 20px; border-top: 1px solid var(--rule); }
-.outcomes dt {
-  color: var(--muted);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.outcomes dd {
-  max-width: 22ch;
-  margin-top: 14px;
-  font-size: clamp(22px, 2vw, 32px);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
+  font-weight: 400;
+  content: "✓";
 }
 
 /* ---------- 04 Homepage: coming soon ---------- */
@@ -341,10 +291,6 @@
   .levelRole,
   .levelExample { grid-column: 2; }
   .levelExample { justify-self: start; }
-  .presentations { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .flow li:nth-child(3)::after { display: none; }
-  .tiers { padding-inline: clamp(16px, 4vw, 28px); }
 }
 
 @media (max-width: 600px) {
@@ -355,12 +301,9 @@
   .layout section[id="overview"] > dl > div { padding-inline: 0; border-left: 0; }
   .platform { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .platform > div { padding-inline: 0; border-left: 0; }
-  .presentations,
-  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .flow li::after { display: none; }
+  .problemNote,
   .outcomes { grid-template-columns: minmax(0, 1fr); }
-  .tiers { gap: 12px; padding: 16px; }
-  .tiers li::after { display: none; }
+  .tiers { gap: 12px; }
   .tierLabel { font-size: 12px; }
   .tierLabel strong { font-size: 16px; }
   .tierLabel em { display: none; }
