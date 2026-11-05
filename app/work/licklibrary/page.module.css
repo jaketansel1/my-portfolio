@@ -3,13 +3,7 @@
  * components/case/Chapters; this file holds the project's own diagrams and showcases.
  */
 
-.levelIndex {
-  color: var(--accent);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-}
-
-/* ---------- Overview: platform scale and business model ---------- */
+/* ---------- Overview: project and platform scale ---------- */
 
 /* About 13% under the shared case-study headline, so the hero leads without crowding the page. */
 /* One measure for every block of copy on the page, read by the shared chapter styles. */
@@ -21,34 +15,35 @@
   .titleBreak { display: inline; }
 }
 
-/* Overview grouping is local to LickLibrary; shared chapters and navigation stay intact. */
-.layout section[id="overview"] { padding-bottom: clamp(48px, 5vw, 80px); }
-.layout section[id="overview"] > dl {
-  grid-template-columns: 1.15fr 1.4fr 0.8fr 1.3fr;
-  gap: 0;
-  margin-top: clamp(36px, 4vw, 56px);
-  padding-top: 0;
-  border-top: 0;
-}
-.layout section[id="overview"] > dl > div { min-width: 0; padding-inline: 20px; }
-.layout section[id="overview"] > dl > div:first-child { padding-left: 0; }
-.layout section[id="overview"] > dl > div:last-child { padding-right: 0; }
-.layout section[id="overview"] > dl > div + div { border-left: 1px solid var(--rule); }
-.layout section[id="overview"] > div:last-child { margin-top: clamp(36px, 4vw, 56px); }
+/* Overview: logo, headline, short intro, then one card. Local to LickLibrary; shared chapters stay intact. */
+.layout section[id="overview"] { padding-bottom: clamp(32px, 3.5vw, 56px); }
+.layout section[id="overview"] > div:last-child { margin-top: clamp(28px, 3vw, 44px); }
 
-.overviewMeta {
-  display: grid;
-  gap: clamp(32px, 3.5vw, 48px);
-}
-.overviewMeta > * { min-width: 0; }
-.businessModel { max-width: 56ch; }
 .platformPanel {
   padding: clamp(24px, 2.5vw, 36px);
   border: 1px solid var(--rule);
   border-radius: clamp(10px, 1vw, 16px);
   background: var(--panel);
 }
-.platformPanel > .metaLabel { margin-bottom: 24px; }
+/* Top of the card: the project, in two columns split like the stats below. */
+.projectInfo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+}
+.projectInfo > div { min-width: 0; padding-inline: clamp(20px, 3vw, 40px); }
+.projectInfo > div:first-child { padding-left: 0; }
+.projectInfo > div:last-child { padding-right: 0; }
+.projectInfo > div + div { border-left: 1px solid var(--rule); }
+.projectInfo dt { margin-bottom: 6px; }
+.projectInfo dd { font-size: 15px; line-height: 1.45; }
+/* Bottom of the card: the platform's scale, below one hairline. */
+.glance {
+  margin-top: clamp(20px, 2vw, 28px);
+  padding-top: clamp(20px, 2vw, 28px);
+  border-top: 1px solid var(--rule);
+}
+.glance > .metaLabel { margin-bottom: 20px; }
 .metaLabel {
   margin-bottom: 10px;
   color: var(--muted);
@@ -75,22 +70,15 @@
 }
 .platform dt { margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.4; }
 
-.businessModel > p {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.5;
-}
-.businessModel h2 { font-weight: 400; }
-.businessTitle { margin-bottom: 6px; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
-
 /* ---------- 01 Mega Menu ---------- */
 
-.layout section[id="mega-menu"] { padding-top: clamp(40px, 4vw, 64px); }
-.layout section[id="mega-menu"] > dl {
-  margin-top: clamp(24px, 2.5vw, 36px);
-  padding-top: 16px;
-  row-gap: 16px;
-}
+/* Section rhythm for this case study: about 17% under the shared chapter spacing (64–112px).
+   :where() keeps the specificity low, so the per-section rules below still win. The overview keeps its own. */
+.layout section:where([aria-labelledby]:not([id="overview"])) { padding-block: clamp(54px, 5.4vw, 92px); }
+
+/* Problem → System reads as one argument, so the gap between them is tighter still. */
+.layout section[id="mega-menu"] { padding-block: clamp(40px, 4vw, 64px) clamp(32px, 3.2vw, 52px); }
+.layout section[id="system"] { padding-top: clamp(40px, 4vw, 64px); }
 
 /* Product visuals step a little past the copy column on desktop, never more than a fixed amount, so they
    stay in proportion on very wide screens. */
@@ -98,87 +86,27 @@
   .wide { margin-right: calc(-1 * min(64px, var(--home-gutter) - 24px)); }
 }
 
-/* 1.1 Problem: the old navigation, then a small statement of what it was missing. */
+/* 1.1 Problem: the old navigation, straight into the System section. */
 .beforeExamples {
   display: grid;
-  grid-template-columns: minmax(0, 3.2fr) minmax(0, 1fr);
-  gap: 10px var(--col-gap);
+  /* Columns in proportion to each screenshot's aspect ratio (1585/992 and 852/1846),
+     so both render at the same height. */
+  grid-template-columns: minmax(0, 1.5978fr) minmax(0, 0.4615fr);
+  gap: 10px clamp(16px, 2vw, 28px);
   align-items: end;
+  /* Full content width, so the pair shares its edges with the System panel below. The redesigned
+     desktop video still steps wider (.wide), keeping the shipped work the larger visual. */
   margin: 0;
+}
+.beforeExamples > :not(figcaption) {
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: clamp(6px, 0.6vw, 10px);
 }
 .beforeCaption {
   grid-column: 1 / -1;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
-}
-.problemNote {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 16px var(--col-gap);
-  align-items: start;
-  margin-top: clamp(36px, 3.6vw, 56px);
-}
-.problemStatement {
-  font-size: clamp(22px, 2vw, 32px);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-}
-.problemNote > p:last-child {
-  max-width: 44ch;
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-/* 1.2 System: Menu ↓ Tab ↓ Block ↓ Item, each beside its path through the live product. */
-.hierarchy { display: grid; list-style: none; }
-.hierarchy li {
-  position: relative;
-  display: grid;
-  grid-template-columns: 40px minmax(0, 9rem) minmax(0, 1fr) auto;
-  gap: 8px 20px;
-  align-items: center;
-  padding-block: clamp(18px, 1.8vw, 26px);
-}
-.hierarchy li:first-child { padding-top: 0; }
-.hierarchy li:last-child { padding-bottom: 0; }
-.hierarchy li + li { border-top: 1px solid var(--rule); }
-/* The arrow sits on the line between levels: each one holds the next. */
-.hierarchy li + li::before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding-right: 8px;
-  translate: 0 -50%;
-  background: var(--panel);
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1;
-  content: "↓";
-}
-.hierarchy strong { font-size: clamp(28px, 2.8vw, 44px); font-weight: 500; letter-spacing: -0.04em; line-height: 1; }
-.levelRole { color: var(--muted); font-size: 14px; line-height: 1.45; }
-.levelExample {
-  display: inline-flex;
-  gap: 10px;
-  align-items: center;
-  justify-self: end;
-  min-height: 38px;
-  padding: 6px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  font-size: 14px;
-  white-space: nowrap;
-}
-.levelExample[data-last] { padding-left: 6px; border-color: rgb(238 114 103 / 0.55); }
-/* John Mayer, cropped straight out of the live menu screenshot. */
-.avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: url("/case/licklibrary/live-mega-lessons.webp") -255px -85px / 501px auto no-repeat;
 }
 
 /* 1.3 Desktop: the live video, as large as the page allows. */
@@ -281,27 +209,14 @@
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 800px) {
-  .layout section[id="overview"] > dl {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 24px;
-  }
-  .layout section[id="overview"] > dl > div:nth-child(3) { padding-left: 0; border-left: 0; }
-  .hierarchy li { grid-template-columns: 32px minmax(0, 1fr); }
-  .levelRole,
-  .levelExample { grid-column: 2; }
-  .levelExample { justify-self: start; }
-}
-
 @media (max-width: 600px) {
   .beforeExamples { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
   .beforeExamples > :nth-child(2) { width: min(100%, 260px); justify-self: center; }
   .beforeCaption { max-width: 260px; justify-self: center; margin-top: -14px; }
-  .layout section[id="overview"] > dl { grid-template-columns: minmax(0, 1fr); }
-  .layout section[id="overview"] > dl > div { padding-inline: 0; border-left: 0; }
-  .platform { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .projectInfo,
+  .platform { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .projectInfo > div,
   .platform > div { padding-inline: 0; border-left: 0; }
-  .problemNote,
   .outcomes { grid-template-columns: minmax(0, 1fr); }
   .tiers { gap: 12px; }
   .tierLabel { font-size: 12px; }

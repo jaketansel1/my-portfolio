@@ -262,6 +262,8 @@
 
 /* Initiative opener: a step down from the page hero, a step up from a chapter. */
 .opener { padding-top: clamp(88px, 9vw, 152px); }
+/* Openers carry no facts row (the overview holds those), so the visual sits closer to the intro. */
+.openerFigure { margin-top: clamp(32px, 3.2vw, 52px); }
 .openerTitle {
   max-width: 17ch;
   font-size: clamp(36px, 4vw, 70px);

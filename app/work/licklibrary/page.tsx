@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Browser, CasePage, Figure, Img, NextProject, Placeholder, type Tone } from "../../../components/case/Case";
-import { ChapterHero, ChapterLayout, ChapterOpener, ChapterSection, Panel, type Chapter } from "../../../components/case/Chapters";
+import { ChapterHero, ChapterLayout, ChapterOpener, ChapterSection, type Chapter } from "../../../components/case/Chapters";
 import NextChapter from "../../../components/case/NextChapter";
+import Walkthrough, { type WalkthroughStep } from "../../../components/case/Walkthrough";
 import ShowcaseVideo from "../../../components/ShowcaseVideo";
 import styles from "./page.module.css";
 
@@ -52,6 +53,12 @@ const chapters: Chapter[] = [
 ];
 const ch = Object.fromEntries(chapters.map((chapter) => [chapter.id, chapter])) as Record<string, Chapter>;
 
+// The project, shown once in the overview card.
+const project = [
+  { label: "My role", value: "Product Designer + Frontend" },
+  { label: "Timeline", value: "2026 — Present" },
+];
+
 /*
  * The scale of LickLibrary itself, for context. These are not results of this work.
  * Placeholders until the real figures are confirmed: just replace the values.
@@ -68,18 +75,40 @@ const platform = [
  * set) is implied rather than documented.
  */
 
-// Menu → Tab → Block → Item, each with the same path through the live Guitar Lessons menu.
-const levels = [
-  { name: "Menu", role: "One per area of the library", example: "Guitar Lessons" },
-  { name: "Tab", role: "A way to browse that area", example: "Featured" },
-  { name: "Block", role: "A group of content inside a tab", example: "Popular artists" },
-  { name: "Item", role: "A real lesson, course, artist or tutor", example: "John Mayer" },
+/*
+ * Menu → Tab → Block → Item, walked through on the live Guitar Lessons menu (system-featured.webp, 2446×1200).
+ * box: [left, top, width, height] in percent of the screenshot, so the highlights scale with it.
+ */
+const systemSteps: WalkthroughStep[] = [
+  { title: "Menu", note: "One per area of the library", box: [3.2, 8.77, 12.1, 5.71] }, // Guitar Lessons
+  { title: "Tab", note: "A way to browse that area", box: [3.2, 18.14, 6.7, 7.6] }, // Featured
+  { title: "Block", note: "A group of content inside a tab", box: [40.75, 29.15, 19.95, 61.57] }, // Popular Artists
+  { title: "Item", note: "A real lesson, course, artist or tutor", box: [42.4, 34.25, 7.7, 18.14] }, // Skid Row
 ];
 
-const tiers: { step: string; line: string; src?: string; video?: string; note: string }[] = [
-  { step: "Menu", line: "The five areas", src: `${LL}/live-mobile-menu.webp`, note: "" },
-  { step: "Section", line: "One area opened", note: "e.g. Guitar Lessons. Can also hold the interaction recording: tap → slide → tap → slide → back." },
-  { step: "Category", line: "Content to browse", note: "e.g. Featured, with its content." },
+// Live iPhone screenshots, 738×1600.
+const tiers: { step: string; line: string; src?: string; video?: string; alt?: string; note: string }[] = [
+  {
+    step: "Menu",
+    line: "The five areas",
+    src: `${LL}/mobile-tier-menu.webp`,
+    alt: "LickLibrary's mobile menu: Home, Guitar Lessons, Guitar Courses, Backing Tracks, Learning Paths, Tutors, Community and Blog",
+    note: "",
+  },
+  {
+    step: "Section",
+    line: "One area opened",
+    src: `${LL}/mobile-tier-section.webp`,
+    alt: "Guitar Courses opened in the mobile menu, listing Featured, New, Classic Albums, Technique and more",
+    note: "",
+  },
+  {
+    step: "Category",
+    line: "Content to browse",
+    src: `${LL}/mobile-tier-category.webp`,
+    alt: "Learning Paths inside Guitar Courses on mobile: a grid of featured learning paths with artwork",
+    note: "",
+  },
 ];
 
 // Small closing points for the Mega Menu.
@@ -133,16 +162,19 @@ export default function LickLibraryCaseStudy() {
             </>
           }
           about="LickLibrary is a long-established guitar-learning platform with thousands of lessons, courses and backing tracks."
-          role="I’m working through the product feature by feature. I own the UX/UI and frontend implementation, and collaborate with LickLibrary’s backend developer to ship each piece into production."
-          facts={[
-            { label: "My role", value: "Product Designer + Frontend" },
-            { label: "Disciplines", value: "UX/UI · Frontend · eCommerce · Email" },
-            { label: "Timeline", value: "2026 — Present" },
-            { label: "Status", value: "Ongoing — updated as each experience ships", live: true },
-          ]}
+          role="I lead the UX/UI and frontend implementation, working closely with engineering to design, build and ship improvements across the platform."
         >
-          <div className={styles.overviewMeta}>
-            <div className={styles.platformPanel}>
+          {/* One card: the project, then the platform's scale. */}
+          <div className={styles.platformPanel}>
+            <dl className={styles.projectInfo}>
+              {project.map((item) => (
+                <div key={item.label}>
+                  <dt className={styles.metaLabel}>{item.label}</dt>
+                  <dd>{item.value}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className={styles.glance}>
               <p className={styles.metaLabel}>Platform at a glance</p>
               <dl className={styles.platform}>
                 {platform.map((item) => (
@@ -153,14 +185,6 @@ export default function LickLibraryCaseStudy() {
                 ))}
               </dl>
             </div>
-            <div className={styles.businessModel}>
-              <h2 className={styles.metaLabel}>Business model</h2>
-              <h3 className={styles.businessTitle}>Membership + individual purchases</h3>
-              <p>
-                Subscribers can access the wider catalogue through membership, while courses and lessons can also be purchased
-                individually.
-              </p>
-            </div>
           </div>
         </ChapterHero>
 
@@ -170,34 +194,18 @@ export default function LickLibraryCaseStudy() {
           title="Making thousands of guitar lessons easier to discover."
           intro={
             <p>
-              LickLibrary&rsquo;s catalogue had grown into thousands of lessons, courses and backing tracks, but the navigation was
-              still a dense, text-heavy list of links: hard to scan, and hiding most of what the library had to offer.
+              As LickLibrary grew, its navigation became a dense, text-heavy list of links. Finding relevant lessons and courses
+              was difficult, with little visual hierarchy to guide discovery.
             </p>
           }
-          facts={[
-            { label: "Scope", value: "UX/UI · Frontend · Admin" },
-            { label: "Shipped", value: "2026" },
-            { label: "Status", value: "Live", live: true },
-          ]}
         >
-          {/* 1.1 Problem: the old navigation, then what it was missing. */}
+          {/* 1.1 Problem: the old navigation. */}
           <div id="problem" className={styles.problem}>
             <figure className={styles.beforeExamples}>
               <Img {...shot(`${LL}/mega-menu-before.webp`, "LickLibrary's old desktop navigation, with dense columns of text links for guitar lessons", 1585, 992)} />
               <Img {...shot(`${LL}/mobile-menu-before.webp`, "LickLibrary's old mobile navigation showing stacked expandable text categories", 852, 1846)} />
               <figcaption className={styles.beforeCaption}>Before: the previous desktop and mobile navigation.</figcaption>
             </figure>
-            <div className={styles.problemNote}>
-              <p className={styles.problemStatement}>
-                Too much content.
-                <br />
-                Not enough hierarchy.
-              </p>
-              <p>
-                The opportunity: rethink navigation as discovery, so members can browse courses, artists, tutors and lessons straight
-                from the menu.
-              </p>
-            </div>
           </div>
         </ChapterOpener>
 
@@ -212,21 +220,15 @@ export default function LickLibraryCaseStudy() {
             </p>
           }
         >
-          <Panel>
-            <ol className={styles.hierarchy} aria-label="Menu, then tab, then block, then item">
-              {levels.map((level, i) => (
-                <li key={level.name}>
-                  <span className={styles.levelIndex}>{String(i + 1).padStart(2, "0")}</span>
-                  <strong>{level.name}</strong>
-                  <span className={styles.levelRole}>{level.role}</span>
-                  <span className={styles.levelExample} data-last={i === levels.length - 1 || undefined}>
-                    {i === levels.length - 1 ? <span className={styles.avatar} aria-hidden="true" /> : null}
-                    {level.example}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </Panel>
+          {/* The live menu, with Menu → Tab → Block → Item highlighted in turn. */}
+          <Walkthrough
+            src={`${LL}/system-featured.webp`}
+            width={2446}
+            height={1200}
+            alt="The live Guitar Lessons mega menu, Featured tab, with Browse, Popular Lessons, Popular Artists and What's Hot"
+            steps={systemSteps}
+            className={styles.wide}
+          />
         </ChapterSection>
 
         {/* ───────── 1.3 Desktop: the product leads ───────── */}
@@ -267,7 +269,7 @@ export default function LickLibraryCaseStudy() {
                   {tier.video ? (
                     <ShowcaseVideo src={tier.video} poster={tier.src ?? `${LL}/live-mobile-menu.webp`} width={900} height={1948} />
                   ) : tier.src ? (
-                    <Img {...shot(tier.src, `${tier.step}: ${tier.line.toLowerCase()}`, 900, 1948)} aspect="9 / 19.5" position="top" />
+                    <Img {...shot(tier.src, tier.alt ?? `${tier.step}: ${tier.line.toLowerCase()}`, 738, 1600)} aspect="9 / 19.5" position="top" />
                   ) : (
                     <Placeholder label={tier.step} note={tier.note} aspect="9 / 19.5" className={styles.phonePlaceholder} />
                   )}

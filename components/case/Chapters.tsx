@@ -70,7 +70,8 @@ export function ChapterHero({
   about: ReactNode;
   /** What I did. */
   role: ReactNode;
-  facts: Fact[];
+  /** Optional: a case study can fold these into its own overview card instead. */
+  facts?: Fact[];
   children?: ReactNode;
 }) {
   return (
@@ -87,7 +88,7 @@ export function ChapterHero({
         <p>{about}</p>
         <p>{role}</p>
       </div>
-      <Facts facts={facts} />
+      {facts ? <Facts facts={facts} /> : null}
       {children ? <div className={styles.heroFigure}>{children}</div> : null}
     </section>
   );
@@ -108,19 +109,18 @@ function Facts({ facts }: { facts: Fact[] }) {
 
 /**
  * Opens one initiative inside a wider case study (e.g. "01 / Mega Menu"): a larger headline than a
- * chapter, a short intro, facts and a lead visual. The chapters that follow tell its story.
+ * chapter, a short intro and a lead visual. No facts row: the case study's overview holds those once.
+ * The chapters that follow tell its story.
  */
 export function ChapterOpener({
   chapter,
   title,
   intro,
-  facts,
   children,
 }: {
   chapter: Chapter;
   title: ReactNode;
   intro?: ReactNode;
-  facts?: Fact[];
   children?: ReactNode;
 }) {
   return (
@@ -134,8 +134,7 @@ export function ChapterOpener({
         {title}
       </h2>
       {intro ? <div className={styles.heroLede}>{intro}</div> : null}
-      {facts ? <Facts facts={facts} /> : null}
-      {children ? <div className={styles.heroFigure}>{children}</div> : null}
+      {children ? <div className={`${styles.heroFigure} ${styles.openerFigure}`}>{children}</div> : null}
     </section>
   );
 }
