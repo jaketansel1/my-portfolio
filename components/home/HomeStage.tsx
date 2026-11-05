@@ -7,6 +7,7 @@ import SiteHeader from "../SiteHeader";
 import { Browser, Phone } from "../ui/Device";
 import TypedLine from "./TypedLine";
 import ShowcaseVideo from "../ShowcaseVideo";
+import ScreenRotator from "../ScreenRotator";
 import { contact } from "../../app/data/contact";
 import home from "../../app/home.module.css";
 import styles from "./HomeStage.module.css";
@@ -38,6 +39,15 @@ const SCENES: Scene[] = [
   { key: "closing", theme: "light" },
 ];
 const PROJECTS = SCENES.filter((s) => s.label);
+
+/* LickLibrary scene: rotating screenshots, course storefront first. */
+const LL_SCREENS = [
+  { src: "/licklibrary/home-course.webp", alt: "LickLibrary course storefront for Classic Albums – Fair Warning" },
+  { src: "/licklibrary/home-checkout.webp", alt: "LickLibrary membership checkout: choosing a monthly or annual plan" },
+  { src: "/licklibrary/home-confirmation.webp", alt: "LickLibrary checkout confirmation: “You're in!” with next steps" },
+  { src: "/licklibrary/home-mega-menu.webp", alt: "LickLibrary admin for curating the Guitar Lessons mega menu" },
+  { src: "/licklibrary/home-mega-menu-site.webp", alt: "LickLibrary Guitar Courses mega menu showing featured courses" },
+];
 /** Hero second line: what I do, then a nudge towards the work. */
 const HERO_LINES = ["who builds and ships.", "scroll to see my work ↓"];
 /** Share of each transition segment spent settled at either end. */
@@ -422,7 +432,7 @@ export default function HomeStage() {
               <Layer m={{ xi: "14vw", yi: "4vh", xo: "-4vw", yo: "-10vh", s: 0.06 }} className={styles.llBrowser}>
                 <Browser url="licklibrary.com/learn" scheme="dark">
                   <div className={styles.videoBox} style={{ aspectRatio: "16 / 9" }}>
-                    <ShowcaseVideo src="/licklibrary/ll-video.mp4" webmSrc="/licklibrary/ll-video.webm" poster="/licklibrary/ll-video-poster.webp" width={1280} height={720} sceneControlled />
+                    <ScreenRotator screens={LL_SCREENS} interval={3000} sceneControlled />
                   </div>
                 </Browser>
               </Layer>
