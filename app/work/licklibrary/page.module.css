@@ -3,23 +3,13 @@
  * components/case/Chapters; this file holds the project's own diagrams and showcases.
  */
 
-/* ---------- Content column, type and rhythm ---------- */
+/* ---------- Overview ---------- */
 
 /*
- * A compact editorial column (about 820px) beside the shared rail, with a quieter type scale than the shared
- * chapter styles. Scoped to this page through .layout and element selectors, so the other case studies that
- * share components/case/Chapters are untouched.
+ * Column width, type scale, labels, the facts row and section rhythm are shared by every case study
+ * (components/case/Chapters.module.css). This page only adds its own pieces.
  */
-.layout { --hero-title: clamp(36px, 3.2vw, 46px); --copy-width: 560px; }
-.layout > div:last-child { max-width: 820px; }
-/* Large monitors: the column widens so visuals use the space; copy keeps its 560px measure and type keeps its size.
-   Laptops (up to 1440px) are unchanged. */
-@media (min-width: 1441px) {
-  .layout > div:last-child { max-width: 900px; }
-}
-@media (min-width: 1920px) {
-  .layout > div:last-child { max-width: 1050px; }
-}
+
 /* Desktop: the headline sits on two lines, breaking after the comma. Smaller screens wrap naturally. */
 .titleBreak { display: none; }
 @media (min-width: 1101px) {
@@ -27,59 +17,17 @@
   .titleBreak { display: inline; }
 }
 
-/* Chapter openers (01 Mega Menu, 02 Checkout...), section headings, then their intros. */
-.layout section > h2 { max-width: 24ch; font-size: clamp(30px, 2.6vw, 36px); line-height: 1.02; letter-spacing: -0.04em; }
-.layout section > header h2 { max-width: 30ch; font-size: clamp(24px, 2vw, 28px); line-height: 1.08; letter-spacing: -0.035em; }
-.layout section > header { margin-bottom: clamp(24px, 2.4vw, 32px); }
-/* Section labels, one pattern everywhere: "1.1 / PROBLEM". Only the number takes the accent. */
-.layout section[id="overview"] > p:first-of-type,
-.layout section > p:first-child,
-.layout section > header > p:first-child {
-  gap: 0.75em;
-  margin-bottom: 14px;
-  color: var(--muted);
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-}
-.layout section[id="overview"] > p:first-of-type > span:first-child::after,
-.layout section > p:first-child > span:first-child::after,
-.layout section > header > p:first-child > span:first-child::after {
-  margin-left: 0.75em;
-  color: var(--muted);
-  content: "/";
-}
-.layout section > header > div { margin-top: 12px; font-size: 16px; }
-/* Hero and opener intros: a step above body copy, not a lead paragraph. */
-.layout section > :is(h1, h2) + div { margin-top: clamp(16px, 1.6vw, 22px); font-size: 17px; line-height: 1.55; }
-/* Visuals under an opener intro. */
-.layout section > :is(h1, h2) + div + div { margin-top: clamp(28px, 2.8vw, 40px); }
-
-/* ---------- Overview: one compact row of project facts ---------- */
-
 /* One intro paragraph: what LickLibrary is in muted text, then my part in full colour. */
 .layout section[id="overview"] > h1 + div p { color: var(--muted); }
 .layout section[id="overview"] > h1 + div .roleLine { color: var(--fg); }
 
-/* Compact, so the product preview starts inside the first desktop screen. */
-.layout section[id="overview"] { padding-block: clamp(28px, 4vh, 48px) clamp(36px, 3.4vw, 48px); }
-.layout section[id="overview"] > div:first-child { margin-bottom: clamp(18px, 1.6vw, 24px); }
-.layout section[id="overview"] > :is(h1) + div + div { margin-top: clamp(22px, 2vw, 28px); }
-
 /* The finished product, right after the facts: the full column, its own proportions, a hairline and soft corners. */
-.showcase { margin: clamp(24px, 2.4vw, 32px) 0 0; }
+.showcase { margin: 0; }
 .showcase > span {
   border: 1px solid rgb(255 255 255 / 0.14);
   border-radius: clamp(6px, 0.6vw, 10px);
 }
 .showcase figcaption { margin-top: 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-/* Grouped with the intro, not spread across the screenshot: a compact row that wraps on small screens. */
-.projectInfo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px clamp(28px, 3vw, 44px);
-}
-.projectInfo > div { min-width: 0; }
-.projectInfo dd { font-size: 15px; line-height: 1.45; }
 .metaLabel {
   margin-bottom: 6px;
   color: var(--muted);
@@ -91,15 +39,9 @@
 
 /* ---------- 01 Mega Menu ---------- */
 
-/* Section rhythm for this case study: about 17% under the shared chapter spacing (64–112px).
-   :where() keeps the specificity low, so the per-section rules below still win. The overview keeps its own. */
-.layout section:where([aria-labelledby]:not([id="overview"])) { padding-block: clamp(48px, 4.4vw, 72px); }
-
 /* Before → after reads as one argument: the redesigned desktop menu follows the old navigation closely. */
 .layout section[id="mega-menu"] { padding-block: clamp(40px, 4vw, 56px) clamp(32px, 3vw, 44px); }
 .layout section[id="experience"] { padding-top: clamp(36px, 3.4vw, 52px); }
-/* Chapter openers keep a clear break between initiatives, just less of one. */
-.layout section:is([id="checkout"], [id="email-templates"]) { padding-top: clamp(64px, 6vw, 96px); }
 
 /* Visuals share the column edge with the copy and dividers. (.wide stays as a hook; it no longer breaks out.) */
 .wide { margin-right: 0; }

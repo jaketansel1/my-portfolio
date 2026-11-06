@@ -27,11 +27,11 @@ const blush: Tone = { bg: "#f1e2d8", fg: "#3b2620", muted: "rgb(59 38 32 / 0.66)
 const screen = (club: string, alt: string) => ({ src: `/fanzine/screen-${club}.webp`, alt, width: 517, height: 1105 });
 
 const chapters: Chapter[] = [
-  { id: "overview", number: "01", title: "Overview" },
-  { id: "system", number: "02", title: "System" },
-  { id: "matchday", number: "03", title: "Matchday" },
-  { id: "engagement", number: "04", title: "Engagement" },
-  { id: "scale", number: "05", title: "Scale" },
+  { id: "overview", number: "00", title: "Overview" },
+  { id: "system", number: "01", title: "System" },
+  { id: "matchday", number: "02", title: "Matchday" },
+  { id: "engagement", number: "03", title: "Engagement" },
+  { id: "scale", number: "04", title: "Scale" },
 ];
 const [overview, system, matchday, engagement, scale] = chapters;
 
@@ -51,12 +51,12 @@ const engagementScreens = [
 export default function FanzineCaseStudy() {
   return (
     <CasePage tone={navy} maxWidth="1240px">
-      <ChapterLayout chapters={chapters} title="Fanzine" accent="#6f97ff" panel="#0d1422" fill="rgb(238 242 248 / 0.05)">
-        {/* ───────── 01 Overview ───────── */}
+      <ChapterLayout chapters={chapters} accent="#6f97ff" panel="#0d1422" fill="rgb(238 242 248 / 0.05)">
+        {/* ───────── 00 Overview ───────── */}
         <ChapterHero
           chapter={overview}
           brand="Fanzine"
-          label="Mobile product system · Club apps"
+          label="Overview"
           title="One product system for 50+ football club apps."
           about="Fanzine builds apps for football fans: news, matches, stats, video and podcasts for one club, in one place. Each club gets its own app, in its own colours, on iOS, Android and web."
           role="I spent eight years on the platform, first as lead UX/UI designer and then as product designer, designing each feature once so it worked for every club."
@@ -72,7 +72,7 @@ export default function FanzineCaseStudy() {
           </Figure>
         </ChapterHero>
 
-        {/* ───────── 02 System ───────── */}
+        {/* ───────── 01 System ───────── */}
         <ChapterSection
           chapter={system}
           lead={<Bridge lead="Dozens of clubs. Dozens of identities." question="One product underneath." />}
@@ -102,7 +102,7 @@ export default function FanzineCaseStudy() {
           />
         </ChapterSection>
 
-        {/* ───────── 03 Matchday ───────── */}
+        {/* ───────── 02 Matchday ───────── */}
         <ChapterSection
           chapter={matchday}
           title="Built around the ninety minutes."
@@ -120,7 +120,7 @@ export default function FanzineCaseStudy() {
           </PhoneRow>
         </ChapterSection>
 
-        {/* ───────── 04 Engagement ───────── */}
+        {/* ───────── 03 Engagement ───────── */}
         <ChapterSection
           chapter={engagement}
           title="Giving fans something to do before kick-off."
@@ -139,7 +139,7 @@ export default function FanzineCaseStudy() {
           <Insight>Pick Your Team was one of the platform&rsquo;s most successful features.</Insight>
         </ChapterSection>
 
-        {/* ───────── 05 Scale ───────── */}
+        {/* ───────── 04 Scale ───────── */}
         <ChapterSection
           chapter={scale}
           title="One system, many apps."

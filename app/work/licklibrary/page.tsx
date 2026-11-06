@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Browser, CasePage, Figure, Img, NextProject, Placeholder, type Tone } from "../../../components/case/Case";
-import { ChapterHero, ChapterLayout, ChapterOpener, ChapterSection, type Chapter } from "../../../components/case/Chapters";
+import { ChapterHero, ChapterLayout, ChapterOpener, ChapterSection, type Chapter, type Fact } from "../../../components/case/Chapters";
 import Walkthrough, { type WalkthroughStep } from "../../../components/case/Walkthrough";
 import ShowcaseVideo from "../../../components/ShowcaseVideo";
 import styles from "./page.module.css";
@@ -53,7 +53,7 @@ const chapters: Chapter[] = [
 const ch = Object.fromEntries(chapters.map((chapter) => [chapter.id, chapter])) as Record<string, Chapter>;
 
 // The project, in one compact row under the intro.
-const project = [
+const project: Fact[] = [
   { label: "Role", value: "Product Designer + Frontend" },
   { label: "Scope", value: "Navigation · Checkout · Email · Homepage" },
   { label: "Timeline", value: "2026 — Present" },
@@ -175,15 +175,8 @@ export default function LickLibraryCaseStudy() {
               </span>
             </>
           }
+          facts={project}
         >
-          <dl className={styles.projectInfo}>
-            {project.map((item) => (
-              <div key={item.label}>
-                <dt className={styles.metaLabel}>{item.label}</dt>
-                <dd>{item.value}</dd>
-              </div>
-            ))}
-          </dl>
           {/* The finished product, straight after the intro: a static preview. 1.2 Desktop is the full demonstration. */}
           <figure className={styles.showcase}>
             <Img

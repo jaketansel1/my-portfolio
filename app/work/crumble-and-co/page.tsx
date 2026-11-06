@@ -32,14 +32,14 @@ const mobile = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, 
 const photo = (file: string, alt: string) => ({ src: `${C}/photo-${file}.webp`, alt, width: 1600, height: 1600 });
 
 const chapters: Chapter[] = [
-  { id: "overview", number: "01", title: "Overview" },
-  { id: "brief", number: "02", title: "Brief" },
-  { id: "direction", number: "03", title: "Direction" },
-  { id: "storefront", number: "04", title: "Storefront" },
-  { id: "sizing", number: "05", title: "Sizing" },
-  { id: "build-your-set", number: "06", title: "Build Your Set" },
-  { id: "build", number: "07", title: "Build" },
-  { id: "outcome", number: "08", title: "Outcome" },
+  { id: "overview", number: "00", title: "Overview" },
+  { id: "brief", number: "01", title: "Brief" },
+  { id: "direction", number: "02", title: "Direction" },
+  { id: "storefront", number: "03", title: "Storefront" },
+  { id: "sizing", number: "04", title: "Sizing" },
+  { id: "build-your-set", number: "05", title: "Build Your Set" },
+  { id: "build", number: "06", title: "Build" },
+  { id: "outcome", number: "07", title: "Outcome" },
 ];
 const [overview, brief, direction, storefront, sizing, buildYourSet, build, outcome] = chapters;
 
@@ -64,12 +64,12 @@ const theme = [
 export default function CrumbleCaseStudy() {
   return (
     <CasePage tone={cream} maxWidth="1240px">
-      <ChapterLayout chapters={chapters} title="Crumble & Co" accent="#a4562b" panel="#faf6f0" fill="rgb(61 35 20 / 0.06)">
-        {/* ───────── 01 Overview ───────── */}
+      <ChapterLayout chapters={chapters} accent="#a4562b" panel="#faf6f0" fill="rgb(61 35 20 / 0.06)">
+        {/* ───────── 00 Overview ───────── */}
         <ChapterHero
           chapter={overview}
           brand="Crumble & Co"
-          label="eCommerce · Shopify store"
+          label="Overview"
           title="A shop as considered as the products."
           about="Crumble & Co makes premium dog accessories: harnesses, collars, leads, bow ties and poo bag holders in two colourways, Biscuit and Espresso."
           role="I owned the website, from an open brief to launch: the direction, the design and a custom Shopify build, including a Build Your Set experience."
@@ -88,7 +88,7 @@ export default function CrumbleCaseStudy() {
           </Figure>
         </ChapterHero>
 
-        {/* ───────── 02 Brief ───────── */}
+        {/* ───────── 01 Brief ───────── */}
         <ChapterSection
           chapter={brief}
           title="A name, a logo and a range. The shop didn’t exist yet."
@@ -110,7 +110,7 @@ export default function CrumbleCaseStudy() {
           </div>
         </ChapterSection>
 
-        {/* ───────── 03 Direction ───────── */}
+        {/* ───────── 02 Direction ───────── */}
         <ChapterSection
           chapter={direction}
           title="Getting to something real, fast."
@@ -129,7 +129,7 @@ export default function CrumbleCaseStudy() {
           <Insight label="What it settled">Warm neutrals, a classic serif, and product photography doing most of the work.</Insight>
         </ChapterSection>
 
-        {/* ───────── 04 Storefront ───────── */}
+        {/* ───────── 03 Storefront ───────── */}
         <ChapterSection chapter={storefront} title="A shop that feels like the product.">
           <Figure caption="Homepage: lifestyle hero, an editorial shop-by-category grid, sets and the brand story.">
             <Browser url="crumbleandco.club" scheme="light" shot={{ src: `${C}/home-desktop-long.webp`, alt: "The full Crumble & Co homepage", width: 1440, height: 4200 }} aspect="16 / 10" />
@@ -149,7 +149,7 @@ export default function CrumbleCaseStudy() {
           </Pair>
         </ChapterSection>
 
-        {/* ───────── 05 Sizing ───────── */}
+        {/* ───────── 04 Sizing ───────── */}
         <ChapterSection
           chapter={sizing}
           title="Getting the size right before it ships."
@@ -173,7 +173,7 @@ export default function CrumbleCaseStudy() {
           />
         </ChapterSection>
 
-        {/* ───────── 06 Build Your Set ───────── */}
+        {/* ───────── 05 Build Your Set ───────── */}
         <ChapterSection
           chapter={buildYourSet}
           title="Matching pieces, picked in the right sizes."
@@ -212,7 +212,7 @@ export default function CrumbleCaseStudy() {
           </Panel>
         </ChapterSection>
 
-        {/* ───────── 07 Build ───────── */}
+        {/* ───────── 06 Build ───────── */}
         <ChapterSection
           chapter={build}
           title="A custom Shopify theme, start to finish."
@@ -227,7 +227,7 @@ export default function CrumbleCaseStudy() {
           <Points items={theme} />
         </ChapterSection>
 
-        {/* ───────── 08 Outcome ───────── */}
+        {/* ───────── 07 Outcome ───────── */}
         <ChapterSection chapter={outcome} title="From an open brief to a live store.">
           <Numbers
             items={[
