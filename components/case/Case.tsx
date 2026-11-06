@@ -252,7 +252,7 @@ export function Browser({
 }: {
   url: string;
   shot?: Shot;
-  video?: { src: string; poster: string; width: number; height: number };
+  video?: { src: string; webmSrc?: string; poster: string; width: number; height: number };
   scheme?: "dark" | "light";
   /** Crop the screen to this ratio instead of showing the whole screenshot. */
   aspect?: string;
@@ -263,8 +263,8 @@ export function Browser({
   return (
     <DeviceBrowser url={url} scheme={scheme} className={className}>
       {video ? (
-        <div className={styles.browserVideo} style={{ aspectRatio: aspect ?? `${video.width} / ${video.height}` }}>
-          <ShowcaseVideo src={video.src} poster={video.poster} />
+        <div className={styles.browserVideo} style={{ aspectRatio: `${video.width} / ${video.height}` }}>
+          <ShowcaseVideo src={video.src} webmSrc={video.webmSrc} poster={video.poster} width={video.width} height={video.height} />
         </div>
       ) : shot ? (
         <Img {...shot} aspect={aspect} position={position} priority={priority} />
@@ -293,12 +293,29 @@ export function Phone({
 }
 
 /** Clearly marked gap for a real asset that's still needed. */
-export function Placeholder({ label, note, aspect = "16 / 10", className }: { label: string; note?: string; aspect?: string; className?: string }) {
+export function Placeholder({
+  label,
+  note,
+  aspect = "16 / 10",
+  tag = "Asset needed",
+  spec,
+  className,
+}: {
+  label: string;
+  note?: string;
+  aspect?: string;
+  /** What's missing, e.g. "Write-up needed". */
+  tag?: string;
+  /** Format to capture it in, e.g. "16:10 · 2560×1600 · webp". */
+  spec?: string;
+  className?: string;
+}) {
   return (
     <div className={`${styles.placeholder} ${className ?? ""}`} style={{ aspectRatio: aspect }}>
-      <span className={styles.placeholderTag}>Asset needed</span>
+      <span className={styles.placeholderTag}>{tag}</span>
       <span className={styles.placeholderLabel}>{label}</span>
       {note ? <span className={styles.placeholderNote}>{note}</span> : null}
+      {spec ? <span className={styles.placeholderSpec}>{spec}</span> : null}
     </div>
   );
 }

@@ -1,6 +1,33 @@
-/* Tokens come from home.module.css (.home). A dense, uniform project archive. */
+/*
+ * Work: a dark project archive where the previews lead. Tokens come from home.module.css (.home); this page
+ * swaps them for a dark set, so the shared header, sticky nav and selection colours follow without changes.
+ */
 
-/* Intro: an editorial lead-in to the work; metadata sits right of the headline on desktop. */
+/* ---------- Dark theme (this page only) ---------- */
+
+/* Doubled class: .home declares the same tokens, and this must win whichever stylesheet loads last. */
+.page.page {
+  --home-paper: #0b0b0a;
+  --home-ink: #f1f0ec;
+  --home-muted: rgb(241 240 236 / 0.58);
+  --home-quiet: rgb(241 240 236 / 0.34);
+  --home-rule: rgb(241 240 236 / 0.09);
+  /* Read by the sticky nav for its scrolled wash and hairline. */
+  --bg: var(--home-paper);
+  --rule: var(--home-rule);
+  /* Loading surface behind screenshots, and their corner radius. */
+  --card: #141413;
+  --card-radius: clamp(10px, 0.9vw, 14px);
+  /* Captions get their own, slightly brighter greys: --home-muted / --home-quiet also colour the nav and
+     the headline's second line, which stay as they are. */
+  --caption: rgb(241 240 236 / 0.68);
+  --caption-meta: rgb(241 240 236 / 0.48);
+  color-scheme: dark;
+  background: var(--home-paper);
+  color: var(--home-ink);
+}
+/* The footer is a near-black band too: a hairline keeps the page from running into it. */
+.page > footer { border-top: 1px solid var(--home-rule); }
 
 .visuallyHidden {
   position: absolute;
@@ -11,20 +38,23 @@
   white-space: nowrap;
 }
 
+/* ---------- Intro ---------- */
+
+/* An editorial lead-in; the count and span sit right of the headline on desktop. */
 .intro {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: clamp(16px, 2vw, 32px);
   align-items: end;
-  padding-block: clamp(16px, 3vh, 40px) clamp(24px, 2.6vw, 40px);
+  padding-block: clamp(24px, 5vh, 64px) clamp(32px, 3.6vw, 56px);
 }
 .eyebrow {
   grid-column: 1 / -1;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   color: var(--home-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .headline {
@@ -41,9 +71,9 @@
   padding-bottom: 0.4em;
   color: var(--home-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
+  font-size: 11.5px;
   line-height: 1.8;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-align: right;
   text-transform: uppercase;
   animation: fade 1100ms 250ms var(--home-ease) both;
@@ -55,7 +85,7 @@
     display: flex;
     gap: 20px;
     justify-self: start;
-    margin-top: 28px;
+    margin-top: 24px;
     padding-bottom: 0;
     text-align: left;
   }
@@ -70,70 +100,109 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(32px, 3vw, 48px) clamp(16px, 1.6vw, 28px);
-  padding-bottom: clamp(80px, 8vw, 140px);
+  gap: clamp(52px, 4.6vw, 80px) clamp(14px, 1.3vw, 22px);
+  padding-bottom: clamp(96px, 9vw, 160px);
   list-style: none;
 }
-.grid > li { scroll-margin-top: 24px; }
+.grid > li {
+  scroll-margin-top: 96px;
+  animation: fade 1100ms var(--home-ease) both;
+}
+/* The first row settles in just after the headline; later rows are below the fold anyway. */
+.grid > li:nth-child(1) { animation-delay: 300ms; }
+.grid > li:nth-child(2) { animation-delay: 360ms; }
+.grid > li:nth-child(3) { animation-delay: 420ms; }
+.grid > li:nth-child(n + 4) { animation-delay: 480ms; }
 
+/* The whole card is the link. */
 .card { display: block; color: inherit; }
-.card:focus-visible { outline: 2px solid var(--home-ink); outline-offset: 6px; }
+.card:focus-visible { outline: 2px solid var(--home-ink); outline-offset: 6px; border-radius: var(--card-radius); }
 
-/* One canvas for every project; the interface brings the colour. */
+/*
+ * The preview: the same 16:10 box for every project, no surface and no frame. Screens fill it from the top in
+ * their own colours; Fanzine's phones stand in it at full height.
+ */
 .frame {
   position: relative;
-  overflow: hidden;
   aspect-ratio: 16 / 10;
-  border-radius: var(--radius-m);
-  background: var(--surface);
-  transition: background-color var(--dur-fast) var(--ease);
 }
-.card:hover .frame { background: color-mix(in srgb, var(--surface) 94%, var(--ink)); }
 .stage {
   position: absolute;
   inset: 0;
-  transition: transform var(--dur) var(--ease);
 }
-.card:hover .stage { transform: scale(1.012); }
-.card[data-static] .stage { opacity: 0.94; }
+.card[data-static] .stage { opacity: 0.86; }
 
-.stage img { display: block; width: 100%; height: auto; }
+.media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
 
-/* Browser (shared frame): large, running off the bottom edge so the interface reads. */
-.browser {
+/* Desktop screens: soft corners, and a hairline only dark screenshots need to hold their edge. */
+.stage[data-kind="screen"] {
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  background: var(--card); /* shows only while the image loads */
+}
+.stage[data-kind="screen"]::after {
   position: absolute;
-  top: 8%;
-  left: 6%;
-  right: 6%;
-  border-radius: var(--radius-m) var(--radius-m) 0 0;
-  /* Lower elevation than the homepage scenes: these sit on a flat canvas. */
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.04), 0 10px 30px -18px rgb(0 0 0 / 0.22);
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  pointer-events: none;
+  content: "";
+}
+.stage[data-kind="screen"] .media {
+  transform-origin: 50% 0;
+  transition: transform 900ms var(--ease);
 }
 
-/* Phone (shared frame): sized per layout below. */
-.phone { position: relative; }
-
-/* Responsive projects: browser on the left, phone over its lower right. */
-.stage[data-kind="browserPhone"] .browser { right: 22%; }
-.stage[data-kind="browserPhone"] .phone {
-  position: absolute;
-  top: 26%;
-  right: 7%;
-  width: 21%;
-}
-
-/* App projects: three phones, the centre one slightly larger and higher. */
+/* App projects: three phones at the full height of the box, the outer two a small step back. */
 .stage[data-kind="phones"] {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  gap: 2.5%;
-  padding-top: 9%;
+  gap: 3.5%;
+  /* The phones are sized by height, so their bezel is too (the shared frame's % padding follows width). */
+  container-type: size;
+  transition: transform 900ms var(--ease);
 }
-.stage[data-kind="phones"] .phone { width: 24%; margin-top: 3%; }
-.stage[data-kind="phones"] .phone:nth-child(2) { width: 27%; margin-top: 0; }
+.stage[data-kind="phones"] .phone {
+  flex: none;
+  /* The shared phone frame's outer proportions: a 9:19.5 screen inside a bezel of ~2.4% of its width. */
+  aspect-ratio: 0.474;
+  height: 95%;
+  padding: 1.1cqh;
+}
+.stage[data-kind="phones"] .phone:nth-child(2) { height: 100%; }
 
-/* Caption: number · title, discipline, year. */
+/* An empty screen waiting on its screenshot: quiet, but clearly a placeholder rather than a broken image. */
+.slot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12%;
+  background: linear-gradient(180deg, #1b1b1f, #141416);
+  color: var(--caption-meta);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(8px, 0.62vw, 10px);
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Hover: the work drifts in, slowly. Screens zoom inside their corners; the phones rise together. */
+@media (hover: hover) {
+  .card:not([data-static]):hover .stage[data-kind="screen"] .media { transform: scale(1.03); }
+  .card:not([data-static]):hover .stage[data-kind="phones"] { transform: translateY(-2%); }
+}
+
+/* ---------- Caption: number · title · year, then discipline ---------- */
+
 .caption {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -141,8 +210,8 @@
     "num title year"
     ". disc disc";
   align-items: baseline;
-  gap: 2px 12px;
-  padding-top: 14px;
+  gap: 4px 12px;
+  padding-top: 16px;
 }
 .number { grid-area: num; }
 .title { grid-area: title; }
@@ -150,39 +219,50 @@
 .year { grid-area: year; }
 .number,
 .year {
-  color: var(--home-muted);
+  color: var(--caption-meta);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11.5px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.06em;
 }
 .year { text-align: right; white-space: nowrap; }
-.year[data-soon] { color: var(--home-quiet); text-transform: uppercase; letter-spacing: 0.06em; font-size: 10.5px; }
+.year[data-soon] { text-transform: uppercase; font-size: 10px; letter-spacing: 0.08em; }
 .title {
   display: flex;
   align-items: baseline;
   gap: 6px;
-  font-size: clamp(17px, 1.25vw, 21px);
+  font-size: clamp(16px, 1.1vw, 19px);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.02em;
 }
 .arrow {
   color: var(--home-muted);
-  font-size: 0.75em;
+  font-size: 0.8em;
   opacity: 0;
-  transform: translate(-3px, 2px);
+  transform: translateX(-4px);
   transition: opacity var(--dur-fast) var(--ease), transform var(--dur) var(--ease);
 }
 .card:hover .arrow,
 .card:focus-visible .arrow { opacity: 1; transform: none; }
-.discipline { color: var(--home-muted); font-size: 13.5px; line-height: 1.4; }
+.discipline {
+  color: var(--caption);
+  font-size: 13.5px;
+  line-height: 1.45;
+  transition: color var(--dur-fast) var(--ease);
+}
+.card:not([data-static]):hover .discipline { color: color-mix(in srgb, var(--home-ink) 74%, transparent); }
 
+/* ---------- Responsive ---------- */
+
+/* Tablet: two columns. */
 @media (max-width: 1100px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* Mobile: one column, previews full width. */
 @media (max-width: 700px) {
-  .grid { grid-template-columns: minmax(0, 1fr); }
+  .grid { grid-template-columns: minmax(0, 1fr); row-gap: 44px; }
+  .caption { padding-top: 14px; }
 }
 
 @media (hover: none) {
@@ -194,6 +274,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .meta { animation: none; }
-  .frame, .stage, .arrow { transition: none; }
+  .meta, .grid > li { animation: none; }
+  .stage, .media, .arrow, .discipline { transition: none; }
+  .card:hover .stage, .card:hover .media { transform: none !important; }
 }

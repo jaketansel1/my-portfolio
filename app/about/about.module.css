@@ -36,7 +36,7 @@
   text-wrap: pretty;
   animation: fade 1100ms 250ms var(--home-ease) both;
 }
-/* Wide hero photo (HeroShuffle): click to shuffle. */
+/* Wide hero photo (HeroRotator): rotates on its own. */
 .portrait {
   grid-column: 7 / -1;
   animation: reveal 1300ms 150ms var(--home-ease) both;
@@ -71,6 +71,66 @@
 
 .sides { padding-bottom: clamp(96px, 10vw, 176px); }
 
+/* ---------- How I work: the professional bridge ---------- */
+
+.work {
+  --flow-gap: clamp(24px, 3vw, 56px);
+  padding-bottom: clamp(96px, 10vw, 176px);
+}
+.sectionEyebrow {
+  margin-bottom: 20px;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.workHead {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 28px clamp(16px, 2vw, 32px);
+  align-items: end;
+  margin-bottom: clamp(32px, 3.4vw, 60px);
+}
+.workHead > :first-child { grid-column: 1 / 7; }
+.workIntro {
+  display: grid;
+  gap: 1em;
+  grid-column: 7 / -1;
+  max-width: 50ch;
+  color: var(--muted);
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.workIntro p:first-child { color: var(--ink); }
+
+/* A quiet footnote under the whole journey: label left, the thought right, under a hairline. */
+.aiNote {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px clamp(16px, 2vw, 32px);
+  margin-top: clamp(40px, 4vw, 64px);
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.aiLabel {
+  grid-column: 1 / 7;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.aiText {
+  grid-column: 7 / -1;
+  max-width: 50ch;
+  color: var(--muted);
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
 /* ---------- How I got here ---------- */
 
 .career { padding-bottom: clamp(96px, 10vw, 176px); }
@@ -97,6 +157,16 @@
   background: color-mix(in srgb, var(--ink) 16%, transparent);
   content: "";
 }
+/* The last stretch, 2025 to now, is drawn in ink: where the story has been heading. */
+.track::after {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  left: calc((100% - 2 * var(--gap)) / 3 * 2 + 2 * var(--gap));
+  height: 1px;
+  background: var(--ink);
+  content: "";
+}
 .node,
 .nodeNow {
   position: relative;
@@ -121,7 +191,8 @@
   box-shadow: 0 0 0 1px var(--ink);
   content: "";
 }
-.node:first-child::before { background: var(--ink); }
+.node:nth-last-child(2)::before { background: var(--ink); }
+.node:nth-last-child(2) { color: var(--ink); }
 /* "Now" closes the line at its right end, filled in the accent of the present. */
 .nodeNow {
   position: absolute;
@@ -154,6 +225,7 @@
   line-height: 1.08;
   letter-spacing: -0.035em;
 }
+.stage:last-child .stageMeta { color: var(--ink); }
 .stageBody {
   max-width: 36ch;
   margin-top: 12px;
@@ -180,6 +252,10 @@
 @media (max-width: 900px) {
   .introText { grid-column: 1 / -1; }
   .portrait { grid-column: 1 / -1; margin-top: 40px; }
+  .workHead > :first-child,
+  .workIntro { grid-column: 1 / -1; }
+  .aiLabel,
+  .aiText { grid-column: 1 / -1; }
   /* The line turns vertical: it runs down the left with a node at each stage. */
   .track { display: none; }
   .stages {
@@ -201,7 +277,7 @@
     box-shadow: 0 0 0 1px var(--ink);
     content: "";
   }
-  .stage:first-child::before { background: var(--ink); }
+  .stage:last-child::before { background: var(--ink); }
 }
 
 

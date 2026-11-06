@@ -1,0 +1,141 @@
+/* "How I work" process line. Reads tokens from tokens.css; --flow-gap is set by the page. */
+
+.flow {
+  --gap: var(--flow-gap, clamp(24px, 3vw, 56px));
+  --start: 250ms;
+  /* Time for the line to draw end to end; the dot moves at the same pace. */
+  --T: 2600ms;
+}
+
+/* ---------- The line: at rest, just this and four nodes ---------- */
+
+.journey {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  stroke-width: 0.9;
+}
+.track { stroke: var(--rule); }
+.line { stroke: var(--ink); }
+.node {
+  fill: var(--ink);
+  stroke: var(--ink);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.flow:has(.stage:nth-child(1):hover) .node1,
+.flow:has(.stage:nth-child(2):hover) .node2,
+.flow:has(.stage:nth-child(3):hover) .node3,
+.flow:has(.stage:nth-child(4):hover) .node4 { transform: scale(1.4); }
+
+/* Only ever seen while the line plays. */
+.moment { stroke: var(--muted); }
+.moment path {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+.lead { fill: var(--ink); opacity: 0; }
+.pulse {
+  stroke: var(--ink);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* ---------- Once, on entering view ---------- */
+
+/* When the dot reaches a mark's point on the line (declared per element, where its --at applies). */
+.journey * { --arrive: calc(var(--start) + var(--at, 0) * var(--T)); }
+.flow[data-ready] .line { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.flow[data-ready] .node { fill: var(--paper); }
+
+.flow[data-in] .line { animation: draw var(--T) var(--start) linear forwards; }
+.flow[data-in] .node { animation: fillNode 260ms var(--arrive) var(--ease) forwards; }
+/* The dot runs Design → Learn (0 → 775.5) at the line's pace, then hands over to the last node. */
+.flow[data-in] .lead { animation: travel calc(var(--T) * 0.7755) var(--start) linear; }
+/* Each mark draws as the dot arrives, holds a beat, then retracts forward and is gone. */
+.flow[data-in] .moment path { animation: moment 1100ms calc(var(--arrive) - 80ms) var(--ease); }
+.flow[data-in] .moment path:nth-child(2) { animation-delay: calc(var(--arrive) - 10ms); }
+.flow[data-in] .moment path:nth-child(3) { animation-delay: calc(var(--arrive) + 60ms); }
+.flow[data-in] .pulse { animation: pulse 900ms calc(var(--arrive) + 520ms) ease-out; }
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fillNode { to { fill: var(--ink); } }
+@keyframes travel {
+  0% { opacity: 0; transform: none; }
+  6%, 94% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(775.5px); }
+}
+@keyframes moment {
+  0% { opacity: 1; stroke-dashoffset: 1; }
+  38%, 62% { opacity: 1; stroke-dashoffset: 0; }
+  100% { opacity: 1; stroke-dashoffset: -1; }
+}
+@keyframes pulse {
+  0% { opacity: 0.45; transform: scale(1); }
+  100% { opacity: 0; transform: scale(3.6); }
+}
+
+/* ---------- Stages ---------- */
+
+.stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--gap);
+  margin-top: clamp(14px, 1.4vw, 22px);
+  list-style: none;
+}
+.stage { min-width: 0; }
+.index {
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+}
+.title {
+  margin-top: 10px;
+  font-size: clamp(30px, 3vw, 52px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+.text {
+  max-width: 26ch;
+  margin-top: clamp(10px, 1vw, 14px);
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ---------- Small screens: too narrow for the line; the stages run down a plain one ---------- */
+
+@media (max-width: 900px) {
+  .journey { display: none; }
+  .stages {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(36px, 8vw, 48px);
+    margin-top: 0;
+    padding-left: 28px;
+    border-left: 1px solid var(--rule);
+  }
+  .stage { position: relative; }
+  .stage::before {
+    position: absolute;
+    top: 3px;
+    left: -32px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink);
+    content: "";
+  }
+  .title { font-size: clamp(30px, 8vw, 44px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow * { animation: none !important; transition: none !important; }
+}

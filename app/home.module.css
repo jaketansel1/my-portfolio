@@ -21,10 +21,12 @@
   color: var(--home-paper);
 }
 
+/* The page column for Home-style pages (Work, About) and every page's header: full width with the homepage's
+   responsive gutters, so content lines up with the logo on the left and the navigation on the right at any
+   screen size. Case studies keep their own constrained containers (components/case). Reading widths are
+   capped per element (ch-based max-widths), not by the column. */
 .container {
   width: 100%;
-  max-width: calc(var(--home-max) + var(--home-gutter) * 2);
-  margin-inline: auto;
   padding-inline: var(--home-gutter);
 }
 

@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import SiteFooter from "../../components/SiteFooter";
-import { Browser as DeviceBrowser, Phone as DevicePhone } from "../../components/ui/Device";
+import { Phone as DevicePhone } from "../../components/ui/Device";
+import ShowcaseLoop, { type ShowcaseScene } from "../../components/ShowcaseLoop";
+import PhoneCycle from "../../components/PhoneCycle";
+import ShowcaseVideo from "../../components/ShowcaseVideo";
 import SiteHeader from "../../components/SiteHeader";
 import StickyNav from "../../components/StickyNav";
 import { projects, type Project } from "../data/projects";
 import home from "../home.module.css";
+import { crumbleScenes, lickLibraryScenes, reawakeningScenes } from "./showcases";
 import styles from "./work.module.css";
 
 export const metadata: Metadata = {
@@ -17,9 +21,9 @@ export const metadata: Metadata = {
 };
 
 /*
- * Project archive. One dense, uniform grid: every project gets the same neutral canvas and the same
- * framing principles (a minimal browser, light phone frames), with its own crop of the real interface. The homepage is the immersive tour; the case studies
- * hold the detail; this page is for scanning.
+ * Project archive, on a dark canvas so the work is the brightest thing on the page. One uniform grid: every
+ * project gets the same 16:10 preview of its real interface, unframed, so the product is the only layer. The homepage is the immersive tour; the case studies hold the detail; this page is for
+ * scanning.
  */
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -27,26 +31,85 @@ const pad = (n: number) => String(n).padStart(2, "0");
 // Earliest start year across projects through to the present.
 const SPAN = `${Math.min(...projects.flatMap((p) => (p.period ? [Number.parseInt(p.period, 10)] : [])))}–now`;
 
-type Shot = { src: string; width: number; height: number };
+/**
+ * One preview: a still, and optionally a short silent loop of the same view. The still is the video's poster
+ * and the fallback (before it loads, off screen, and with reduced motion), so add a video without changing src:
+ *   { src: "/work/licklibrary-screen.webp", width: 1400, height: 907,
+ *     video: { src: "/work/licklibrary-loop.mp4", webmSrc: "/work/licklibrary-loop.webm" } }
+ * Record the loop at the still's proportions so the frame doesn't jump when it starts.
+ */
+type Shot = {
+  src: string;
+  width: number;
+  height: number;
+  video?: { src: string; webmSrc?: string };
+  /**
+   * The part of the capture to show, in its own pixels, for captures with browser bars or other chrome around
+   * the site. Keep it 16:10 (w / h = 1.6) so it fills the preview exactly; it's scaled, never stretched.
+   */
+  crop?: { x: number; y: number; w: number; h: number };
+};
 
-/** How each project's interface is presented. Product UI only: no lifestyle or decorative imagery. */
+/** Positions a capture so only its crop fills the 16:10 preview: sizes as percentages of the frame. */
+function cropStyle(shot: Shot): CSSProperties | undefined {
+  const c = shot.crop;
+  if (!c) return undefined;
+  const frameH = c.w / 1.6; // the crop's height at 16:10, in source pixels
+  return {
+    position: "absolute",
+    width: `${(shot.width / c.w) * 100}%`,
+    height: "auto",
+    maxWidth: "none",
+    left: `${(-c.x / c.w) * 100}%`,
+    top: `${(-c.y / frameH) * 100}%`,
+    objectFit: "fill",
+  };
+}
+
+/**
+ * How each project's interface is presented. Product UI only: no lifestyle or decorative imagery.
+ * "screen": the desktop screenshot on its own, no frame, filling the preview from the top.
+ * "phones": an app shown as phones, the one place a device frame stays. With `more`, the screens cross-fade
+ *   through the whole set (components/PhoneCycle).
+ * "phoneSlots": the same phone row with empty screens, for an app whose screenshots are still to come. Swap it
+ *   for "phones" (with `more` to cycle) once they're ready.
+ * "showcase": a cinematic loop of real screenshots (components/ShowcaseLoop), with the still as its poster.
+ */
 type Visual =
-  | { kind: "browser"; shot: Shot }
-  | { kind: "browserPhone"; shot: Shot; phone: Shot }
-  | { kind: "phones"; phones: Shot[] };
+  | { kind: "screen"; shot: Shot }
+  | { kind: "phones"; phones: Shot[]; more?: Shot[] }
+  | { kind: "phoneSlots"; labels: string[] }
+  | { kind: "showcase"; poster: Shot; scenes: ShowcaseScene[]; speed?: number };
 
 type Entry = { discipline: string; year?: string; visual: Visual };
 
+
+/*
+ * Every desktop screenshot is a clean capture (no browser chrome in the file) at 16:10 to about 1.41:1. The
+ * preview is 16:10 and anchored to the top, so wider shots fit exactly and taller ones lose a little from the
+ * bottom, never the sides. Reawakening and SportSkins used to pair the screen with a phone; both phone assets
+ * carry device chrome (Safari's address pill, a baked-in phone frame), so they're left out here.
+ */
 const entries: Record<string, Entry> = {
   LickLibrary: {
     discipline: "Product Design · UX/UI · Frontend",
     year: "2025–now",
-    visual: { kind: "browser", shot: { src: "/work/licklibrary-screen.webp", width: 1400, height: 907 } },
+    visual: {
+      kind: "showcase",
+      poster: { src: "/work/licklibrary-screen.webp", width: 1400, height: 907 },
+      scenes: lickLibraryScenes,
+      speed: 1.45,
+    },
   },
   "Crumble & Co": {
     discipline: "eCommerce · Design · Shopify build",
     year: "2026",
-    visual: { kind: "browser", shot: { src: "/work/crumble-screen.webp", width: 1400, height: 875 } },
+    visual: {
+      kind: "showcase",
+      poster: { src: "/work/crumble-screen.webp", width: 1400, height: 875 },
+      scenes: crumbleScenes,
+      speed: 1.45, // the scenes are timed at a reading pace; this plays the ~31s loop in ~21s
+    },
   },
   Fanzine: {
     discipline: "Product Design · Mobile · Design System",
@@ -58,76 +121,121 @@ const entries: Record<string, Entry> = {
         { src: "/fanzine/app-arsenal.webp", width: 900, height: 1964 },
         { src: "/fanzine/app-man-city.webp", width: 900, height: 1958 },
       ],
+      // The same product in other clubs' colours: the screens cycle through every app.
+      more: [
+        { src: "/fanzine/app-celtic.webp", width: 900, height: 1954 },
+        { src: "/fanzine/app-west-ham.webp", width: 900, height: 1955 },
+      ],
     },
   },
   "Reawakening the Feminine": {
     discipline: "Web Design · UX/UI · Frontend",
     year: "2026",
     visual: {
-      kind: "browserPhone",
-      shot: { src: "/work/reawakening-screen.webp", width: 1400, height: 992 },
-      phone: { src: "/reawakening/screen-mobile.jpg", width: 945, height: 2048 },
+      kind: "showcase",
+      poster: { src: "/work/reawakening-screen.webp", width: 1400, height: 992 },
+      scenes: reawakeningScenes,
+      speed: 1.45,
     },
   },
   SportSkins: {
     discipline: "Product Design · Gaming · Web App",
     year: "2023–2024",
-    visual: {
-      kind: "browserPhone",
-      shot: { src: "/work/sportskins-screen.webp", width: 1400, height: 930 },
-      phone: { src: "/work/sportskins-phone.webp", width: 600, height: 1340 },
-    },
+    // Phones like Fanzine's, waiting on mobile screenshots. The existing sportskins-phone.webp has a phone
+    // frame baked in, so it can't sit inside the shared frame; clean screen captures will replace these.
+    visual: { kind: "phoneSlots", labels: ["Screen to come", "Screen to come", "Screen to come"] },
   },
   "Maison Augustin": {
     discipline: "Web Design · Frontend · Lead Generation",
-    visual: { kind: "browser", shot: { src: "/work/maison-screen.webp", width: 1400, height: 875 } },
+    // A screen recording of the live homepage hero. It was recorded with the browser showing, so the crop keeps
+    // only the site: below the address bar, above the black band, left of the scrollbar, at 16:10 (logo,
+    // headline, call to action and the MENU label in view; the round menu icon falls just outside).
+    visual: {
+      kind: "screen",
+      shot: {
+        src: "/work/maison-video-poster.webp",
+        width: 1920,
+        height: 1280,
+        video: { src: "/mason-augustin.mp4" },
+        crop: { x: 50, y: 132, w: 1715, h: 1072 },
+      },
+    },
   },
 };
 
 const SIZES = "(min-width: 1100px) 30vw, (min-width: 700px) 46vw, 92vw";
 
-function Img({ shot, sizes = SIZES, priority }: { shot: Shot; sizes?: string; priority?: boolean }) {
-  return <Image src={shot.src} alt="" width={shot.width} height={shot.height} sizes={sizes} preload={priority} unoptimized />;
-}
-
-/* Shared frames (components/ui/Device), positioned per layout in work.module.css. */
-function Browser({ shot, priority }: { shot: Shot; priority?: boolean }) {
+/** A still, or a poster-first silent loop that plays only while in view (components/ShowcaseVideo). Both cover their box from the top. */
+function Media({ shot, sizes = SIZES, priority }: { shot: Shot; sizes?: string; priority?: boolean }) {
+  if (shot.video) {
+    return (
+      <ShowcaseVideo
+        src={shot.video.src}
+        webmSrc={shot.video.webmSrc}
+        poster={shot.src}
+        width={shot.width}
+        height={shot.height}
+        waitForScroll={false}
+        className={shot.crop ? undefined : styles.media}
+        style={cropStyle(shot) ?? { objectFit: "cover", objectPosition: "top" }}
+      />
+    );
+  }
   return (
-    <DeviceBrowser className={styles.browser}>
-      <Img shot={shot} priority={priority} />
-    </DeviceBrowser>
-  );
-}
-
-function Phone({ shot }: { shot: Shot }) {
-  return (
-    <DevicePhone className={styles.phone}>
-      <Img shot={shot} sizes="(min-width: 1100px) 8vw, 24vw" />
-    </DevicePhone>
+    <Image
+      src={shot.src}
+      alt=""
+      width={shot.width}
+      height={shot.height}
+      sizes={sizes}
+      preload={priority}
+      unoptimized
+      className={styles.media}
+    />
   );
 }
 
 function Visual({ visual, priority }: { visual: Visual; priority?: boolean }): ReactNode {
   switch (visual.kind) {
-    case "browser":
+    case "screen":
       return (
-        <div className={styles.stage} data-kind="browser">
-          <Browser shot={visual.shot} priority={priority} />
+        <div className={styles.stage} data-kind="screen">
+          <Media shot={visual.shot} priority={priority} />
         </div>
       );
-    case "browserPhone":
+    case "showcase":
       return (
-        <div className={styles.stage} data-kind="browserPhone">
-          <Browser shot={visual.shot} priority={priority} />
-          <Phone shot={visual.phone} />
+        <div className={styles.stage} data-kind="screen">
+          <ShowcaseLoop poster={visual.poster} scenes={visual.scenes} speed={visual.speed} sizes={SIZES} />
+        </div>
+      );
+    case "phoneSlots":
+      return (
+        <div className={styles.stage} data-kind="phones">
+          {visual.labels.map((label, i) => (
+            <DevicePhone key={i} className={styles.phone}>
+              <span className={styles.slot}>{label}</span>
+            </DevicePhone>
+          ))}
         </div>
       );
     case "phones":
       return (
         <div className={styles.stage} data-kind="phones">
-          {visual.phones.map((shot) => (
-            <Phone key={shot.src} shot={shot} />
-          ))}
+          {visual.more ? (
+            <PhoneCycle
+              screens={[...visual.phones, ...visual.more]}
+              count={visual.phones.length}
+              sizes="(min-width: 1100px) 10vw, 30vw"
+              phoneClassName={styles.phone}
+            />
+          ) : (
+            visual.phones.map((shot) => (
+              <DevicePhone key={shot.src} className={styles.phone}>
+                <Media shot={shot} sizes="(min-width: 1100px) 10vw, 30vw" />
+              </DevicePhone>
+            ))
+          )}
         </div>
       );
   }
@@ -135,7 +243,8 @@ function Visual({ visual, priority }: { visual: Visual; priority?: boolean }): R
 
 function Card({ project, n }: { project: Project; n: number }) {
   const entry = entries[project.title];
-  const status = project.link ? entry?.year : project.label ?? "Case study coming soon";
+  const external = !!project.link && /^https?:///.test(project.link);
+  const status = project.link ? (entry?.year ?? (external ? "Live site" : undefined)) : project.label ?? "Case study coming soon";
   const body = (
     <>
       <div className={styles.frame}>{entry ? <Visual visual={entry.visual} priority={n <= 3} /> : null}</div>
@@ -145,7 +254,7 @@ function Card({ project, n }: { project: Project; n: number }) {
           {project.title}
           {project.link ? (
             <span className={styles.arrow} aria-hidden="true">
-              &rarr;
+              {external ? <>&#8599;</> : <>&rarr;</>}
             </span>
           ) : null}
         </h2>
@@ -158,6 +267,14 @@ function Card({ project, n }: { project: Project; n: number }) {
       </div>
     </>
   );
+  if (external) {
+    return (
+      <a href={project.link} target="_blank" rel="noopener noreferrer" className={styles.card}>
+        {body}
+        <span className={styles.visuallyHidden}> (opens the live site in a new tab)</span>
+      </a>
+    );
+  }
   return project.link ? (
     <Link href={project.link} className={styles.card}>
       {body}
@@ -173,7 +290,7 @@ const keyOf = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
 
 export default function WorkPage() {
   return (
-    <div className={home.home}>
+    <div className={`${home.home} ${styles.page}`}>
       <StickyNav>
         <div className={home.container}>
           <SiteHeader editorial current="work" />

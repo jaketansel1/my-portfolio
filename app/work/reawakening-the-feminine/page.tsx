@@ -30,13 +30,13 @@ const mobile = (file: string, alt: string) => ({ src: `${R}/${file}.webp`, alt, 
 const SITE = "reawakeningthefeminineprograms.com";
 
 const chapters: Chapter[] = [
-  { id: "overview", number: "01", title: "Overview" },
-  { id: "brief", number: "02", title: "Brief" },
-  { id: "direction", number: "03", title: "Direction" },
-  { id: "structure", number: "04", title: "Structure" },
-  { id: "details", number: "05", title: "Details" },
-  { id: "mobile", number: "06", title: "Mobile" },
-  { id: "build", number: "07", title: "Build" },
+  { id: "overview", number: "00", title: "Overview" },
+  { id: "brief", number: "01", title: "Brief" },
+  { id: "direction", number: "02", title: "Direction" },
+  { id: "structure", number: "03", title: "Structure" },
+  { id: "details", number: "04", title: "Details" },
+  { id: "mobile", number: "05", title: "Mobile" },
+  { id: "build", number: "06", title: "Build" },
 ];
 const [overview, brief, direction, structure, details, mobileChapter, build] = chapters;
 
@@ -71,12 +71,12 @@ const runningOrder = [
 export default function ReawakeningCaseStudy() {
   return (
     <CasePage tone={blush} maxWidth="1240px">
-      <ChapterLayout chapters={chapters} title="Reawakening the Feminine" accent="#a85f45" panel="#faf4ee" fill="rgb(59 38 32 / 0.06)">
-        {/* ───────── 01 Overview ───────── */}
+      <ChapterLayout chapters={chapters} accent="#a85f45" panel="#faf4ee" fill="rgb(59 38 32 / 0.06)">
+        {/* ───────── 00 Overview ───────── */}
         <ChapterHero
           chapter={overview}
           brand="She Who Mothers Herself"
-          label="Programme website · Design & build"
+          label="Overview"
           title="A calm page for an emotional offer."
           about="Lauren is a feminine awakening guide, psychotherapist and yoga teacher. She Who Mothers Herself is her nine-week online journey: weekly live sessions, embodiment practices and a small group."
           role="I designed and built the website, from the first section to launch, in Vue 3, TypeScript and Tailwind."
@@ -92,7 +92,7 @@ export default function ReawakeningCaseStudy() {
           </div>
         </ChapterHero>
 
-        {/* ───────── 02 Brief ───────── */}
+        {/* ───────── 01 Brief ───────── */}
         <ChapterSection
           chapter={brief}
           title="Calm enough to sit with. Clear enough to book from."
@@ -116,7 +116,7 @@ export default function ReawakeningCaseStudy() {
           </Pair>
         </ChapterSection>
 
-        {/* ───────── 03 Direction ───────── */}
+        {/* ───────── 02 Direction ───────── */}
         <ChapterSection
           chapter={direction}
           title="Golden hour, cream and chocolate."
@@ -157,7 +157,7 @@ export default function ReawakeningCaseStudy() {
           </Block>
         </ChapterSection>
 
-        {/* ───────── 04 Structure ───────── */}
+        {/* ───────── 03 Structure ───────── */}
         <ChapterSection
           chapter={structure}
           title="Sixteen sections, one long breath."
@@ -188,7 +188,7 @@ export default function ReawakeningCaseStudy() {
           </div>
         </ChapterSection>
 
-        {/* ───────── 05 Details ───────── */}
+        {/* ───────── 04 Details ───────── */}
         <ChapterSection chapter={details} title="Nine weeks, laid out like a journey.">
           <Figure caption="The journey roadmap: one card per week, with dates, in a swipeable carousel.">
             <Browser url={SITE} scheme="light" shot={desk("d-journey-roadmap", "Journey roadmap carousel")} />
@@ -203,7 +203,7 @@ export default function ReawakeningCaseStudy() {
           </Pair>
         </ChapterSection>
 
-        {/* ───────── 06 Mobile ───────── */}
+        {/* ───────── 05 Mobile ───────── */}
         <ChapterSection
           chapter={mobileChapter}
           title="Every section got its own mobile pass."
@@ -218,7 +218,7 @@ export default function ReawakeningCaseStudy() {
           </PhoneRow>
         </ChapterSection>
 
-        {/* ───────── 07 Build ───────── */}
+        {/* ───────── 06 Build ───────── */}
         <ChapterSection
           chapter={build}
           title="Designed and built by one person."

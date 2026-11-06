@@ -187,6 +187,23 @@ export const projects: Project[] = [
     },
   },
   {
+    title: "SportSkins",
+    description:
+      "Designing betting game products across mobile and web, turning complex rules into clear user experiences.",
+    link: "/work/betting-game-products",
+    image: "/sportskins2-homepage.jpg",
+    cover: "/placeholders/sportskins.jpg",
+    category: "Web and mobile games",
+    tags: ["Product Design", "Gaming", "Web App"],
+    period: "2023–2024",
+    showcase: {
+      image: "/betting-homepage.jpg",
+      background: "#0f0d0b",
+      theme: "dark",
+      position: "60% center",
+    },
+  },
+  {
     title: "Reawakening the Feminine",
     featured: true,
     link: "/work/reawakening-the-feminine",
@@ -216,24 +233,9 @@ export const projects: Project[] = [
     },
   },
   {
-    title: "SportSkins",
-    description:
-      "Designing betting game products across mobile and web, turning complex rules into clear user experiences.",
-    link: "/work/betting-game-products",
-    image: "/sportskins2-homepage.jpg",
-    cover: "/placeholders/sportskins.jpg",
-    category: "Web and mobile games",
-    tags: ["Product Design", "Gaming", "Web App"],
-    period: "2023–2024",
-    showcase: {
-      image: "/betting-homepage.jpg",
-      background: "#0f0d0b",
-      theme: "dark",
-      position: "60% center",
-    },
-  },
-  {
     title: "Maison Augustin",
+    // No case study yet: the card goes straight to the live site.
+    link: "https://maisonaugustinproperties.com/",
     description:
       "Designing and launching a premium lead-generation website for an independent real estate consultant specialising in Dubai off-plan investments.",
     image: "/maison-augustin-homepage3.jpg",

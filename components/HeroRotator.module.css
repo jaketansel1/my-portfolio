@@ -1,0 +1,26 @@
+/* About hero photo that rotates on its own. Reads tokens from home.module.css (.home). */
+
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9.4;
+  overflow: hidden;
+  border-radius: var(--radius-m);
+  background: var(--surface);
+}
+
+/*
+ * All photos stacked. The incoming one fades in on top while the outgoing one stays fully visible
+ * beneath it, so the crossfade never dips through the background. Opacity only: no slide or zoom.
+ */
+.photo {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+.photo[data-previous] { z-index: 1; opacity: 1; }
+.photo[data-active] { z-index: 2; opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .photo { transition: none; }
+}

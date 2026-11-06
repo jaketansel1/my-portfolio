@@ -13,3 +13,4 @@ Temporary homepage placeholders (Unsplash licence, via picsum.photos). Replace w
 - crumble-pug-blanket.jpg — Matthew Wiebe — https://unsplash.com/photos/U5rMrSI7Pn4
 - crumble-puppy.jpg — André Spieker — https://unsplash.com/photos/8wTPqxlnKM4
 - crumble-bulldog.jpg — Yamon  Figurs — https://unsplash.com/photos/2zlxFmByClI
+- about-office.jpg — William Iven — https://unsplash.com/photos/GANqCr1BRTU

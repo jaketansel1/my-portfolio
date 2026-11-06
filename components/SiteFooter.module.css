@@ -13,10 +13,8 @@
     "statement details"
     "bottom bottom";
   align-items: end;
-  gap: clamp(56px, 7vw, 112px) clamp(32px, 5vw, 96px);
-  max-width: calc(var(--max-wide) + var(--gutter) * 2);
-  margin-inline: auto;
-  padding: var(--space-section) var(--gutter) 28px;
+  gap: clamp(40px, 4.5vw, 72px) clamp(32px, 5vw, 96px);
+  padding: clamp(56px, 6vw, 104px) var(--gutter) 24px;
 }
 
 /* ---------- Statement ---------- */
@@ -24,7 +22,7 @@
 .statement {
   grid-area: statement;
   display: grid;
-  font-size: var(--text-1);
+  font-size: var(--text-2);
   font-weight: 500;
   line-height: 1.02;
   letter-spacing: -0.045em;
@@ -38,7 +36,7 @@
   grid-area: details;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, max-content));
-  gap: 28px clamp(32px, 4vw, 64px);
+  gap: 20px clamp(32px, 4vw, 64px);
 }
 .detail { display: grid; gap: 6px; }
 .detail:first-child { grid-column: 1 / -1; }
@@ -91,7 +89,7 @@ a.value:hover .arrow { transform: translate(2px, -2px); }
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding-top: 20px;
+  padding-top: 18px;
   border-top: 1px solid var(--night-rule);
   color: var(--night-quiet);
   font-size: 12.5px;
@@ -115,8 +113,9 @@ a.value:hover .arrow { transform: translate(2px, -2px); }
 }
 
 @media (max-width: 600px) {
-  .statement { font-size: 11vw; }
-  .details { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .statement { font-size: 9vw; }
+  /* Email across the top, LinkedIn and CV side by side beneath it. */
+  .details { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -12,7 +12,8 @@ import styles from "./Chapters.module.css";
  * an accent, and optionally the panel and fill colours used by diagrams and quiet surfaces.
  */
 
-export type Chapter = NavChapter;
+/** `theme` is a short line beside an initiative opener's label, e.g. "Discovery & Navigation". */
+export type Chapter = NavChapter & { theme?: string };
 
 export function ChapterLayout({
   chapters,
@@ -24,8 +25,8 @@ export function ChapterLayout({
   children,
 }: {
   chapters: Chapter[];
-  /** Shown above the rail. */
-  title: string;
+  /** Shown above the rail. Optional: a case study can leave the rail to its chapters. */
+  title?: string;
   accent: string;
   /** Diagram / stage background. Defaults to a step off the page background. */
   panel?: string;
@@ -67,9 +68,10 @@ export function ChapterHero({
   title: ReactNode;
   /** What the company or product is. */
   about: ReactNode;
-  /** What I did. */
-  role: ReactNode;
-  facts: Fact[];
+  /** What I did. Optional: a case study can fold it into `about` as one paragraph. */
+  role?: ReactNode;
+  /** Optional: a case study can fold these into its own overview card instead. */
+  facts?: Fact[];
   children?: ReactNode;
 }) {
   return (
@@ -84,9 +86,9 @@ export function ChapterHero({
       </h1>
       <div className={styles.heroLede}>
         <p>{about}</p>
-        <p>{role}</p>
+        {role ? <p>{role}</p> : null}
       </div>
-      <Facts facts={facts} />
+      {facts ? <Facts facts={facts} /> : null}
       {children ? <div className={styles.heroFigure}>{children}</div> : null}
     </section>
   );
@@ -107,33 +109,32 @@ function Facts({ facts }: { facts: Fact[] }) {
 
 /**
  * Opens one initiative inside a wider case study (e.g. "01 / Mega Menu"): a larger headline than a
- * chapter, a short intro, facts and a lead visual. The chapters that follow tell its story.
+ * chapter, a short intro and a lead visual. No facts row: the case study's overview holds those once.
+ * The chapters that follow tell its story.
  */
 export function ChapterOpener({
   chapter,
   title,
   intro,
-  facts,
   children,
 }: {
   chapter: Chapter;
   title: ReactNode;
   intro?: ReactNode;
-  facts?: Fact[];
   children?: ReactNode;
 }) {
   return (
     <section id={chapter.id} className={`${styles.chapter} ${styles.opener}`} aria-labelledby={`${chapter.id}-title`}>
       <p className={styles.chapterLabel}>
-        <span>{chapter.number} /</span>
+        <span>{chapter.number}</span>
         {chapter.title}
+        {chapter.theme ? <span className={styles.chapterTheme}>{chapter.theme}</span> : null}
       </p>
       <h2 id={`${chapter.id}-title`} className={styles.openerTitle}>
         {title}
       </h2>
       {intro ? <div className={styles.heroLede}>{intro}</div> : null}
-      {facts ? <Facts facts={facts} /> : null}
-      {children ? <div className={styles.heroFigure}>{children}</div> : null}
+      {children ? <div className={`${styles.heroFigure} ${styles.openerFigure}`}>{children}</div> : null}
     </section>
   );
 }

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import SiteFooter from "../../components/SiteFooter";
-import HeroShuffle from "../../components/HeroShuffle";
+import HeroRotator from "../../components/HeroRotator";
+import ProcessFlow from "../../components/ProcessFlow";
 import SideGrid from "../../components/SideGrid";
 import SiteHeader from "../../components/SiteHeader";
 import StickyNav from "../../components/StickyNav";
-import { career, heroPhotos, sides } from "../data/about";
+import { career, heroPhotos, sides, workStages } from "../data/about";
 import home from "../home.module.css";
 import styles from "./about.module.css";
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/* Intro → "Pick a side of me" → how I got here → contact. Content lives in app/data/about.ts. */
+/* Intro → a few sides of me → how I work → how I got here. Content lives in app/data/about.ts. */
 export default function AboutPage() {
   return (
     <div className={home.home}>
@@ -44,7 +45,7 @@ export default function AboutPage() {
               platforms to websites and independent client projects.
             </p>
           </div>
-          <HeroShuffle photos={heroPhotos} className={styles.portrait} />
+          <HeroRotator photos={heroPhotos} className={styles.portrait} />
         </section>
 
         <section className={`${home.container} ${styles.sides}`} aria-labelledby="sides-heading">
@@ -55,6 +56,37 @@ export default function AboutPage() {
 
           </div>
           <SideGrid sides={sides} />
+        </section>
+
+        <section className={`${home.container} ${styles.work}`} aria-labelledby="work-heading">
+          <div className={styles.workHead}>
+            <div>
+              <p className={styles.sectionEyebrow}>How I work</p>
+              <h2 id="work-heading" className={styles.sectionHeading}>
+                Designing beyond the canvas.
+              </h2>
+            </div>
+            <div className={styles.workIntro}>
+              <p>
+                Over the past year, I&rsquo;ve been deliberately closing the gap between designing a product and actually
+                shipping it.
+              </p>
+              <p>
+                I&rsquo;ve moved beyond Figma into frontend code, existing codebases, Git and GitHub, testing and production
+                delivery &mdash; working closely with backend developers to take features from idea through to release.
+              </p>
+            </div>
+          </div>
+          {/* Design → Build → Ship → Learn: one continuous journey line, drawn once on entering view. */}
+          <ProcessFlow stages={workStages} />
+          {/* A quiet footnote to the whole journey. */}
+          <aside className={styles.aiNote} aria-label="A note on AI">
+            <p className={styles.aiLabel}>A note on AI</p>
+            <p className={styles.aiText}>
+              AI has accelerated how quickly I can learn and build, but I use it to deepen my understanding rather than replace
+              it. I still want to understand the code, the product decisions and how everything fits together.
+            </p>
+          </aside>
         </section>
 
         <section className={`${home.container} ${styles.career}`} aria-labelledby="career-heading">
