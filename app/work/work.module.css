@@ -178,6 +178,23 @@
 }
 .stage[data-kind="phones"] .phone:nth-child(2) { height: 100%; }
 
+/* An empty screen waiting on its screenshot: quiet, but clearly a placeholder rather than a broken image. */
+.slot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12%;
+  background: linear-gradient(180deg, #1b1b1f, #141416);
+  color: var(--caption-meta);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(8px, 0.62vw, 10px);
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 /* Hover: the work drifts in, slowly. Screens zoom inside their corners; the phones rise together. */
 @media (hover: hover) {
   .card:not([data-static]):hover .stage[data-kind="screen"] .media { transform: scale(1.03); }

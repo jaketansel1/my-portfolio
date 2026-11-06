@@ -187,6 +187,23 @@ export const projects: Project[] = [
     },
   },
   {
+    title: "SportSkins",
+    description:
+      "Designing betting game products across mobile and web, turning complex rules into clear user experiences.",
+    link: "/work/betting-game-products",
+    image: "/sportskins2-homepage.jpg",
+    cover: "/placeholders/sportskins.jpg",
+    category: "Web and mobile games",
+    tags: ["Product Design", "Gaming", "Web App"],
+    period: "2023–2024",
+    showcase: {
+      image: "/betting-homepage.jpg",
+      background: "#0f0d0b",
+      theme: "dark",
+      position: "60% center",
+    },
+  },
+  {
     title: "Reawakening the Feminine",
     featured: true,
     link: "/work/reawakening-the-feminine",
@@ -213,23 +230,6 @@ export const projects: Project[] = [
         desktop: { src: "/reawakening/screen-desktop.webp", width: 1521, height: 1078, url: "reawakeningthefeminineprograms.com" },
         mobile: { src: "/reawakening/screen-mobile.jpg", width: 945, height: 2048 },
       },
-    },
-  },
-  {
-    title: "SportSkins",
-    description:
-      "Designing betting game products across mobile and web, turning complex rules into clear user experiences.",
-    link: "/work/betting-game-products",
-    image: "/sportskins2-homepage.jpg",
-    cover: "/placeholders/sportskins.jpg",
-    category: "Web and mobile games",
-    tags: ["Product Design", "Gaming", "Web App"],
-    period: "2023–2024",
-    showcase: {
-      image: "/betting-homepage.jpg",
-      background: "#0f0d0b",
-      theme: "dark",
-      position: "60% center",
     },
   },
   {

@@ -4,11 +4,14 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import SiteFooter from "../../components/SiteFooter";
 import { Phone as DevicePhone } from "../../components/ui/Device";
+import ShowcaseLoop, { type ShowcaseScene } from "../../components/ShowcaseLoop";
+import PhoneCycle from "../../components/PhoneCycle";
 import ShowcaseVideo from "../../components/ShowcaseVideo";
 import SiteHeader from "../../components/SiteHeader";
 import StickyNav from "../../components/StickyNav";
 import { projects, type Project } from "../data/projects";
 import home from "../home.module.css";
+import { crumbleScenes, lickLibraryScenes, reawakeningScenes } from "./showcases";
 import styles from "./work.module.css";
 
 export const metadata: Metadata = {
@@ -40,11 +43,20 @@ type Shot = { src: string; width: number; height: number; video?: { src: string;
 /**
  * How each project's interface is presented. Product UI only: no lifestyle or decorative imagery.
  * "screen": the desktop screenshot on its own, no frame, filling the preview from the top.
- * "phones": an app shown as phones, the one place a device frame stays.
+ * "phones": an app shown as phones, the one place a device frame stays. With `more`, the screens cross-fade
+ *   through the whole set (components/PhoneCycle).
+ * "phoneSlots": the same phone row with empty screens, for an app whose screenshots are still to come. Swap it
+ *   for "phones" (with `more` to cycle) once they're ready.
+ * "showcase": a cinematic loop of real screenshots (components/ShowcaseLoop), with the still as its poster.
  */
-type Visual = { kind: "screen"; shot: Shot } | { kind: "phones"; phones: Shot[] };
+type Visual =
+  | { kind: "screen"; shot: Shot }
+  | { kind: "phones"; phones: Shot[]; more?: Shot[] }
+  | { kind: "phoneSlots"; labels: string[] }
+  | { kind: "showcase"; poster: Shot; scenes: ShowcaseScene[]; speed?: number };
 
 type Entry = { discipline: string; year?: string; visual: Visual };
+
 
 /*
  * Every desktop screenshot is a clean capture (no browser chrome in the file) at 16:10 to about 1.41:1. The
@@ -56,12 +68,22 @@ const entries: Record<string, Entry> = {
   LickLibrary: {
     discipline: "Product Design · UX/UI · Frontend",
     year: "2025–now",
-    visual: { kind: "screen", shot: { src: "/work/licklibrary-screen.webp", width: 1400, height: 907 } },
+    visual: {
+      kind: "showcase",
+      poster: { src: "/work/licklibrary-screen.webp", width: 1400, height: 907 },
+      scenes: lickLibraryScenes,
+      speed: 1.45,
+    },
   },
   "Crumble & Co": {
     discipline: "eCommerce · Design · Shopify build",
     year: "2026",
-    visual: { kind: "screen", shot: { src: "/work/crumble-screen.webp", width: 1400, height: 875 } },
+    visual: {
+      kind: "showcase",
+      poster: { src: "/work/crumble-screen.webp", width: 1400, height: 875 },
+      scenes: crumbleScenes,
+      speed: 1.45, // the scenes are timed at a reading pace; this plays the ~31s loop in ~21s
+    },
   },
   Fanzine: {
     discipline: "Product Design · Mobile · Design System",
@@ -73,17 +95,29 @@ const entries: Record<string, Entry> = {
         { src: "/fanzine/app-arsenal.webp", width: 900, height: 1964 },
         { src: "/fanzine/app-man-city.webp", width: 900, height: 1958 },
       ],
+      // The same product in other clubs' colours: the screens cycle through every app.
+      more: [
+        { src: "/fanzine/app-celtic.webp", width: 900, height: 1954 },
+        { src: "/fanzine/app-west-ham.webp", width: 900, height: 1955 },
+      ],
     },
   },
   "Reawakening the Feminine": {
     discipline: "Web Design · UX/UI · Frontend",
     year: "2026",
-    visual: { kind: "screen", shot: { src: "/work/reawakening-screen.webp", width: 1400, height: 992 } },
+    visual: {
+      kind: "showcase",
+      poster: { src: "/work/reawakening-screen.webp", width: 1400, height: 992 },
+      scenes: reawakeningScenes,
+      speed: 1.45,
+    },
   },
   SportSkins: {
     discipline: "Product Design · Gaming · Web App",
     year: "2023–2024",
-    visual: { kind: "screen", shot: { src: "/work/sportskins-screen.webp", width: 1400, height: 930 } },
+    // Phones like Fanzine's, waiting on mobile screenshots. The existing sportskins-phone.webp has a phone
+    // frame baked in, so it can't sit inside the shared frame; clean screen captures will replace these.
+    visual: { kind: "phoneSlots", labels: ["Screen to come", "Screen to come", "Screen to come"] },
   },
   "Maison Augustin": {
     discipline: "Web Design · Frontend · Lead Generation",
@@ -131,14 +165,39 @@ function Visual({ visual, priority }: { visual: Visual; priority?: boolean }): R
           <Media shot={visual.shot} priority={priority} />
         </div>
       );
+    case "showcase":
+      return (
+        <div className={styles.stage} data-kind="screen">
+          <ShowcaseLoop poster={visual.poster} scenes={visual.scenes} speed={visual.speed} sizes={SIZES} />
+        </div>
+      );
+    case "phoneSlots":
+      return (
+        <div className={styles.stage} data-kind="phones">
+          {visual.labels.map((label, i) => (
+            <DevicePhone key={i} className={styles.phone}>
+              <span className={styles.slot}>{label}</span>
+            </DevicePhone>
+          ))}
+        </div>
+      );
     case "phones":
       return (
         <div className={styles.stage} data-kind="phones">
-          {visual.phones.map((shot) => (
-            <DevicePhone key={shot.src} className={styles.phone}>
-              <Media shot={shot} sizes="(min-width: 1100px) 10vw, 30vw" />
-            </DevicePhone>
-          ))}
+          {visual.more ? (
+            <PhoneCycle
+              screens={[...visual.phones, ...visual.more]}
+              count={visual.phones.length}
+              sizes="(min-width: 1100px) 10vw, 30vw"
+              phoneClassName={styles.phone}
+            />
+          ) : (
+            visual.phones.map((shot) => (
+              <DevicePhone key={shot.src} className={styles.phone}>
+                <Media shot={shot} sizes="(min-width: 1100px) 10vw, 30vw" />
+              </DevicePhone>
+            ))
+          )}
         </div>
       );
   }
