@@ -298,6 +298,7 @@ export function Placeholder({
   note,
   aspect = "16 / 10",
   tag = "Asset needed",
+  spec,
   className,
 }: {
   label: string;
@@ -305,6 +306,8 @@ export function Placeholder({
   aspect?: string;
   /** What's missing, e.g. "Write-up needed". */
   tag?: string;
+  /** Format to capture it in, e.g. "16:10 · 2560×1600 · webp". */
+  spec?: string;
   className?: string;
 }) {
   return (
@@ -312,6 +315,7 @@ export function Placeholder({
       <span className={styles.placeholderTag}>{tag}</span>
       <span className={styles.placeholderLabel}>{label}</span>
       {note ? <span className={styles.placeholderNote}>{note}</span> : null}
+      {spec ? <span className={styles.placeholderSpec}>{spec}</span> : null}
     </div>
   );
 }

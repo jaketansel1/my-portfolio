@@ -273,38 +273,6 @@
   text-wrap: balance;
 }
 
-/* ---------- Next chapter: the hand-off at the end of a chapter ---------- */
-
-.nextChapter {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px 24px;
-  align-items: end;
-  margin-top: clamp(72px, 7vw, 112px);
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
-}
-.nextChapterLabel {
-  grid-column: 1 / -1;
-  color: var(--muted);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.nextChapterTitle {
-  display: flex;
-  gap: 14px;
-  align-items: baseline;
-  font-size: clamp(24px, 2.2vw, 36px);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  transition: color 200ms ease;
-}
-.nextChapterTitle span { color: var(--accent); font-family: var(--font-geist-mono), monospace; font-size: 13px; letter-spacing: 0; }
-.nextChapterArrow { color: var(--muted); font-size: 20px; transition: translate 300ms var(--case-ease), color 200ms ease; }
-.nextChapter:hover .nextChapterArrow { translate: 0 4px; color: var(--fg); }
-.nextChapter:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
 
 /* ---------- Insight ---------- */
 
@@ -449,7 +417,6 @@
   .caseNav { transition: none; }
   .caseNav a::before { transition: none; }
   .caseNavSections { transition: none; }
-  .nextChapterArrow { transition: none; }
 }
 
 /* ---------- Responsive ---------- */

@@ -14,8 +14,8 @@ const STEP_MS = 2500;
 /**
  * One screenshot with a highlight that steps through areas of it, dimming the rest. Autoplays once on
  * screen (the full screenshot once, then each step), loops from the last step straight back to the first,
- * and keeps going on hover. Choosing a step jumps there and carries on from it. Reduced motion: no autoplay,
- * the first step shown, steps still selectable.
+ * and keeps going on hover. Choosing a step jumps there and carries on from it; keyboard focus on the steps holds it.
+ * Reduced motion: no autoplay, the first step shown, steps still selectable.
  */
 export default function Walkthrough({
   src,
@@ -39,6 +39,8 @@ export default function Walkthrough({
   const [inView, setInView] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [hidden, setHidden] = useState(false);
+  // Keyboard focus inside the steps holds the autoplay, so it never moves on under someone reading a step.
+  const [focused, setFocused] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -64,7 +66,7 @@ export default function Walkthrough({
   // Autoplay always runs (unless reduced motion); hovering or picking a step doesn't stop it. It holds, without
   // losing its place, off screen or in a hidden tab.
   const autoplay = !reduced;
-  const holding = hidden || !inView;
+  const holding = hidden || !inView || focused;
 
   // The plain screenshot shows once, before the first step. From then on the active step's progress fill is the
   // clock: when it finishes, the next step starts (see onAnimationEnd), so the two can never drift apart.
@@ -100,7 +102,13 @@ export default function Walkthrough({
           <Image src={src} alt={alt} width={width} height={height} unoptimized />
           <span className={styles.highlight} style={box} data-on={step >= 0 || undefined} aria-hidden="true" />
         </div>
-        <div className={styles.controls}>
+        <div
+          className={styles.controls}
+          onFocus={(e) => setFocused(e.target.matches(":focus-visible"))}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+          }}
+        >
           <ol className={styles.steps} aria-label="Walkthrough steps">
             {steps.map((s, i) => (
               <li key={s.title}>
@@ -139,7 +147,8 @@ export default function Walkthrough({
             ))}
           </ol>
           {/* Small screens: the columns drop their notes, and the active one shows here instead. */}
-          <p className={styles.activeNote} aria-live="polite">
+          {/* Announced only once someone has chosen a step, not on every autoplay tick. */}
+          <p className={styles.activeNote} aria-live={run > 0 ? "polite" : "off"}>
             {active ? `${active.title}: ${active.note}` : " "}
           </p>
         </div>

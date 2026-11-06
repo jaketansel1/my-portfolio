@@ -25,8 +25,8 @@ export function ChapterLayout({
   children,
 }: {
   chapters: Chapter[];
-  /** Shown above the rail. */
-  title: string;
+  /** Shown above the rail. Optional: a case study can leave the rail to its chapters. */
+  title?: string;
   accent: string;
   /** Diagram / stage background. Defaults to a step off the page background. */
   panel?: string;
@@ -68,8 +68,8 @@ export function ChapterHero({
   title: ReactNode;
   /** What the company or product is. */
   about: ReactNode;
-  /** What I did. */
-  role: ReactNode;
+  /** What I did. Optional: a case study can fold it into `about` as one paragraph. */
+  role?: ReactNode;
   /** Optional: a case study can fold these into its own overview card instead. */
   facts?: Fact[];
   children?: ReactNode;
@@ -86,7 +86,7 @@ export function ChapterHero({
       </h1>
       <div className={styles.heroLede}>
         <p>{about}</p>
-        <p>{role}</p>
+        {role ? <p>{role}</p> : null}
       </div>
       {facts ? <Facts facts={facts} /> : null}
       {children ? <div className={styles.heroFigure}>{children}</div> : null}
@@ -126,7 +126,7 @@ export function ChapterOpener({
   return (
     <section id={chapter.id} className={`${styles.chapter} ${styles.opener}`} aria-labelledby={`${chapter.id}-title`}>
       <p className={styles.chapterLabel}>
-        <span>{chapter.number} /</span>
+        <span>{chapter.number}</span>
         {chapter.title}
         {chapter.theme ? <span className={styles.chapterTheme}>{chapter.theme}</span> : null}
       </p>

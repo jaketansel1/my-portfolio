@@ -3,11 +3,23 @@
  * components/case/Chapters; this file holds the project's own diagrams and showcases.
  */
 
-/* ---------- Overview: project and platform scale ---------- */
+/* ---------- Content column, type and rhythm ---------- */
 
-/* About 13% under the shared case-study headline, so the hero leads without crowding the page. */
-/* One measure for every block of copy on the page, read by the shared chapter styles. */
-.layout { --hero-title: clamp(36px, 3.85vw, 70px); --copy-width: 48ch; }
+/*
+ * A compact editorial column (about 820px) beside the shared rail, with a quieter type scale than the shared
+ * chapter styles. Scoped to this page through .layout and element selectors, so the other case studies that
+ * share components/case/Chapters are untouched.
+ */
+.layout { --hero-title: clamp(36px, 3.2vw, 46px); --copy-width: 560px; }
+.layout > div:last-child { max-width: 820px; }
+/* Large monitors: the column widens so visuals use the space; copy keeps its 560px measure and type keeps its size.
+   Laptops (up to 1440px) are unchanged. */
+@media (min-width: 1441px) {
+  .layout > div:last-child { max-width: 900px; }
+}
+@media (min-width: 1920px) {
+  .layout > div:last-child { max-width: 1050px; }
+}
 /* Desktop: the headline sits on two lines, breaking after the comma. Smaller screens wrap naturally. */
 .titleBreak { display: none; }
 @media (min-width: 1101px) {
@@ -15,76 +27,82 @@
   .titleBreak { display: inline; }
 }
 
-/* Overview: logo, headline, short intro, then one card. Local to LickLibrary; shared chapters stay intact. */
-.layout section[id="overview"] { padding-bottom: clamp(32px, 3.5vw, 56px); }
-.layout section[id="overview"] > div:last-child { margin-top: clamp(28px, 3vw, 44px); }
+/* Chapter openers (01 Mega Menu, 02 Checkout...), section headings, then their intros. */
+.layout section > h2 { max-width: 24ch; font-size: clamp(30px, 2.6vw, 36px); line-height: 1.02; letter-spacing: -0.04em; }
+.layout section > header h2 { max-width: 30ch; font-size: clamp(24px, 2vw, 28px); line-height: 1.08; letter-spacing: -0.035em; }
+.layout section > header { margin-bottom: clamp(24px, 2.4vw, 32px); }
+/* Section labels, one pattern everywhere: "1.1 / PROBLEM". Only the number takes the accent. */
+.layout section[id="overview"] > p:first-of-type,
+.layout section > p:first-child,
+.layout section > header > p:first-child {
+  gap: 0.75em;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+}
+.layout section[id="overview"] > p:first-of-type > span:first-child::after,
+.layout section > p:first-child > span:first-child::after,
+.layout section > header > p:first-child > span:first-child::after {
+  margin-left: 0.75em;
+  color: var(--muted);
+  content: "/";
+}
+.layout section > header > div { margin-top: 12px; font-size: 16px; }
+/* Hero and opener intros: a step above body copy, not a lead paragraph. */
+.layout section > :is(h1, h2) + div { margin-top: clamp(16px, 1.6vw, 22px); font-size: 17px; line-height: 1.55; }
+/* Visuals under an opener intro. */
+.layout section > :is(h1, h2) + div + div { margin-top: clamp(28px, 2.8vw, 40px); }
 
-.platformPanel {
-  padding: clamp(24px, 2.5vw, 36px);
-  border: 1px solid var(--rule);
-  border-radius: clamp(10px, 1vw, 16px);
-  background: var(--panel);
+/* ---------- Overview: one compact row of project facts ---------- */
+
+/* One intro paragraph: what LickLibrary is in muted text, then my part in full colour. */
+.layout section[id="overview"] > h1 + div p { color: var(--muted); }
+.layout section[id="overview"] > h1 + div .roleLine { color: var(--fg); }
+
+/* Compact, so the product preview starts inside the first desktop screen. */
+.layout section[id="overview"] { padding-block: clamp(28px, 4vh, 48px) clamp(36px, 3.4vw, 48px); }
+.layout section[id="overview"] > div:first-child { margin-bottom: clamp(18px, 1.6vw, 24px); }
+.layout section[id="overview"] > :is(h1) + div + div { margin-top: clamp(22px, 2vw, 28px); }
+
+/* The finished product, right after the facts: the full column, its own proportions, a hairline and soft corners. */
+.showcase { margin: clamp(24px, 2.4vw, 32px) 0 0; }
+.showcase > span {
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: clamp(6px, 0.6vw, 10px);
 }
-/* Top of the card: the project, in two columns split like the stats below. */
+.showcase figcaption { margin-top: 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+/* Grouped with the intro, not spread across the screenshot: a compact row that wraps on small screens. */
 .projectInfo {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px clamp(28px, 3vw, 44px);
 }
-.projectInfo > div { min-width: 0; padding-inline: clamp(20px, 3vw, 40px); }
-.projectInfo > div:first-child { padding-left: 0; }
-.projectInfo > div:last-child { padding-right: 0; }
-.projectInfo > div + div { border-left: 1px solid var(--rule); }
-.projectInfo dt { margin-bottom: 6px; }
+.projectInfo > div { min-width: 0; }
 .projectInfo dd { font-size: 15px; line-height: 1.45; }
-/* Bottom of the card: the platform's scale, below one hairline. */
-.glance {
-  margin-top: clamp(20px, 2vw, 28px);
-  padding-top: clamp(20px, 2vw, 28px);
-  border-top: 1px solid var(--rule);
-}
-.glance > .metaLabel { margin-bottom: 20px; }
 .metaLabel {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.platform {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
-}
-.platform > div { min-width: 0; padding-inline: clamp(20px, 3vw, 40px); }
-.platform > div:first-child { padding-left: 0; }
-.platform > div:last-child { padding-right: 0; }
-.platform > div + div { border-left: 1px solid var(--rule); }
-/* LickLibrary's own scale: kept a clear step below the chapter headlines. */
-.platform dd {
-  font-size: clamp(22px, 1.9vw, 30px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
-.platform dt { margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.4; }
 
 /* ---------- 01 Mega Menu ---------- */
 
 /* Section rhythm for this case study: about 17% under the shared chapter spacing (64–112px).
    :where() keeps the specificity low, so the per-section rules below still win. The overview keeps its own. */
-.layout section:where([aria-labelledby]:not([id="overview"])) { padding-block: clamp(54px, 5.4vw, 92px); }
+.layout section:where([aria-labelledby]:not([id="overview"])) { padding-block: clamp(48px, 4.4vw, 72px); }
 
-/* Problem → System reads as one argument, so the gap between them is tighter still. */
-.layout section[id="mega-menu"] { padding-block: clamp(40px, 4vw, 64px) clamp(32px, 3.2vw, 52px); }
-.layout section[id="system"] { padding-top: clamp(40px, 4vw, 64px); }
+/* Before → after reads as one argument: the redesigned desktop menu follows the old navigation closely. */
+.layout section[id="mega-menu"] { padding-block: clamp(40px, 4vw, 56px) clamp(32px, 3vw, 44px); }
+.layout section[id="experience"] { padding-top: clamp(36px, 3.4vw, 52px); }
+/* Chapter openers keep a clear break between initiatives, just less of one. */
+.layout section:is([id="checkout"], [id="email-templates"]) { padding-top: clamp(64px, 6vw, 96px); }
 
-/* Product visuals step a little past the copy column on desktop, never more than a fixed amount, so they
-   stay in proportion on very wide screens. */
-@media (min-width: 1101px) {
-  .wide { margin-right: calc(-1 * min(64px, var(--home-gutter) - 24px)); }
-}
+/* Visuals share the column edge with the copy and dividers. (.wide stays as a hook; it no longer breaks out.) */
+.wide { margin-right: 0; }
 
 /* 1.1 Problem: the old navigation, straight into the System section. */
 .beforeExamples {
@@ -98,7 +116,7 @@
      desktop video still steps wider (.wide), keeping the shipped work the larger visual. */
   margin: 0;
 }
-.beforeExamples > :not(figcaption) {
+.beforeExamples > :not(figcaption, [style*="aspect-ratio"]) {
   border: 1px solid rgb(255 255 255 / 0.14);
   border-radius: clamp(6px, 0.6vw, 10px);
 }
@@ -119,10 +137,13 @@
 .tiers {
   display: grid;
   /* Phones stop growing at a comfortable inspecting size; wider screens just get more space around them. */
-  grid-template-columns: repeat(3, minmax(0, 340px));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(20px, 3vw, 48px);
   list-style: none;
 }
+/* Large monitors: phones stay phone-sized as the column grows. */
+@media (min-width: 1441px) { .tiers { grid-template-columns: repeat(3, minmax(0, 290px)); } }
+@media (min-width: 1920px) { .tiers { grid-template-columns: repeat(3, minmax(0, 310px)); } }
 .tiers li { position: relative; min-width: 0; }
 .tierLabel {
   display: flex;
@@ -132,7 +153,7 @@
   margin-bottom: clamp(14px, 1.4vw, 20px);
 }
 .tierLabel span { color: var(--accent); font-family: var(--font-geist-mono), monospace; font-size: 12px; }
-.tierLabel strong { font-size: clamp(18px, 1.5vw, 24px); font-weight: 500; letter-spacing: -0.03em; }
+.tierLabel strong { font-size: 19px; font-weight: 500; letter-spacing: -0.03em; }
 .tierLabel em { color: var(--muted); font-size: 14px; font-style: normal; }
 .phone {
   overflow: hidden;
@@ -146,17 +167,54 @@
 .phone video { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; border-radius: clamp(14px, 1.6vw, 26px); }
 .phone :global(img) { border-radius: clamp(14px, 1.6vw, 26px); }
 
-/* 1.5 Admin: the editor, then one paragraph on my part in it. */
+/* Small step label above a visual, e.g. "01 Edit: ..." and "02 Live: ...". */
+.panelStep {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  margin-bottom: clamp(10px, 1vw, 14px);
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.panelStep span { color: var(--accent); }
+
+/* Screens shown flat on the page: a hairline and soft corners, like the before shots. */
+.adminShot,
+.liveShot {
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: clamp(6px, 0.6vw, 10px);
+}
+
+/* 1.5 Admin: the editor, then the same block live beside what the team controls and my part in it. */
+.adminResult {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+  margin-top: clamp(28px, 3vw, 44px);
+}
+.adminNotes { padding-top: calc(11px * 1.5 + clamp(10px, 1vw, 14px)); }
+.controlList { list-style: none; }
+.controlList li {
+  padding-block: 10px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 15px;
+  line-height: 1.4;
+}
+.controlList li:first-child { border-top: 1px solid var(--rule); }
 .ownership {
   max-width: var(--copy-width);
-  margin-top: clamp(32px, 3.4vw, 52px);
+  margin-top: clamp(20px, 2vw, 28px);
   color: var(--muted);
-  font-size: clamp(15px, 1.1vw, 17px);
+  font-size: 15px;
   line-height: 1.6;
   text-wrap: pretty;
 }
 .stack {
-  margin-top: 16px;
+  margin-top: 14px;
   color: var(--muted);
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
@@ -164,29 +222,87 @@
   text-transform: uppercase;
 }
 
-/* 1.6 Outcome: three small points under a hairline, then the hand-off to Checkout. */
-.outcomes {
+/* 1.6 Outcome and 2.3 stages: titled points under a hairline, no boxes. */
+.outcomes,
+.stages {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px var(--col-gap);
+  gap: 28px var(--col-gap);
   list-style: none;
 }
-.outcomes li {
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
-  font-size: clamp(15px, 1.15vw, 17px);
-  font-weight: 500;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-}
-.outcomes li::before {
+.stages { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px clamp(20px, 2.4vw, 36px); }
+.outcomes li,
+.stages li { padding-top: 16px; border-top: 1px solid var(--rule); }
+.outcomeIndex {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: var(--accent);
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
-  font-weight: 400;
-  content: "✓";
+}
+.outcomes h3,
+.stages h3 {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.outcomes p,
+.stages p { margin-top: 8px; color: var(--muted); font-size: 14.5px; line-height: 1.5; text-wrap: pretty; }
+.stages p:not(.stageDetail) { color: var(--fg); }
+.stages .stageDetail { margin-top: 10px; font-size: 13.5px; }
+
+/* ---------- 02 Checkout ---------- */
+
+/* Not live yet, said plainly: a hollow dot, like Coming soon. */
+.status {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.status::before { flex: none; width: 6px; height: 6px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--accent); content: ""; }
+.layout section[id="checkout"] > div:last-child { margin-top: clamp(24px, 2.4vw, 36px); }
+
+/* Two visuals side by side, each with a step label. */
+.directions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 36px);
+}
+.stageShots { margin-top: clamp(36px, 3.6vw, 56px); }
+
+/* 2.4 The redesigned checkout: desktop and phone at the same height, then the welcome screen. */
+.checkoutHero {
+  display: grid;
+  /* 2560/1440 beside 9/19.5, so both render at the same height. */
+  grid-template-columns: minmax(0, 1.7778fr) minmax(0, 0.4615fr);
+  gap: clamp(16px, 2vw, 28px);
+  align-items: start;
+}
+.followOn { margin-top: clamp(36px, 3.6vw, 56px); }
+.measure {
+  max-width: 720px;
+  margin-top: clamp(40px, 4vw, 64px);
+}
+.measure ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--col-gap);
+  list-style: none;
+}
+.measure li {
+  padding-block: 10px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 /* ---------- 04 Homepage: coming soon ---------- */
@@ -207,20 +323,54 @@
 /* The last chapter: room to finish reading before the next project. */
 .layout section[id="homepage"] { padding-bottom: clamp(96px, 10vw, 168px); }
 
+/* Mobile only: a quiet cue that the phones scroll sideways. */
+.swipeHint { display: none; }
+
 /* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
+  .adminResult { grid-template-columns: minmax(0, 1fr); }
+  .adminNotes { padding-top: 0; }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}
 
 @media (max-width: 600px) {
   .beforeExamples { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
   .beforeExamples > :nth-child(2) { width: min(100%, 260px); justify-self: center; }
+  .beforeExamples > .phonePlaceholder { width: min(100%, 180px); }
   .beforeCaption { max-width: 260px; justify-self: center; margin-top: -14px; }
-  .projectInfo,
-  .platform { grid-template-columns: minmax(0, 1fr); gap: 20px; }
-  .projectInfo > div,
-  .platform > div { padding-inline: 0; border-left: 0; }
-  .outcomes { grid-template-columns: minmax(0, 1fr); }
-  .tiers { gap: 12px; }
-  .tierLabel { font-size: 12px; }
-  .tierLabel strong { font-size: 16px; }
-  .tierLabel em { display: none; }
-  .phonePlaceholder > span:last-child { display: none; }
+  .stages { grid-template-columns: minmax(0, 1fr); }
+  .directions { grid-template-columns: minmax(0, 1fr); }
+  .measure ul { grid-template-columns: minmax(0, 1fr); }
+  .checkoutHero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .checkoutPhone { width: min(100%, 240px); justify-self: center; }
+
+  /* Mobile: the three phones become a swipeable row, each large enough to read, instead of three thumbnails. */
+  .tiers {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 72%;
+    gap: 16px;
+    overflow-x: auto;
+    margin-inline: calc(-1 * var(--home-gutter));
+    padding-inline: var(--home-gutter);
+    scroll-padding-inline: var(--home-gutter);
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .tiers::-webkit-scrollbar { display: none; }
+  .tiers li { scroll-snap-align: start; }
+  .swipeHint {
+    display: block;
+    margin-top: 16px;
+    color: var(--muted);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .swipeHint::after { margin-left: 8px; content: "→"; }
+  .phonePlaceholder > span:nth-child(n + 3) { display: none; }
 }
