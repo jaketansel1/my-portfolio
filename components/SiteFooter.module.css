@@ -14,8 +14,6 @@
     "bottom bottom";
   align-items: end;
   gap: clamp(40px, 4.5vw, 72px) clamp(32px, 5vw, 96px);
-  max-width: calc(var(--max-wide) + var(--gutter) * 2);
-  margin-inline: auto;
   padding: clamp(56px, 6vw, 104px) var(--gutter) 24px;
 }
 
