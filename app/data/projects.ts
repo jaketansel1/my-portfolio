@@ -234,6 +234,8 @@ export const projects: Project[] = [
   },
   {
     title: "Maison Augustin",
+    // No case study yet: the card goes straight to the live site.
+    link: "https://maisonaugustinproperties.com/",
     description:
       "Designing and launching a premium lead-generation website for an independent real estate consultant specialising in Dubai off-plan investments.",
     image: "/maison-augustin-homepage3.jpg",

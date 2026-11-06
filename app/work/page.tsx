@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import SiteFooter from "../../components/SiteFooter";
 import { Phone as DevicePhone } from "../../components/ui/Device";
 import ShowcaseLoop, { type ShowcaseScene } from "../../components/ShowcaseLoop";
@@ -38,7 +38,33 @@ const SPAN = `${Math.min(...projects.flatMap((p) => (p.period ? [Number.parseInt
  *     video: { src: "/work/licklibrary-loop.mp4", webmSrc: "/work/licklibrary-loop.webm" } }
  * Record the loop at the still's proportions so the frame doesn't jump when it starts.
  */
-type Shot = { src: string; width: number; height: number; video?: { src: string; webmSrc?: string } };
+type Shot = {
+  src: string;
+  width: number;
+  height: number;
+  video?: { src: string; webmSrc?: string };
+  /**
+   * The part of the capture to show, in its own pixels, for captures with browser bars or other chrome around
+   * the site. Keep it 16:10 (w / h = 1.6) so it fills the preview exactly; it's scaled, never stretched.
+   */
+  crop?: { x: number; y: number; w: number; h: number };
+};
+
+/** Positions a capture so only its crop fills the 16:10 preview: sizes as percentages of the frame. */
+function cropStyle(shot: Shot): CSSProperties | undefined {
+  const c = shot.crop;
+  if (!c) return undefined;
+  const frameH = c.w / 1.6; // the crop's height at 16:10, in source pixels
+  return {
+    position: "absolute",
+    width: `${(shot.width / c.w) * 100}%`,
+    height: "auto",
+    maxWidth: "none",
+    left: `${(-c.x / c.w) * 100}%`,
+    top: `${(-c.y / frameH) * 100}%`,
+    objectFit: "fill",
+  };
+}
 
 /**
  * How each project's interface is presented. Product UI only: no lifestyle or decorative imagery.
@@ -121,7 +147,19 @@ const entries: Record<string, Entry> = {
   },
   "Maison Augustin": {
     discipline: "Web Design · Frontend · Lead Generation",
-    visual: { kind: "screen", shot: { src: "/work/maison-screen.webp", width: 1400, height: 875 } },
+    // A screen recording of the live homepage hero. It was recorded with the browser showing, so the crop keeps
+    // only the site: below the address bar, above the black band, left of the scrollbar, at 16:10 (logo,
+    // headline, call to action and the MENU label in view; the round menu icon falls just outside).
+    visual: {
+      kind: "screen",
+      shot: {
+        src: "/work/maison-video-poster.webp",
+        width: 1920,
+        height: 1280,
+        video: { src: "/mason-augustin.mp4" },
+        crop: { x: 50, y: 132, w: 1715, h: 1072 },
+      },
+    },
   },
 };
 
@@ -138,8 +176,8 @@ function Media({ shot, sizes = SIZES, priority }: { shot: Shot; sizes?: string; 
         width={shot.width}
         height={shot.height}
         waitForScroll={false}
-        className={styles.media}
-        style={{ objectFit: "cover", objectPosition: "top" }}
+        className={shot.crop ? undefined : styles.media}
+        style={cropStyle(shot) ?? { objectFit: "cover", objectPosition: "top" }}
       />
     );
   }
@@ -205,7 +243,8 @@ function Visual({ visual, priority }: { visual: Visual; priority?: boolean }): R
 
 function Card({ project, n }: { project: Project; n: number }) {
   const entry = entries[project.title];
-  const status = project.link ? entry?.year : project.label ?? "Case study coming soon";
+  const external = !!project.link && /^https?:///.test(project.link);
+  const status = project.link ? (entry?.year ?? (external ? "Live site" : undefined)) : project.label ?? "Case study coming soon";
   const body = (
     <>
       <div className={styles.frame}>{entry ? <Visual visual={entry.visual} priority={n <= 3} /> : null}</div>
@@ -215,7 +254,7 @@ function Card({ project, n }: { project: Project; n: number }) {
           {project.title}
           {project.link ? (
             <span className={styles.arrow} aria-hidden="true">
-              &rarr;
+              {external ? <>&#8599;</> : <>&rarr;</>}
             </span>
           ) : null}
         </h2>
@@ -228,6 +267,14 @@ function Card({ project, n }: { project: Project; n: number }) {
       </div>
     </>
   );
+  if (external) {
+    return (
+      <a href={project.link} target="_blank" rel="noopener noreferrer" className={styles.card}>
+        {body}
+        <span className={styles.visuallyHidden}> (opens the live site in a new tab)</span>
+      </a>
+    );
+  }
   return project.link ? (
     <Link href={project.link} className={styles.card}>
       {body}
