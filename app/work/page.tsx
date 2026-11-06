@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import SiteFooter from "../../components/SiteFooter";
-import { Browser as DeviceBrowser, Phone as DevicePhone } from "../../components/ui/Device";
+import { Phone as DevicePhone } from "../../components/ui/Device";
+import ShowcaseVideo from "../../components/ShowcaseVideo";
 import SiteHeader from "../../components/SiteHeader";
 import StickyNav from "../../components/StickyNav";
 import { projects, type Project } from "../data/projects";
@@ -17,9 +18,9 @@ export const metadata: Metadata = {
 };
 
 /*
- * Project archive. One dense, uniform grid: every project gets the same neutral canvas and the same
- * framing principles (a minimal browser, light phone frames), with its own crop of the real interface. The homepage is the immersive tour; the case studies
- * hold the detail; this page is for scanning.
+ * Project archive, on a dark canvas so the work is the brightest thing on the page. One uniform grid: every
+ * project gets the same 16:10 preview of its real interface, unframed, so the product is the only layer. The homepage is the immersive tour; the case studies hold the detail; this page is for
+ * scanning.
  */
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -27,26 +28,40 @@ const pad = (n: number) => String(n).padStart(2, "0");
 // Earliest start year across projects through to the present.
 const SPAN = `${Math.min(...projects.flatMap((p) => (p.period ? [Number.parseInt(p.period, 10)] : [])))}–now`;
 
-type Shot = { src: string; width: number; height: number };
+/**
+ * One preview: a still, and optionally a short silent loop of the same view. The still is the video's poster
+ * and the fallback (before it loads, off screen, and with reduced motion), so add a video without changing src:
+ *   { src: "/work/licklibrary-screen.webp", width: 1400, height: 907,
+ *     video: { src: "/work/licklibrary-loop.mp4", webmSrc: "/work/licklibrary-loop.webm" } }
+ * Record the loop at the still's proportions so the frame doesn't jump when it starts.
+ */
+type Shot = { src: string; width: number; height: number; video?: { src: string; webmSrc?: string } };
 
-/** How each project's interface is presented. Product UI only: no lifestyle or decorative imagery. */
-type Visual =
-  | { kind: "browser"; shot: Shot }
-  | { kind: "browserPhone"; shot: Shot; phone: Shot }
-  | { kind: "phones"; phones: Shot[] };
+/**
+ * How each project's interface is presented. Product UI only: no lifestyle or decorative imagery.
+ * "screen": the desktop screenshot on its own, no frame, filling the preview from the top.
+ * "phones": an app shown as phones, the one place a device frame stays.
+ */
+type Visual = { kind: "screen"; shot: Shot } | { kind: "phones"; phones: Shot[] };
 
 type Entry = { discipline: string; year?: string; visual: Visual };
 
+/*
+ * Every desktop screenshot is a clean capture (no browser chrome in the file) at 16:10 to about 1.41:1. The
+ * preview is 16:10 and anchored to the top, so wider shots fit exactly and taller ones lose a little from the
+ * bottom, never the sides. Reawakening and SportSkins used to pair the screen with a phone; both phone assets
+ * carry device chrome (Safari's address pill, a baked-in phone frame), so they're left out here.
+ */
 const entries: Record<string, Entry> = {
   LickLibrary: {
     discipline: "Product Design · UX/UI · Frontend",
     year: "2025–now",
-    visual: { kind: "browser", shot: { src: "/work/licklibrary-screen.webp", width: 1400, height: 907 } },
+    visual: { kind: "screen", shot: { src: "/work/licklibrary-screen.webp", width: 1400, height: 907 } },
   },
   "Crumble & Co": {
     discipline: "eCommerce · Design · Shopify build",
     year: "2026",
-    visual: { kind: "browser", shot: { src: "/work/crumble-screen.webp", width: 1400, height: 875 } },
+    visual: { kind: "screen", shot: { src: "/work/crumble-screen.webp", width: 1400, height: 875 } },
   },
   Fanzine: {
     discipline: "Product Design · Mobile · Design System",
@@ -63,70 +78,66 @@ const entries: Record<string, Entry> = {
   "Reawakening the Feminine": {
     discipline: "Web Design · UX/UI · Frontend",
     year: "2026",
-    visual: {
-      kind: "browserPhone",
-      shot: { src: "/work/reawakening-screen.webp", width: 1400, height: 992 },
-      phone: { src: "/reawakening/screen-mobile.jpg", width: 945, height: 2048 },
-    },
+    visual: { kind: "screen", shot: { src: "/work/reawakening-screen.webp", width: 1400, height: 992 } },
   },
   SportSkins: {
     discipline: "Product Design · Gaming · Web App",
     year: "2023–2024",
-    visual: {
-      kind: "browserPhone",
-      shot: { src: "/work/sportskins-screen.webp", width: 1400, height: 930 },
-      phone: { src: "/work/sportskins-phone.webp", width: 600, height: 1340 },
-    },
+    visual: { kind: "screen", shot: { src: "/work/sportskins-screen.webp", width: 1400, height: 930 } },
   },
   "Maison Augustin": {
     discipline: "Web Design · Frontend · Lead Generation",
-    visual: { kind: "browser", shot: { src: "/work/maison-screen.webp", width: 1400, height: 875 } },
+    visual: { kind: "screen", shot: { src: "/work/maison-screen.webp", width: 1400, height: 875 } },
   },
 };
 
 const SIZES = "(min-width: 1100px) 30vw, (min-width: 700px) 46vw, 92vw";
 
-function Img({ shot, sizes = SIZES, priority }: { shot: Shot; sizes?: string; priority?: boolean }) {
-  return <Image src={shot.src} alt="" width={shot.width} height={shot.height} sizes={sizes} preload={priority} unoptimized />;
-}
-
-/* Shared frames (components/ui/Device), positioned per layout in work.module.css. */
-function Browser({ shot, priority }: { shot: Shot; priority?: boolean }) {
+/** A still, or a poster-first silent loop that plays only while in view (components/ShowcaseVideo). Both cover their box from the top. */
+function Media({ shot, sizes = SIZES, priority }: { shot: Shot; sizes?: string; priority?: boolean }) {
+  if (shot.video) {
+    return (
+      <ShowcaseVideo
+        src={shot.video.src}
+        webmSrc={shot.video.webmSrc}
+        poster={shot.src}
+        width={shot.width}
+        height={shot.height}
+        waitForScroll={false}
+        className={styles.media}
+        style={{ objectFit: "cover", objectPosition: "top" }}
+      />
+    );
+  }
   return (
-    <DeviceBrowser className={styles.browser}>
-      <Img shot={shot} priority={priority} />
-    </DeviceBrowser>
-  );
-}
-
-function Phone({ shot }: { shot: Shot }) {
-  return (
-    <DevicePhone className={styles.phone}>
-      <Img shot={shot} sizes="(min-width: 1100px) 8vw, 24vw" />
-    </DevicePhone>
+    <Image
+      src={shot.src}
+      alt=""
+      width={shot.width}
+      height={shot.height}
+      sizes={sizes}
+      preload={priority}
+      unoptimized
+      className={styles.media}
+    />
   );
 }
 
 function Visual({ visual, priority }: { visual: Visual; priority?: boolean }): ReactNode {
   switch (visual.kind) {
-    case "browser":
+    case "screen":
       return (
-        <div className={styles.stage} data-kind="browser">
-          <Browser shot={visual.shot} priority={priority} />
-        </div>
-      );
-    case "browserPhone":
-      return (
-        <div className={styles.stage} data-kind="browserPhone">
-          <Browser shot={visual.shot} priority={priority} />
-          <Phone shot={visual.phone} />
+        <div className={styles.stage} data-kind="screen">
+          <Media shot={visual.shot} priority={priority} />
         </div>
       );
     case "phones":
       return (
         <div className={styles.stage} data-kind="phones">
           {visual.phones.map((shot) => (
-            <Phone key={shot.src} shot={shot} />
+            <DevicePhone key={shot.src} className={styles.phone}>
+              <Media shot={shot} sizes="(min-width: 1100px) 10vw, 30vw" />
+            </DevicePhone>
           ))}
         </div>
       );
@@ -173,7 +184,7 @@ const keyOf = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
 
 export default function WorkPage() {
   return (
-    <div className={home.home}>
+    <div className={`${home.home} ${styles.page}`}>
       <StickyNav>
         <div className={home.container}>
           <SiteHeader editorial current="work" />

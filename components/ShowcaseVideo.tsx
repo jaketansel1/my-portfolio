@@ -13,6 +13,7 @@ export default function ShowcaseVideo({
   width = 1920,
   height = 1080,
   sceneControlled = false,
+  waitForScroll = true,
   className,
   style,
 }: {
@@ -23,6 +24,11 @@ export default function ShowcaseVideo({
   height?: number;
   /** The immersive homepage exposes proximity and visibility on the parent scene. */
   sceneControlled?: boolean;
+  /**
+   * Hold off loading until the first scroll, so a fresh page load shows posters only (the homepage).
+   * Pass false where videos above the fold should start as soon as they're in view (the Work grid).
+   */
+  waitForScroll?: boolean;
   className?: string;
   style?: CSSProperties;
 }) {
@@ -35,7 +41,7 @@ export default function ShowcaseVideo({
     const immersive = window.matchMedia("(min-width: 900px) and (prefers-reduced-motion: no-preference)");
     const scene = sceneControlled ? video.closest("[data-scene]") : null;
     let loaded = false;
-    let hasScrolled = false;
+    let hasScrolled = !waitForScroll;
     let near = false;
     let visible = false;
 
@@ -99,7 +105,7 @@ export default function ShowcaseVideo({
       video.preload = "none";
       video.load();
     };
-  }, [src, webmSrc, sceneControlled]);
+  }, [src, webmSrc, sceneControlled, waitForScroll]);
 
   return (
     <video
