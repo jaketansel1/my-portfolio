@@ -249,4 +249,13 @@ export const projects: Project[] = [
       position: "center",
     },
   },
+  {
+    title: "Inspect Design",
+    // A personal product in development. No link until it launches at inspectdesign.com.
+    description: "A visual tool for inspecting websites and understanding how digital products are built.",
+    category: "Independent product",
+    tags: ["Product Design", "Development"],
+    period: "2026",
+    label: "In development",
+  },
 ];

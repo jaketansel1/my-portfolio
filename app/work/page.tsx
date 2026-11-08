@@ -168,6 +168,12 @@ const entries: Record<string, Entry> = {
       },
     },
   },
+  "Inspect Design": {
+    discipline: "Independent Product · Design & Development",
+    icon: "/work/icons/inspect-design.svg",
+    // The local app at 1440×900 (2×): a Learn lesson, the tool explaining how a real interface is structured.
+    visual: { kind: "screen", shot: { src: "/inspect-design/lesson-mega-menu.webp", width: 1800, height: 1125 } },
+  },
 };
 
 const SIZES = "(min-width: 1100px) 30vw, (min-width: 700px) 46vw, 92vw";
@@ -293,7 +299,60 @@ function Card({ project, n }: { project: Project; n: number }) {
   );
 }
 
+/*
+ * A personal product, featured beneath the grid rather than in it: text in the grid's first column, the screen
+ * across the other two. It reuses the card's frame and hover; "Explore project" appears once it has a link.
+ */
+const FEATURE = {
+  title: "Inspect Design",
+  label: "Personal project · In development",
+  description: "A visual learning tool for understanding how great websites are designed and built.",
+};
+
+function Feature({ project }: { project: Project }) {
+  const entry = entries[project.title];
+  const link = project.link;
+  const external = !!link && /^https?:///.test(link);
+  const body = (
+    <>
+      <div className={`${styles.frame} ${styles.featureFrame}`}>{entry ? <Visual visual={entry.visual} /> : null}</div>
+      <div className={styles.featureText}>
+        <p className={styles.featureLabel}>{FEATURE.label}</p>
+        <h2 id="feature-heading" className={styles.featureTitle}>
+          {FEATURE.title}
+        </h2>
+        <p className={styles.featureDescription}>{FEATURE.description}</p>
+        {link ? (
+          <span className={styles.featureLink}>
+            Explore project <span aria-hidden="true">&#8599;</span>
+          </span>
+        ) : null}
+      </div>
+    </>
+  );
+  if (!link) {
+    return (
+      <div className={`${styles.card} ${styles.feature}`} data-static="">
+        {body}
+      </div>
+    );
+  }
+  return external ? (
+    <a href={link} target="_blank" rel="noopener noreferrer" className={`${styles.card} ${styles.feature}`}>
+      {body}
+      <span className={styles.visuallyHidden}> (opens in a new tab)</span>
+    </a>
+  ) : (
+    <Link href={link} className={`${styles.card} ${styles.feature}`}>
+      {body}
+    </Link>
+  );
+}
+
 const keyOf = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+const gridProjects = projects.filter((p) => p.title !== FEATURE.title);
+const featured = projects.find((p) => p.title === FEATURE.title);
 
 export default function WorkPage() {
   return (
@@ -328,13 +387,23 @@ export default function WorkPage() {
 
         <section className={home.container} aria-label="Projects">
           <ol className={styles.grid}>
-            {projects.map((project, i) => (
+            {gridProjects.map((project, i) => (
               <li key={project.title} id={keyOf(project.title)}>
                 <Card project={project} n={i + 1} />
               </li>
             ))}
           </ol>
         </section>
+
+        {featured ? (
+          <section
+            id={keyOf(featured.title)}
+            className={`${home.container} ${styles.featureSection}`}
+            aria-labelledby="feature-heading"
+          >
+            <Feature project={featured} />
+          </section>
+        ) : null}
 
       </main>
       <SiteFooter />

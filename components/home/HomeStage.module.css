@@ -87,6 +87,13 @@
     radial-gradient(ellipse 62% 95% at 0% 55%, rgb(156 114 88 / 0.28), transparent 72%),
     linear-gradient(100deg, #c9b19e 0%, #d7c3b1 20%, #e5d5c5 42%, #efe2d6 64%, #f5ebe3 84%, #f8f0ea 100%);
 }
+/* Inspect Design: near-black, as on the Work page, with a faint lift of light behind the product. */
+.scene[data-scene="inspect"] {
+  --bg: #0b0b0a;
+  --bg-art:
+    radial-gradient(ellipse 46% 56% at 68% 50%, rgb(243 242 238 / 0.07), transparent 72%),
+    #0b0b0a;
+}
 .scene[data-scene="closing"] { --bg: #f3f2ee; }
 
 /* ---------- Intro ---------- */
@@ -210,6 +217,16 @@
 .scene[data-scene="fanzine"] { --cta-bg: #2f62d9; --cta-fg: #fff; }
 .scene[data-scene="reawakening"] { --cta-bg: #5b6752; --cta-fg: #fff; }
 .scene a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+/* Small label above a spotlight title, in the same voice as .meta. */
+.eyebrow {
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.idInfo .line { max-width: 36ch; }
+.idInfo .meta { margin-top: 24px; }
 
 /* ---------- Devices ---------- */
 
@@ -301,7 +318,7 @@
 /* ---------- Stacked layout (default): one strong visual per project ---------- */
 
 .llGhost, .crDog, .fzWall, .rwPhoto, .rwPhone { display: none; }
-.llBrowser, .crBrowser, .rwBrowser { margin-top: 32px; }
+.llBrowser, .crBrowser, .rwBrowser, .idBrowser { margin-top: 32px; }
 .llGhost img, .fzWall img, .rwPhoto img { display: block; width: 100%; height: auto; }
 /* Fanzine: Arsenal leads, Chelsea and Man City tucked behind and angled out. */
 .fzPhones {
@@ -387,7 +404,7 @@
 
   /* Show everything in immersive mode. */
   .llGhost, .crDog, .fzWall, .rwPhoto, .rwPhone { display: block; }
-  .llBrowser, .crBrowser, .rwBrowser { margin: 0; }
+  .llBrowser, .crBrowser, .rwBrowser, .idBrowser { margin: 0; }
 
   /* Intro */
   .introText { left: var(--gutter); right: var(--gutter); top: 30%; }
@@ -487,6 +504,10 @@
     width: min(24rem, 24vw);
   }
   .rwInfo .title { font-size: clamp(36px, 3.7vw, 68px); }
+
+  /* Currently building: Inspect Design. The product large on the right, the text on the left like the project scenes. */
+  .idBrowser { top: 50%; translate: 0 -50%; right: var(--gutter); width: min(54vw, 110svh); }
+  .idInfo { width: min(28rem, 28vw); }
 
   /* Closing */
   /* Invitation sits a little above centre; the footer row is pinned to the bottom. */

@@ -250,11 +250,70 @@
 }
 .card:not([data-static]):hover .discipline { color: color-mix(in srgb, var(--home-ink) 74%, transparent); }
 
+/* ---------- Featured personal project, beneath the grid ---------- */
+
+/* On the grid's columns: text in the first, the screen across the other two. The grid's bottom padding is the gap above. */
+.featureSection { padding-bottom: clamp(96px, 9vw, 160px); }
+.feature {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas: "text media media";
+  align-items: center;
+  column-gap: clamp(14px, 1.3vw, 22px);
+  animation: fade 1100ms 300ms var(--home-ease) both;
+}
+.featureFrame { grid-area: media; }
+/* Featured even before it has a link: no dimming. */
+.feature[data-static] .stage { opacity: 1; }
+.featureText {
+  grid-area: text;
+  max-width: 26rem;
+  padding-right: clamp(0px, 2vw, 40px);
+}
+.featureLabel {
+  color: var(--caption-meta);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.featureTitle {
+  margin-top: 18px;
+  font-size: clamp(30px, 2.8vw, 48px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.featureDescription {
+  margin-top: 16px;
+  color: var(--caption);
+  font-size: clamp(15px, 1.1vw, 18px);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+.featureLink {
+  display: inline-flex;
+  gap: 8px;
+  margin-top: 28px;
+  color: var(--home-ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+.featureLink span { transition: transform var(--dur) var(--ease); }
+.feature:hover .featureLink span { transform: translate(3px, -3px); }
+
 /* ---------- Responsive ---------- */
 
 /* Tablet: two columns. */
 @media (max-width: 1100px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Tablet and below: the screen first at full width, the text beneath it, as on the cards. */
+@media (max-width: 900px) {
+  .feature { grid-template-columns: minmax(0, 1fr); grid-template-areas: "media" "text"; row-gap: 24px; }
+  .featureText { max-width: 34rem; padding-right: 0; }
+  .featureTitle { margin-top: 14px; }
 }
 
 /* Mobile: one column, previews full width. */
@@ -272,7 +331,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .meta, .grid > li { animation: none; }
+  .meta, .grid > li, .feature { animation: none; }
   .stage, .media, .arrow, .discipline { transition: none; }
   .card:hover .stage, .card:hover .media { transform: none !important; }
 }
