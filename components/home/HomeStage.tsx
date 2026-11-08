@@ -36,6 +36,8 @@ const SCENES: Scene[] = [
   { key: "crumble", theme: "light", label: "Crumble & Co" },
   { key: "fanzine", theme: "dark", label: "Fanzine" },
   { key: "reawakening", theme: "light", label: "Reawakening the Feminine" },
+  // A spotlight on what I am building now. Not in the project rail: it has no case study yet.
+  { key: "inspect", theme: "dark" },
   { key: "closing", theme: "light" },
 ];
 const PROJECTS = SCENES.filter((s) => s.label);
@@ -47,6 +49,12 @@ const LL_SCREENS = [
   { src: "/licklibrary/home-confirmation.webp", alt: "LickLibrary checkout confirmation: “You're in!” with next steps" },
   { src: "/licklibrary/home-mega-menu.webp", alt: "LickLibrary admin for curating the Guitar Lessons mega menu" },
   { src: "/licklibrary/home-mega-menu-site.webp", alt: "LickLibrary Guitar Courses mega menu showing featured courses" },
+];
+/* Inspect Design scene: real screens from the app in development, captured locally. */
+const ID_SCREENS = [
+  { src: "/inspect-design/lesson-mega-menu.webp", alt: "Inspect Design lesson explaining how the LickLibrary mega menu is structured" },
+  { src: "/inspect-design/home.webp", alt: "Inspect Design home: paste a website to inspect how it is built" },
+  { src: "/inspect-design/lesson-web-apps.webp", alt: "Inspect Design lesson showing how a page load travels between browser, Vue, Laravel and the database" },
 ];
 /** Hero second line: what I do, then a nudge towards the work. */
 const HERO_LINES = ["who builds and ships.", "scroll to see my work ↓"];
@@ -148,7 +156,7 @@ export default function HomeStage() {
       });
       headerRef.current?.setAttribute("data-theme", SCENES[i].theme);
       markersRef.current?.setAttribute("data-theme", SCENES[i].theme);
-      markersRef.current?.setAttribute("data-visible", String(SCENES[i].key !== "closing"));
+      markersRef.current?.setAttribute("data-visible", String(SCENES[i].key === "intro" || !!SCENES[i].label));
       markersRef.current?.setAttribute("data-scene", SCENES[i].key);
       markersRef.current?.querySelectorAll("ol a").forEach((a, k) => {
         if (PROJECTS[k].key === SCENES[i].key) a.setAttribute("aria-current", "true");
@@ -538,8 +546,30 @@ export default function HomeStage() {
               />
             </section>
 
+            {/* ── Currently building: Inspect Design. Dark, so the light product UI is the brightest thing. ── */}
+            <section {...sceneProps(5)} aria-labelledby="inspect-heading">
+              <div className={styles.bg} />
+              <Layer m={{ xi: "14vw", yi: "4vh", xo: "-4vw", yo: "-10vh", s: 0.06 }} className={styles.idBrowser}>
+                <Browser scheme="dark">
+                  <div className={styles.videoBox} style={{ aspectRatio: "16 / 10" }}>
+                    <ScreenRotator screens={ID_SCREENS} interval={3600} width={1800} height={1125} sceneControlled />
+                  </div>
+                </Browser>
+              </Layer>
+              <Layer m={{ yi: "6vh", yo: "-5vh", f: 2.4 }} className={`${styles.info} ${styles.idInfo}`}>
+                <p className={styles.eyebrow}>Currently building / 07</p>
+                <h2 id="inspect-heading" className={styles.title}>
+                  Inspect Design
+                </h2>
+                <p className={styles.line}>
+                  A personal tool for exploring how websites are built, collecting inspiration, and understanding the design decisions behind digital products.
+                </p>
+                <p className={styles.meta}>Independent project &middot; Product Design &amp; Development</p>
+              </Layer>
+            </section>
+
             {/* ── Closing ── */}
-            <section {...sceneProps(5)} aria-labelledby="closing-heading">
+            <section {...sceneProps(6)} aria-labelledby="closing-heading">
               <div className={styles.bg} />
               <Layer m={{ yi: "10vh", f: 1.6 }} className={styles.closing}>
                 <div className={styles.closingHead}>
