@@ -48,15 +48,6 @@
   align-items: end;
   padding-block: clamp(24px, 5vh, 64px) clamp(32px, 3.6vw, 56px);
 }
-.eyebrow {
-  grid-column: 1 / -1;
-  margin-bottom: 16px;
-  color: var(--home-muted);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 .headline {
   grid-column: 1 / 10;
   font-size: var(--text-1);
@@ -201,23 +192,30 @@
   .card:not([data-static]):hover .stage[data-kind="phones"] { transform: translateY(-2%); }
 }
 
-/* ---------- Caption: number · title · year, then discipline ---------- */
+/* ---------- Caption: icon · title · year, then discipline ---------- */
 
 .caption {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
-    "num title year"
+    "icon title year"
     ". disc disc";
   align-items: baseline;
   gap: 4px 12px;
   padding-top: 16px;
 }
-.number { grid-area: num; }
+/* The project's favicon or app icon, centred on the title's line. */
+.icon {
+  grid-area: icon;
+  align-self: center;
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+}
 .title { grid-area: title; }
 .discipline { grid-area: disc; }
 .year { grid-area: year; }
-.number,
 .year {
   color: var(--caption-meta);
   font-family: var(--font-geist-mono), monospace;

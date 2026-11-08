@@ -1,15 +1,5 @@
 /* About: intro, "Pick a side of me", how I got here. Tokens come from home.module.css (.home). */
 
-.eyebrow {
-  margin-bottom: 20px;
-  color: var(--home-muted);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  animation: fade 1100ms 100ms var(--home-ease) both;
-}
-
 /* ---------- Intro: text and a modest photo, under one viewport ---------- */
 
 .intro {
@@ -282,5 +272,5 @@
 
 
 @media (prefers-reduced-motion: reduce) {
-  .eyebrow, .lede, .portrait { animation: none; }
+  .lede, .portrait { animation: none; }
 }
