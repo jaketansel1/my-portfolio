@@ -81,7 +81,8 @@ type Visual =
   | { kind: "phoneSlots"; labels: string[] }
   | { kind: "showcase"; poster: Shot; scenes: ShowcaseScene[]; speed?: number };
 
-type Entry = { discipline: string; year?: string; visual: Visual };
+/** `icon`: the project's own favicon or app icon, square, in /public/work/icons. */
+type Entry = { discipline: string; year?: string; icon: string; visual: Visual };
 
 
 /*
@@ -93,6 +94,7 @@ type Entry = { discipline: string; year?: string; visual: Visual };
 const entries: Record<string, Entry> = {
   LickLibrary: {
     discipline: "Product Design · UX/UI · Frontend",
+    icon: "/work/icons/licklibrary.png",
     year: "2025–now",
     visual: {
       kind: "showcase",
@@ -103,6 +105,7 @@ const entries: Record<string, Entry> = {
   },
   "Crumble & Co": {
     discipline: "eCommerce · Design · Shopify build",
+    icon: "/work/icons/crumble-and-co.png",
     year: "2026",
     visual: {
       kind: "showcase",
@@ -113,6 +116,7 @@ const entries: Record<string, Entry> = {
   },
   Fanzine: {
     discipline: "Product Design · Mobile · Design System",
+    icon: "/work/icons/fanzine.png",
     year: "2017–2025",
     visual: {
       kind: "phones",
@@ -130,6 +134,7 @@ const entries: Record<string, Entry> = {
   },
   "Reawakening the Feminine": {
     discipline: "Web Design · UX/UI · Frontend",
+    icon: "/work/icons/reawakening-the-feminine.png",
     year: "2026",
     visual: {
       kind: "showcase",
@@ -140,6 +145,7 @@ const entries: Record<string, Entry> = {
   },
   SportSkins: {
     discipline: "Product Design · Gaming · Web App",
+    icon: "/work/icons/sportskins.png",
     year: "2023–2024",
     // Phones like Fanzine's, waiting on mobile screenshots. The existing sportskins-phone.webp has a phone
     // frame baked in, so it can't sit inside the shared frame; clean screen captures will replace these.
@@ -147,6 +153,7 @@ const entries: Record<string, Entry> = {
   },
   "Maison Augustin": {
     discipline: "Web Design · Frontend · Lead Generation",
+    icon: "/work/icons/maison-augustin.png",
     // A screen recording of the live homepage hero. It was recorded with the browser showing, so the crop keeps
     // only the site: below the address bar, above the black band, left of the scrollbar, at 16:10 (logo,
     // headline, call to action and the MENU label in view; the round menu icon falls just outside).
@@ -249,7 +256,7 @@ function Card({ project, n }: { project: Project; n: number }) {
     <>
       <div className={styles.frame}>{entry ? <Visual visual={entry.visual} priority={n <= 3} /> : null}</div>
       <div className={styles.caption}>
-        <span className={styles.number}>{pad(n)}</span>
+        {entry ? <Image src={entry.icon} alt="" width={22} height={22} unoptimized className={styles.icon} /> : null}
         <h2 className={styles.title}>
           {project.title}
           {project.link ? (
@@ -299,7 +306,6 @@ export default function WorkPage() {
 
       <main id="main-content">
         <section className={`${home.container} ${styles.intro}`} aria-labelledby="work-heading">
-          <p className={styles.eyebrow}>Selected work</p>
           <h1 id="work-heading" className={styles.headline}>
             <span className={home.line}>
               <span>A few of my favourite</span>

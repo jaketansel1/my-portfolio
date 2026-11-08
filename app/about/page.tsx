@@ -30,7 +30,6 @@ export default function AboutPage() {
       <main id="main-content">
         <section className={`${home.container} ${styles.intro}`} aria-labelledby="about-heading">
           <div className={styles.introText}>
-            <p className={styles.eyebrow}>About</p>
             <h1 id="about-heading" className={styles.heading}>
               <span className={home.line}>
                 <span>A bit more</span>
