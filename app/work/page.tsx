@@ -7,6 +7,7 @@ import { Phone as DevicePhone } from "../../components/ui/Device";
 import ShowcaseLoop, { type ShowcaseScene } from "../../components/ShowcaseLoop";
 import PhoneCycle from "../../components/PhoneCycle";
 import ShowcaseVideo from "../../components/ShowcaseVideo";
+import ScreenRotator from "../../components/ScreenRotator";
 import SiteHeader from "../../components/SiteHeader";
 import StickyNav from "../../components/StickyNav";
 import { projects, type Project } from "../data/projects";
@@ -79,7 +80,9 @@ type Visual =
   | { kind: "screen"; shot: Shot }
   | { kind: "phones"; phones: Shot[]; more?: Shot[] }
   | { kind: "phoneSlots"; labels: string[] }
-  | { kind: "showcase"; poster: Shot; scenes: ShowcaseScene[]; speed?: number };
+  | { kind: "showcase"; poster: Shot; scenes: ShowcaseScene[]; speed?: number }
+  /* Stills crossfading in turn (components/ScreenRotator), as on the homepage. */
+  | { kind: "rotator"; screens: { src: string; alt: string }[]; width: number; height: number; interval?: number };
 
 /** `icon`: the project's own favicon or app icon, square, in /public/work/icons. */
 type Entry = { discipline: string; year?: string; icon: string; visual: Visual };
@@ -171,8 +174,18 @@ const entries: Record<string, Entry> = {
   "Inspect Design": {
     discipline: "Independent Product · Design & Development",
     icon: "/work/icons/inspect-design.svg",
-    // The local app at 1440×900 (2×): a Learn lesson, the tool explaining how a real interface is structured.
-    visual: { kind: "screen", shot: { src: "/inspect-design/lesson-mega-menu.webp", width: 1800, height: 1125 } },
+    // The local app at 1440×900 (2×), in the homepage's order: home, a Learn lesson, then the mega menu lesson.
+    visual: {
+      kind: "rotator",
+      width: 1800,
+      height: 1125,
+      interval: 3600,
+      screens: [
+        { src: "/inspect-design/home.webp", alt: "Inspect Design home: paste a website to inspect how it is built" },
+        { src: "/inspect-design/lesson-web-apps.webp", alt: "Inspect Design lesson showing how a page load travels between browser, Vue, Laravel and the database" },
+        { src: "/inspect-design/lesson-mega-menu.webp", alt: "Inspect Design lesson explaining how the LickLibrary mega menu is structured" },
+      ],
+    },
   },
 };
 
@@ -220,6 +233,12 @@ function Visual({ visual, priority }: { visual: Visual; priority?: boolean }): R
       return (
         <div className={styles.stage} data-kind="screen">
           <ShowcaseLoop poster={visual.poster} scenes={visual.scenes} speed={visual.speed} sizes={SIZES} />
+        </div>
+      );
+    case "rotator":
+      return (
+        <div className={styles.stage} data-kind="screen">
+          <ScreenRotator screens={visual.screens} width={visual.width} height={visual.height} interval={visual.interval} />
         </div>
       );
     case "phoneSlots":
