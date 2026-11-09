@@ -305,8 +305,8 @@ function Card({ project, n }: { project: Project; n: number }) {
  */
 const FEATURE = {
   title: "Inspect Design",
-  label: "Personal project · In development",
-  description: "A visual learning tool for understanding how great websites are designed and built.",
+  label: "Currently building · Personal project",
+  description: "A visual learning tool I’m building to explore how great websites are designed, structured and developed.",
 };
 
 function Feature({ project }: { project: Project }) {
@@ -317,7 +317,10 @@ function Feature({ project }: { project: Project }) {
     <>
       <div className={`${styles.frame} ${styles.featureFrame}`}>{entry ? <Visual visual={entry.visual} /> : null}</div>
       <div className={styles.featureText}>
-        <p className={styles.featureLabel}>{FEATURE.label}</p>
+        <p className={styles.featureLabel}>
+          <span className={styles.liveDot} aria-hidden="true" />
+          {FEATURE.label}
+        </p>
         <h2 id="feature-heading" className={styles.featureTitle}>
           {FEATURE.title}
         </h2>

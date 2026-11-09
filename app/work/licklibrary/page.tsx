@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Browser, CasePage, Figure, Img, NextProject, Placeholder, type Tone } from "../../../components/case/Case";
 import { ChapterHero, ChapterLayout, ChapterOpener, ChapterSection, type Chapter, type Fact } from "../../../components/case/Chapters";
+import StepShowcase, { type ShowcaseStep } from "../../../components/case/StepShowcase";
 import Walkthrough, { type WalkthroughStep } from "../../../components/case/Walkthrough";
 import ShowcaseVideo from "../../../components/ShowcaseVideo";
 import styles from "./page.module.css";
@@ -9,7 +10,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "LickLibrary — Jake Tansel",
   description:
-    "Ongoing product work redesigning LickLibrary, one experience at a time: navigation, checkout, email and homepage, from UX and UI to frontend implementation.",
+    "Ongoing product work redesigning LickLibrary, one experience at a time: navigation, checkout and homepage, from UX and UI to frontend implementation.",
 };
 
 const night: Tone = { bg: "#0a0a0a", fg: "#f3f2ee", muted: "rgb(243 242 238 / 0.62)" };
@@ -23,39 +24,34 @@ const shot = (src: string, alt: string, width = 2400, height = 1500) => ({ src, 
  * each with an opener and its own nested sections (the rail shows only the chapter being read). To add
  * an initiative, add its chapter and sections here and its sections to the page in the same order.
  *
- * The Mega Menu sections keep their original ids so existing links and styles still hold; later
- * chapters prefix theirs.
+ * Sign Up & Checkout leads, then Mega Menu. The Mega Menu sections keep their original ids so existing links
+ * and styles still hold; the other chapters prefix theirs.
  */
 const chapters: Chapter[] = [
   { id: "overview", number: "00", title: "Overview" },
 
-  { id: "mega-menu", number: "01", title: "Mega Menu" },
-  { id: "problem", number: "1.1", title: "Problem", sub: true },
-  { id: "experience", number: "1.2", title: "Desktop", sub: true },
-  { id: "mobile", number: "1.3", title: "Mobile", sub: true },
-  { id: "system", number: "1.4", title: "System", sub: true },
-  { id: "admin", number: "1.5", title: "Admin", sub: true },
-  { id: "delivery", number: "1.6", title: "Outcome", sub: true },
+  { id: "checkout", number: "01", title: "Sign Up & Checkout" },
+  { id: "checkout-problem", number: "1.1", title: "Problem", sub: true },
+  { id: "checkout-direction", number: "1.2", title: "Direction", sub: true },
+  { id: "checkout-personalise", number: "1.3", title: "Beyond checkout", sub: true },
+  { id: "checkout-outcome", number: "1.4", title: "Ownership", sub: true },
 
-  { id: "checkout", number: "02", title: "Checkout" },
-  { id: "checkout-problem", number: "2.1", title: "Problem", sub: true },
-  { id: "checkout-exploration", number: "2.2", title: "Directions", sub: true },
-  { id: "checkout-experience", number: "2.3", title: "Flow", sub: true },
-  { id: "checkout-outcome", number: "2.4", title: "Redesign", sub: true },
+  { id: "mega-menu", number: "02", title: "Mega Menu" },
+  { id: "problem", number: "2.1", title: "Problem", sub: true },
+  { id: "experience", number: "2.2", title: "Desktop", sub: true },
+  { id: "mobile", number: "2.3", title: "Mobile", sub: true },
+  { id: "system", number: "2.4", title: "System", sub: true },
+  { id: "admin", number: "2.5", title: "Admin", sub: true },
+  { id: "delivery", number: "2.6", title: "Outcome", sub: true },
 
-  { id: "email-templates", number: "03", title: "Email Templates" },
-  { id: "email-problem", number: "3.1", title: "Problem", sub: true },
-  { id: "email-system", number: "3.2", title: "System", sub: true },
-  { id: "email-outcome", number: "3.3", title: "Outcome", sub: true },
-
-  { id: "homepage", number: "04", title: "Homepage", status: "Soon" },
+  { id: "homepage", number: "03", title: "Homepage", status: "Soon" },
 ];
 const ch = Object.fromEntries(chapters.map((chapter) => [chapter.id, chapter])) as Record<string, Chapter>;
 
 // The project, in one compact row under the intro.
 const project: Fact[] = [
   { label: "Role", value: "Product Designer + Frontend" },
-  { label: "Scope", value: "Navigation · Checkout · Email · Homepage" },
+  { label: "Scope", value: "Navigation · Checkout · Homepage" },
   { label: "Timeline", value: "2026 — Present" },
 ];
 
@@ -118,38 +114,93 @@ const outcomes = [
 ];
 
 /*
- * Checkout: a working prototype, not yet live. Sell → Simplify → Convert → Celebrate is the frame; each stage
- * names what it does in the design, as the prototype screens show it.
+ * Sign Up & Checkout. Every screen below is a capture: the original from licklibrary.com/sign-up/monthly, the redesign
+ * from the build (/checkout-new), walked with nothing submitted, charged or created. No live claims, no metrics.
+ * One headline, one short paragraph, one visual per section.
  */
-const stages = [
-  { title: "Sell", job: "Show what membership includes before asking for anything.", detail: "The catalogue and its benefits stay in view beside every step." },
-  { title: "Simplify", job: "One decision at a time: Plan, then Account, then Payment.", detail: "Monthly or annual, with annual marked as best value." },
-  { title: "Convert", job: "A clear final action, with ways to pay that suit the customer.", detail: "Currency selection, with payment methods shown by region." },
-  { title: "Celebrate", job: "A welcome, not a receipt.", detail: "Start learning straight away, or personalise recommendations." },
+
+// 1.1 The original sign-up: three problems, each marked on the page (percent of checkout-old-desktop.webp, 1440×900).
+const originalIssues = [
+  { title: "Membership undersold", text: "A generic header and a plain checklist did little to show what members get.", at: [55, 27] },
+  { title: "Competing information", text: "Plan choice, the account form and the benefits all ask to be read first.", at: [60.3, 52.7] },
+  { title: "No sense of progression", text: "The account form is only the start: consent, payment and card details follow in one long page.", at: [23.5, 68.3] },
+] as const;
+
+// 1.2 The new journey: the checkout itself, then onboarding after purchase.
+const journey = [
+  { group: "Checkout", steps: [
+    { name: "Plan", line: "Monthly or annual" },
+    { name: "Account", line: "Create one, or sign in" },
+    { name: "Payment", line: "Choose how to pay" },
+  ] },
+  { group: "After purchase", steps: [{ name: "Personalise", line: "Shape what comes next" }] },
 ];
 
-// Honest next step for the checkout: what to measure once it's live. No numbers until there are real ones.
-const measures = ["Checkout completion, by step", "Monthly vs annual plan mix", "Drop-off between Plan, Account and Payment", "Uptake of personalisation after joining"];
-
-/*
- * Email Templates is structure only for now: each section's headline and a note on what it will show. As a
- * section is written up, replace its <DraftSection> with a real <ChapterSection>.
- */
-type Draft = { id: string; title: string; label: string; note: string };
-
-const emailDraft: Draft[] = [
-  { id: "email-problem", title: "Campaign by campaign.", label: "Before the system", note: "How emails were built before the master system." },
-  { id: "email-system", title: "A master email system.", label: "Master template", note: "The reusable modules in Campaign Monitor and how they combine." },
-  { id: "email-outcome", title: "Campaigns built from the system.", label: "Example campaigns", note: "Emails built from the master template, and what the system changed." },
+// 1.2 The checkout, Plan → Account → Payment, captured at 1440×900. Titles only: the journey above explains each step.
+const checkoutSteps: ShowcaseStep[] = [
+  {
+    title: "Plan",
+    note: "",
+    src: `${LL}/checkout-new-plan.webp`,
+    alt: "Plan step: the All Access membership and its benefits on the left; monthly and annual plans on the right, annual selected as best value",
+  },
+  {
+    title: "Account",
+    note: "",
+    src: `${LL}/checkout-new-account.webp`,
+    alt: "Account step: name, email and password, a sign-in link for returning members, and the chosen annual plan summarised below",
+  },
+  {
+    title: "Payment",
+    note: "",
+    src: `${LL}/checkout-new-payment.webp`,
+    alt: "Payment step: the annual membership summary, payment methods (card, PayPal, Klarna), the card details field and Start membership",
+  },
 ];
 
-function DraftSection({ id, title, label, note }: Draft) {
-  return (
-    <ChapterSection chapter={ch[id]} title={title}>
-      <Placeholder tag="Write-up needed" label={label} note={note} aspect="16 / 4" />
-    </ChapterSection>
-  );
-}
+// 1.3 After payment: the personalise questions, captured at 1440×900.
+const personaliseSteps: ShowcaseStep[] = [
+  {
+    title: "Level",
+    note: "Where they are with their playing",
+    src: `${LL}/personalise-level.webp`,
+    alt: "Personalise, step 1 of 4: “Where are you with your guitar playing?” with five levels, Confident player looking to improve selected",
+  },
+  {
+    title: "Music",
+    note: "Up to three genres, favourite first",
+    src: `${LL}/personalise-music.webp`,
+    alt: "Personalise, step 2 of 4: “What music do you love?” with Rock, Blues and Classic Rock chosen, ranked 1 to 3",
+  },
+  {
+    title: "Goals",
+    note: "Goals that fit their level",
+    src: `${LL}/personalise-goals.webp`,
+    alt: "Personalise, step 3 of 4: “What would you love to achieve?” with goals for a confident player, Learn my favourite songs and Join a band chosen",
+  },
+  {
+    title: "1-to-1",
+    note: "A free video session with a LickLibrary pro",
+    src: `${LL}/personalise-support.webp`,
+    alt: "Personalise, step 4 of 4: “Want to improve even faster?” offering a free 1-to-1 video session, with Book your free 1-to-1 and Finish setup",
+  },
+  {
+    title: "Ready",
+    note: "Straight into learning",
+    src: `${LL}/personalise-done.webp`,
+    alt: "“You're all set!”: the personalised experience is ready, with Start learning",
+  },
+];
+
+// 1.4 Designed, built and integrated: what I did, in those three words.
+const ownership = [
+  { label: "Designed", text: "The end-to-end journey, from choosing a plan through payment and into onboarding, for desktop and mobile." },
+  { label: "Built", text: "The frontend for every step, in Blade and Alpine.js inside the existing Laravel platform." },
+  {
+    label: "Integrated",
+    text: "With the site’s own sign-in for returning members, its country-based pricing and currencies, ZeroBounce email validation, a Stripe card field and the existing 1-to-1 booking.",
+  },
+];
 
 export default function LickLibraryCaseStudy() {
   return (
@@ -169,30 +220,172 @@ export default function LickLibraryCaseStudy() {
           about={
             <>
               LickLibrary is a long-established guitar-learning platform with thousands of lessons, courses and backing tracks.{" "}
-              <span className={styles.roleLine}>
-                I lead the UX/UI and frontend implementation, working closely with engineering to design, build and ship
-                improvements across the platform.
-              </span>
+              I lead the UX/UI and frontend implementation, working closely with engineering to design, build and ship
+              improvements across the platform.
             </>
           }
           facts={project}
         >
-          {/* The finished product, straight after the intro: a static preview. 1.2 Desktop is the full demonstration. */}
+          {/* The lead experience, straight after the intro: the redesigned checkout. 1.4 Redesign shows it in full. */}
           <figure className={styles.showcase}>
             <Img
               {...shot(
-                `${LL}/live-mega-courses.webp`,
-                "The redesigned LickLibrary mega menu, Guitar Courses open on the Featured tab, with a row of course artwork",
-                2400,
-                1500,
+                "/licklibrary/home-checkout.webp",
+                "The redesigned LickLibrary membership checkout, Plan step: membership benefits on the left, monthly and annual plans on the right with annual selected as best value",
+                2560,
+                1440,
               )}
               priority
             />
-            <figcaption>The redesigned Guitar Courses menu, live on licklibrary.com.</figcaption>
+            <figcaption>The redesigned membership checkout: choosing a plan, with annual marked as best value.</figcaption>
           </figure>
         </ChapterHero>
 
-        {/* ───────── 01 Mega Menu, opening on the problem ───────── */}
+        {/* ───────── 01 Sign Up & Checkout ───────── */}
+        <ChapterOpener
+          chapter={ch.checkout}
+          title="Turning checkout into a clearer path to membership."
+          intro={
+            <p>
+              I redesigned the membership journey around three focused steps — Plan, Account and Payment — followed by personalised
+              onboarding to help new members start learning.
+            </p>
+          }
+        >
+          <p className={styles.roleLine}>UX/UI design · Frontend development · Integration</p>
+        </ChapterOpener>
+
+        {/* 1.1 The Problem: the original sign-up page, three problems marked. */}
+        <ChapterSection
+          chapter={ch["checkout-problem"]}
+          title="A checkout that asked too much, too soon."
+          intro={<p>The original sign-up asked for everything at once, with nothing guiding a new member through it.</p>}
+        >
+          <figure className={styles.original}>
+            <span className={styles.originalFrame}>
+              <Image
+                src={`${LL}/checkout-old-desktop.webp`}
+                alt="The original LickLibrary sign-up page: a generic membership header, monthly and annual plan buttons, the start of an account form and a checklist of membership benefits"
+                width={2880}
+                height={1800}
+                unoptimized
+              />
+              {originalIssues.map((issue, i) => (
+                <span key={issue.title} className={styles.marker} style={{ left: `${issue.at[0]}%`, top: `${issue.at[1]}%` }} aria-hidden="true">
+                  {i + 1}
+                </span>
+              ))}
+            </span>
+            <figcaption>
+              <ol className={styles.issues}>
+                {originalIssues.map((issue, i) => (
+                  <li key={issue.title}>
+                    <span className={styles.issueIndex}>{i + 1}</span>
+                    <h3>{issue.title}</h3>
+                    <p>{issue.text}</p>
+                  </li>
+                ))}
+              </ol>
+            </figcaption>
+          </figure>
+        </ChapterSection>
+
+        {/* 1.2 The Direction: the new journey, then the checkout itself. */}
+        <ChapterSection
+          chapter={ch["checkout-direction"]}
+          title="One decision at a time."
+          intro={<p>Instead of one long form, each step asks for a single decision before moving on.</p>}
+        >
+          <ol className={styles.journey} aria-label="Plan, then Account, then Payment, then Personalise">
+            {journey.map((group, g) => (
+              <li key={group.group} className={styles.journeyGroup} data-after={g > 0 || undefined}>
+                <p className={styles.metaLabel}>{group.group}</p>
+                <ol className={styles.journeySteps}>
+                  {group.steps.map((s) => {
+                    const n = journey.slice(0, g).reduce((sum, prev) => sum + prev.steps.length, 0) + group.steps.indexOf(s) + 1;
+                    return (
+                      <li key={s.name}>
+                        <span className={styles.journeyIndex}>{String(n).padStart(2, "0")}</span>
+                        <strong>{s.name}</strong>
+                        <span>{s.line}</span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </li>
+            ))}
+          </ol>
+          <StepShowcase
+            url="licklibrary.com"
+            steps={checkoutSteps}
+            width={2400}
+            height={1500}
+            stepMs={2800}
+            label="Checkout steps"
+            compact
+            className={styles.showcaseAfterJourney}
+          />
+        </ChapterSection>
+
+        {/* 1.3 Beyond Checkout: personalised onboarding, and the one decision worth showing. */}
+        <ChapterSection
+          chapter={ch["checkout-personalise"]}
+          title="The experience doesn’t end at payment."
+          intro={
+            <p>
+              After payment, four optional questions shape each member&rsquo;s recommendations and lead straight into learning: a first
+              meaningful step, not just a completed purchase.
+            </p>
+          }
+        >
+          <StepShowcase url="licklibrary.com" steps={personaliseSteps} width={2400} height={1500} stepMs={2000} label="Personalise steps" />
+          <div className={styles.adaptive}>
+            <div className={styles.adaptiveText}>
+              <p className={styles.metaLabel}>One decision in detail</p>
+              <h3>Goals adapt to the member&rsquo;s level.</h3>
+              <p>A beginner is offered their first chords and scales; a confident player skips straight past them.</p>
+            </div>
+            <figure className={styles.adaptiveShot}>
+              <Image
+                src={`${LL}/personalise-goals-beginner.webp`}
+                alt="Goals for a beginner: Learn my first chords and Learn scales first, then eight more goals"
+                width={1000}
+                height={926}
+                unoptimized
+              />
+              <figcaption>Just starting out</figcaption>
+            </figure>
+            <figure className={styles.adaptiveShot}>
+              <Image
+                src={`${LL}/personalise-goals-confident.webp`}
+                alt="Goals for a confident player: the same list without Learn my first chords and Learn scales"
+                width={1000}
+                height={926}
+                unoptimized
+              />
+              <figcaption>Confident player</figcaption>
+            </figure>
+          </div>
+        </ChapterSection>
+
+        {/* 1.4 Ownership & Outcome: designed, built and integrated. */}
+        <ChapterSection
+          chapter={ch["checkout-outcome"]}
+          title="Designed, built and integrated."
+          intro={<p>I took the checkout from design to working frontend, inside the platform it runs on.</p>}
+        >
+          <dl className={styles.ownership}>
+            {ownership.map((item) => (
+              <div key={item.label}>
+                <dt>{item.label}</dt>
+                <dd>{item.text}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className={styles.stack}>Laravel · Blade · Alpine.js · Stripe Elements</p>
+        </ChapterSection>
+
+        {/* ───────── 02 Mega Menu, opening on the problem ───────── */}
         <ChapterOpener
           chapter={ch["mega-menu"]}
           title="Making thousands of guitar lessons easier to discover."
@@ -206,7 +399,7 @@ export default function LickLibraryCaseStudy() {
             </>
           }
         >
-          {/* 1.1 Problem: the old navigation. */}
+          {/* 2.1 Problem: the old navigation. */}
           <div id="problem" className={styles.problem}>
             <figure className={styles.beforeExamples}>
               <Img {...shot(`${LL}/mega-menu-before.webp`, "LickLibrary's old desktop navigation, with dense columns of text links for guitar lessons", 1585, 992)} />
@@ -216,7 +409,7 @@ export default function LickLibraryCaseStudy() {
           </div>
         </ChapterOpener>
 
-        {/* ───────── 1.2 Desktop: the redesign, straight after the before shots ───────── */}
+        {/* ───────── 2.2 Desktop: the redesign, straight after the before shots ───────── */}
         <ChapterSection
           chapter={ch.experience}
           title="Browse without leaving the page."
@@ -236,7 +429,7 @@ export default function LickLibraryCaseStudy() {
           </Figure>
         </ChapterSection>
 
-        {/* ───────── 1.3 Mobile: Menu → Section → Category ───────── */}
+        {/* ───────── 2.3 Mobile: Menu → Section → Category ───────── */}
         <ChapterSection
           chapter={ch.mobile}
           title="Rethinking it for mobile."
@@ -272,7 +465,7 @@ export default function LickLibraryCaseStudy() {
           </p>
         </ChapterSection>
 
-        {/* ───────── 1.4 System: the one structure behind desktop and mobile ───────── */}
+        {/* ───────── 2.4 System: the one structure behind desktop and mobile ───────── */}
         <ChapterSection
           chapter={ch.system}
           title="Designing something that could scale."
@@ -295,7 +488,7 @@ export default function LickLibraryCaseStudy() {
           />
         </ChapterSection>
 
-        {/* ───────── 1.5 Admin: one system, managed by the team ───────── */}
+        {/* ───────── 2.5 Admin: one system, managed by the team ───────── */}
         <ChapterSection
           chapter={ch.admin}
           title="The same system, run by the content team."
@@ -348,7 +541,7 @@ export default function LickLibraryCaseStudy() {
           </div>
         </ChapterSection>
 
-        {/* ───────── 1.6 Outcome: what was delivered ───────── */}
+        {/* ───────── 2.6 Outcome: what was delivered ───────── */}
         <ChapterSection
           chapter={ch.delivery}
           title="From navigation to discovery."
@@ -365,182 +558,7 @@ export default function LickLibraryCaseStudy() {
           </ul>
         </ChapterSection>
 
-        {/* ───────── 02 Checkout: a working prototype ───────── */}
-        <ChapterOpener
-          chapter={ch.checkout}
-          title="Turning checkout into a clearer path to membership."
-          intro={
-            <>
-              <p>
-                With discovery improved, the next step was the journey from finding a lesson to becoming a member.
-              </p>
-              <p>
-                I&rsquo;m designing and building a new membership checkout: a focused, three-step flow that keeps selling the
-                membership while it takes the order.
-              </p>
-            </>
-          }
-        >
-          <p className={styles.status}>Working prototype · In development</p>
-        </ChapterOpener>
-
-        {/* 2.1 The existing checkout. */}
-        <ChapterSection
-          chapter={ch["checkout-problem"]}
-          title="The existing checkout."
-          intro={<p>Membership is where discovery becomes revenue, so the route to it needs to be as clear as the catalogue behind it.</p>}
-        >
-          <div className={`${styles.beforeExamples} ${styles.wide}`}>
-            <Placeholder
-              label="Previous checkout, desktop"
-              note="The old plan selection through to payment, as one full-page capture. Mark the two or three points where it asks too much or explains too little."
-              aspect="1585 / 992"
-              spec="16:10 · 2560×1600"
-            />
-            <Placeholder label="Previous checkout, mobile" note="The same step on a phone." aspect="852 / 1846" spec="9:19.5 · 1170×2532" className={styles.phonePlaceholder} />
-          </div>
-        </ChapterSection>
-
-        {/* 2.2 Comparing design directions. */}
-        <ChapterSection
-          chapter={ch["checkout-exploration"]}
-          title="Comparing design directions."
-          intro={
-            <p>
-              The direction taken forward pairs the membership proposition with a progressive purchase: what you get on one side, one
-              decision at a time on the other. The reasons to join stay in view right up to payment.
-            </p>
-          }
-        >
-          <div className={`${styles.directions} ${styles.wide}`}>
-            <div>
-              <p className={styles.panelStep}>
-                <span>A</span>Explored
-              </p>
-              <Placeholder
-                label="An alternative direction"
-                note="A direction you didn't take forward, such as a single-page form or a plans page before checkout. One line on what it did well and why it lost."
-                aspect="16 / 10"
-                spec="16:10 · 2560×1600"
-              />
-            </div>
-            <div>
-              <p className={styles.panelStep}>
-                <span>B</span>Taken forward
-              </p>
-              <Placeholder
-                label="Early split layout"
-                note="An early version of the chosen layout, so the step from first idea to final design is visible."
-                aspect="16 / 10"
-                spec="16:10 · 2560×1600"
-              />
-            </div>
-          </div>
-        </ChapterSection>
-
-        {/* 2.3 Sell → Simplify → Convert → Celebrate. */}
-        <ChapterSection
-          chapter={ch["checkout-experience"]}
-          title="Sell → Simplify → Convert → Celebrate."
-          intro={<p>Each stage of the checkout has one job.</p>}
-        >
-          <ol className={`${styles.stages} ${styles.wide}`}>
-            {stages.map((stage, i) => (
-              <li key={stage.title}>
-                <span className={styles.outcomeIndex}>{String(i + 1).padStart(2, "0")}</span>
-                <h3>{stage.title}</h3>
-                <p>{stage.job}</p>
-                <p className={styles.stageDetail}>{stage.detail}</p>
-              </li>
-            ))}
-          </ol>
-          <div className={`${styles.directions} ${styles.wide} ${styles.stageShots}`}>
-            <div>
-              <p className={styles.panelStep}>
-                <span>02</span>Simplify: Account
-              </p>
-              <Placeholder
-                label="Account step"
-                note="The Account step of the prototype, with the progress bar showing Plan complete."
-                aspect="16 / 9"
-                spec="16:9 · 2560×1440"
-              />
-            </div>
-            <div>
-              <p className={styles.panelStep}>
-                <span>03</span>Convert: Payment
-              </p>
-              <Placeholder
-                label="Payment step"
-                note="The Payment step with the currency selector open, showing how the payment methods change by region."
-                aspect="16 / 9"
-                spec="16:9 · 2560×1440"
-              />
-            </div>
-          </div>
-        </ChapterSection>
-
-        {/* 2.4 The redesigned checkout: the climax of the chapter. */}
-        <ChapterSection
-          chapter={ch["checkout-outcome"]}
-          title="The redesigned checkout."
-          intro={
-            <p>
-              Membership on one side, one decision at a time on the other, from choosing a plan to the first lesson. Responsive from
-              the start, on desktop and mobile.
-            </p>
-          }
-        >
-          <div className={`${styles.checkoutHero} ${styles.wide}`}>
-            <Figure caption="Plan: monthly or annual, with annual marked as best value.">
-              <Img
-                src="/licklibrary/home-checkout.webp"
-                alt="The redesigned LickLibrary checkout, Plan step: membership benefits on the left, monthly and annual plans on the right with annual selected as best value"
-                width={2560}
-                height={1440}
-                className={styles.adminShot}
-              />
-            </Figure>
-            <div className={styles.checkoutPhone}>
-              <Placeholder
-                label="Plan step, mobile"
-                note="The same step on a phone, with the plan cards stacked."
-                aspect="9 / 19.5"
-                spec="1170×2532"
-                className={styles.phonePlaceholder}
-              />
-            </div>
-          </div>
-          <Figure caption="Celebrate: a welcome that leads straight into learning, or into personalising the membership." className={`${styles.wide} ${styles.followOn}`}>
-            <Img
-              src="/licklibrary/home-confirmation.webp"
-              alt="The checkout confirmation: “You're in!”, with Start learning and Personalise your experience"
-              width={2560}
-              height={1440}
-              className={styles.adminShot}
-            />
-          </Figure>
-          <div className={styles.measure}>
-            <p className={styles.metaLabel}>What I&rsquo;ll measure once it&rsquo;s live</p>
-            <ul>
-              {measures.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </ChapterSection>
-
-        {/* ───────── 03 Email Templates: structure only until the write-up lands ───────── */}
-        <ChapterOpener
-          chapter={ch["email-templates"]}
-          title="From one-off campaigns to a reusable email system."
-          intro={<p>A master email system in Campaign Monitor for campaigns, product launches and customer retention.</p>}
-        />
-        {emailDraft.map((section) => (
-          <DraftSection key={section.id} {...section} />
-        ))}
-
-        {/* ───────── 04 Homepage: coming soon ───────── */}
+        {/* ───────── 03 Homepage: coming soon ───────── */}
         <ChapterSection
           chapter={ch.homepage}
           lead={<p className={styles.soon}>Coming soon</p>}
