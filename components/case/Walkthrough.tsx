@@ -41,6 +41,8 @@ export default function Walkthrough({
   const [hidden, setHidden] = useState(false);
   // Keyboard focus inside the steps holds the autoplay, so it never moves on under someone reading a step.
   const [focused, setFocused] = useState(false);
+  // Bumped on every choice (and every restart), so a step's fill restarts from the top even if it was already active.
+  const [run, setRun] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -51,7 +53,18 @@ export default function Walkthrough({
       if (motion.matches) setStep((s) => (s < 0 ? 0 : s));
     };
     const onVisibility = () => setHidden(document.hidden);
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.35 });
+    // Leaving the screen rewinds it: coming back always starts again from the plain screenshot (or step one, with reduced
+    // motion), never mid-way.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        if (!entry.isIntersecting) {
+          setStep(motion.matches ? 0 : -1);
+          setRun((r) => r + 1);
+        }
+      },
+      { threshold: 0.35 },
+    );
     observer.observe(el);
     motion.addEventListener("change", onMotion);
     document.addEventListener("visibilitychange", onVisibility);
@@ -63,8 +76,8 @@ export default function Walkthrough({
     };
   }, []);
 
-  // Autoplay always runs (unless reduced motion); hovering or picking a step doesn't stop it. It holds, without
-  // losing its place, off screen or in a hidden tab.
+  // Autoplay always runs (unless reduced motion); hovering or picking a step doesn't stop it. It holds in a hidden tab,
+  // and starts again from the beginning after being scrolled away (see the observer above).
   const autoplay = !reduced;
   const holding = hidden || !inView || focused;
 
@@ -75,9 +88,6 @@ export default function Walkthrough({
     const id = window.setTimeout(() => setStep(0), INTRO_MS);
     return () => window.clearTimeout(id);
   }, [autoplay, holding, step]);
-
-  // Bumped on every choice, so a chosen step's fill restarts from the top even if it was already active.
-  const [run, setRun] = useState(0);
 
   // Before the first step, the highlight waits (invisible) on step one, so it fades in rather than flying in.
   const [l, t, w, h] = steps[Math.max(step, 0)].box;

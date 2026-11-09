@@ -1,0 +1,52 @@
+:where(.toggle) { margin: 0; }
+
+/* A quiet segmented control: two words, the chosen one filled. */
+.control {
+  display: inline-flex;
+  gap: 2px;
+  margin-bottom: 14px;
+  padding: 3px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+.control button {
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+.control button:hover { color: var(--fg); }
+.control button[aria-pressed="true"] { background: rgb(255 255 255 / 0.1); color: var(--fg); }
+.control button:focus-visible { outline: 2px solid var(--accent, #ee7267); outline-offset: 2px; }
+
+/* The screens stacked; the chosen one fades in over the other. */
+.stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: clamp(6px, 0.6vw, 10px);
+  background: #fff;
+}
+.stage img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.stage img[data-active] { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stage img,
+  .control button { transition: none; }
+}

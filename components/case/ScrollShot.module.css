@@ -1,0 +1,66 @@
+/* The frame: a fixed window onto the page. Clipping, border and corners come from the frameClassName passed in. */
+.frame { position: relative; }
+
+/* The scrolling page, with no visible scrollbar: the fade and the cue say it scrolls. Wheel, trackpad, touch and keyboard
+   all still work. No overscroll-behavior: at either end the page itself carries on scrolling. */
+.scroller {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.scroller::-webkit-scrollbar { display: none; }
+.scroller:focus-visible { outline: 2px solid var(--accent, #ee7267); outline-offset: -2px; }
+
+/* The page's header, pinned while the rest scrolls under it (markers included). */
+.sticky { position: sticky; top: 0; z-index: 2; }
+.sticky img { display: block; width: 100%; height: auto; }
+
+.page { position: relative; }
+.page img { display: block; width: 100%; height: auto; }
+
+/* A soft fade into the page's own white at the bottom: there's more below. Gone at the bottom. */
+.fade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 28%;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0), rgb(255 255 255 / 0.92));
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+.fade[data-hidden] { opacity: 0; }
+
+/* The cue: a small, quiet pill at the bottom centre. Fades once they scroll, returns at the top. */
+.cue {
+  position: absolute;
+  bottom: clamp(12px, 2vw, 20px);
+  left: 50%;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 11px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: rgb(18 18 18 / 0.6);
+  backdrop-filter: blur(6px);
+  color: rgb(255 255 255 / 0.92);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 300ms ease, translate 300ms ease;
+}
+.cue svg { animation: nudge 1.6s ease-in-out infinite; }
+.cue[data-hidden] { opacity: 0; translate: -50% 6px; }
+@keyframes nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade,
+  .cue { transition: none; }
+  .cue svg { animation: none; }
+}

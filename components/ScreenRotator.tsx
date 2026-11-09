@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import styles from "./ScreenRotator.module.css";
 
 type Screen = { src: string; alt: string };
@@ -15,6 +15,7 @@ export default function ScreenRotator({
   width = 2560,
   height = 1440,
   sceneControlled = false,
+  fade,
 }: {
   screens: Screen[];
   interval?: number;
@@ -22,6 +23,8 @@ export default function ScreenRotator({
   height?: number;
   /** The immersive homepage exposes visibility on the parent scene. */
   sceneControlled?: boolean;
+  /** Crossfade length in ms (default 1200, from the stylesheet): shorter for a quick flick through screens. */
+  fade?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -81,7 +84,7 @@ export default function ScreenRotator({
   }, [running, interval, screens.length]);
 
   return (
-    <div ref={ref} className={styles.rotator}>
+    <div ref={ref} className={styles.rotator} style={fade ? ({ "--fade": `${fade}ms` } as CSSProperties) : undefined}>
       {screens.map((screen, i) => (
         // eslint-disable-next-line @next/next/no-img-element
         <img

@@ -10,7 +10,7 @@
   overflow: hidden;
   background: #fff; /* the product's own background, behind the screens while they load */
 }
-/* The incoming screen slides a little and fades in over the last, which holds until it's covered. */
+/* A plain crossfade: the incoming screen fades in over the last, which holds until it's covered. */
 .screen {
   position: absolute;
   inset: 0;
@@ -20,18 +20,12 @@
   height: 100%;
   object-fit: contain;
   opacity: 0;
-  transform: translateX(2.5%);
-  transition:
-    opacity 0s linear 700ms,
-    transform 0s linear 700ms;
+  transition: opacity 0s linear 600ms;
 }
 .screen[data-active] {
   z-index: 1;
   opacity: 1;
-  transform: none;
-  transition:
-    opacity 600ms ease,
-    transform 700ms var(--case-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  transition: opacity 600ms ease;
 }
 
 /* ---------- Steps ---------- */
@@ -103,7 +97,6 @@
   .screen,
   .screen[data-active],
   .steps button { transition: none; }
-  .screen { transform: none; }
 }
 
 @media (max-width: 700px) {
