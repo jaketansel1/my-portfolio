@@ -1,0 +1,121 @@
+.showcase {
+  --accent-line: var(--accent, #ee7267);
+}
+:where(.showcase) { margin: 0; }
+
+/* ---------- Screens ---------- */
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  background: #fff; /* the product's own background, behind the screens while they load */
+}
+/* The incoming screen slides a little and fades in over the last, which holds until it's covered. */
+.screen {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transform: translateX(2.5%);
+  transition:
+    opacity 0s linear 700ms,
+    transform 0s linear 700ms;
+}
+.screen[data-active] {
+  z-index: 1;
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 600ms ease,
+    transform 700ms var(--case-ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* ---------- Steps ---------- */
+
+.steps {
+  --hit-x: 10px;
+  --hit-y: 8px;
+  display: grid;
+  grid-template-columns: repeat(var(--count, 3), minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 28px);
+  margin: clamp(16px, 1.8vw, 24px) calc(-1 * var(--hit-x)) calc(-1 * var(--hit-y));
+  list-style: none;
+}
+.steps button {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: var(--hit-y) var(--hit-x) calc(var(--hit-y) + 4px);
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 74%, transparent);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color 300ms ease,
+    background-color 300ms ease;
+}
+.steps button:hover { background: rgb(255 255 255 / 0.04); color: var(--fg); }
+.steps button[aria-pressed="true"] { color: var(--fg); }
+.steps button:focus-visible { outline: 2px solid var(--accent-line); outline-offset: 0; }
+
+/* A muted track per step; the active one fills with coral over its time on screen. */
+.bar {
+  position: relative;
+  display: block;
+  height: 3px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.14);
+}
+.progress {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent-line);
+  transform-origin: left;
+  /* The step's length (set from StepShowcase.tsx); its end is what moves the showcase on. */
+  animation: fill var(--step-ms, 3500ms) linear both;
+}
+.progress[data-static] { animation: none; }
+@keyframes fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.head { display: flex; gap: 10px; align-items: baseline; }
+/* Compact: titles only, so the buttons sit a little tighter under the screen. */
+.showcase[data-compact] .steps button { padding-bottom: var(--hit-y); }
+.index { color: inherit; font-family: var(--font-geist-mono), monospace; font-size: 11px; }
+.steps button[aria-pressed="true"] .index { color: var(--accent-line); }
+.head strong { font-size: clamp(15px, 1.2vw, 18px); font-weight: 500; letter-spacing: -0.02em; }
+.note { color: var(--muted); font-size: 13px; line-height: 1.45; }
+.activeNote { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .screen,
+  .screen[data-active],
+  .steps button { transition: none; }
+  .screen { transform: none; }
+}
+
+@media (max-width: 700px) {
+  .steps { gap: 6px; }
+  .note { display: none; }
+  .head { flex-direction: column; gap: 2px; }
+  .head strong { font-size: 14px; }
+  .activeNote {
+    display: block;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+}

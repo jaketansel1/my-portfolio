@@ -262,30 +262,43 @@
   column-gap: clamp(14px, 1.3vw, 22px);
   animation: fade 1100ms 300ms var(--home-ease) both;
 }
-.featureFrame { grid-area: media; }
+/* The screen at 88% of its two columns, held to the right edge: a step back from the grid, more room beside the text. */
+.featureFrame { grid-area: media; justify-self: end; width: 88%; }
 /* Featured even before it has a link: no dimming. */
 .feature[data-static] .stage { opacity: 1; }
 .featureText {
   grid-area: text;
-  max-width: 26rem;
+  max-width: 28rem;
   padding-right: clamp(0px, 2vw, 40px);
 }
+/* Status: a small green dot, then the label. Noticeable, still quiet. */
 .featureLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   color: var(--caption-meta);
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.liveDot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3fbf72;
+  box-shadow: 0 0 0 3px rgb(63 191 114 / 0.16);
+}
 .featureTitle {
-  margin-top: 18px;
-  font-size: clamp(30px, 2.8vw, 48px);
+  margin-top: 20px;
+  font-size: clamp(34px, 3.4vw, 58px);
   font-weight: 500;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
 }
 .featureDescription {
-  margin-top: 16px;
+  margin-top: 18px;
   color: var(--caption);
   font-size: clamp(15px, 1.1vw, 18px);
   line-height: 1.45;
@@ -312,6 +325,7 @@
 /* Tablet and below: the screen first at full width, the text beneath it, as on the cards. */
 @media (max-width: 900px) {
   .feature { grid-template-columns: minmax(0, 1fr); grid-template-areas: "media" "text"; row-gap: 24px; }
+  .featureFrame { width: 100%; }
   .featureText { max-width: 34rem; padding-right: 0; }
   .featureTitle { margin-top: 14px; }
 }
