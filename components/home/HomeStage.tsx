@@ -52,9 +52,9 @@ const LL_SCREENS = [
 ];
 /* Inspect Design scene: real screens from the app in development, captured locally. */
 const ID_SCREENS = [
-  { src: "/inspect-design/lesson-mega-menu.webp", alt: "Inspect Design lesson explaining how the LickLibrary mega menu is structured" },
   { src: "/inspect-design/home.webp", alt: "Inspect Design home: paste a website to inspect how it is built" },
   { src: "/inspect-design/lesson-web-apps.webp", alt: "Inspect Design lesson showing how a page load travels between browser, Vue, Laravel and the database" },
+  { src: "/inspect-design/lesson-mega-menu.webp", alt: "Inspect Design lesson explaining how the LickLibrary mega menu is structured" },
 ];
 /** Hero second line: what I do, then a nudge towards the work. */
 const HERO_LINES = ["who builds and ships.", "scroll to see my work ↓"];
