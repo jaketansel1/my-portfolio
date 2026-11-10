@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Browser, CasePage, Figure, Img, NextProject, Phone, Placeholder, type Tone } from "../../../components/case/Case";
+import { Browser, CasePage, Figure, Img, NextProject, Phone, type Tone } from "../../../components/case/Case";
 import { ChapterHero, ChapterLayout, ChapterOpener, ChapterSection, type Chapter, type Fact } from "../../../components/case/Chapters";
 import Lightbox from "../../../components/case/Lightbox";
+import PhoneVideo from "../../../components/case/PhoneVideo";
 import ScrollShot from "../../../components/case/ScrollShot";
 import StepShowcase, { type ShowcaseStep } from "../../../components/case/StepShowcase";
 import ScreenRotator from "../../../components/ScreenRotator";
@@ -68,54 +69,71 @@ const project: Fact[] = [
  */
 
 /*
- * Menu → Tab → Block → Item, walked through on the live Guitar Lessons menu (system-featured.webp, 2446×1200).
+ * Menu → Tab → Block → Item, walked through on the live Guitar Lessons menu, New tab (system-menu.webp, 1510×862).
  * box: [left, top, width, height] in percent of the screenshot, so the highlights scale with it.
  */
 const systemSteps: WalkthroughStep[] = [
-  { title: "Menu", note: "One per area of the library", box: [3.2, 8.77, 12.1, 5.71] }, // Guitar Lessons
-  { title: "Tab", note: "A way to browse that area", box: [3.2, 18.14, 6.7, 7.6] }, // Featured
-  { title: "Block", note: "A group of content inside a tab", box: [40.75, 29.15, 19.95, 61.57] }, // Popular Artists
-  { title: "Item", note: "A real lesson, course, artist or tutor", box: [42.4, 34.25, 7.7, 18.14] }, // Skid Row
+  { title: "Menu", note: "One per area of the library", box: [11.59, 10.21, 13.77, 6.03] }, // Guitar Lessons
+  { title: "Tab", note: "A way to browse that area", box: [14.44, 20.65, 4.9, 8.35] }, // New (the open tab)
+  { title: "Block", note: "A group of content inside a tab", box: [27.95, 33.87, 67.55, 54.76] }, // Featured
+  { title: "Item", note: "A real lesson, course, artist or tutor", box: [28.34, 39.44, 16.36, 23.78] }, // Strange Brew
 ];
 
-// Live iPhone screenshots, 738×1600.
-const tiers: { step: string; line: string; src?: string; video?: string; alt?: string; note: string }[] = [
+// 2.3 The three principles behind the mobile menu, beside its recording.
+const mobilePrinciples = [
   {
-    step: "Menu",
-    line: "The five areas",
-    src: `${LL}/mobile-tier-menu.webp`,
-    alt: "LickLibrary's mobile menu: Home, Guitar Lessons, Guitar Courses, Backing Tracks, Learning Paths, Tutors, Community and Blog",
-    note: "",
+    label: "Structure",
+    title: "Three levels. One clear path.",
+    text: "A simple hierarchy takes members from broad categories to individual lessons, without overwhelming them with options.",
   },
   {
-    step: "Section",
-    line: "One area opened",
-    src: `${LL}/mobile-tier-section.webp`,
-    alt: "Guitar Courses opened in the mobile menu, listing Featured, New, Classic Albums, Technique and more",
-    note: "",
+    label: "Motion",
+    title: "Transitions that feel natural.",
+    text: "Smooth sliding animations connect each navigation level, giving members a clear sense of direction as they move deeper or back through the menu.",
   },
   {
-    step: "Category",
-    line: "Content to browse",
-    src: `${LL}/mobile-tier-category.webp`,
-    alt: "Learning Paths inside Guitar Courses on mobile: a grid of featured learning paths with artwork",
-    note: "",
+    label: "Discovery",
+    title: "More than a list of links.",
+    text: "Visual lesson previews bring the catalogue into the navigation, helping members discover content before opening a page.",
   },
 ];
 
-// What the admin lets the content team do, as shown in the editor above it.
-const adminControls = [
-  "Tabs and blocks for every menu",
-  "Items picked by searching the real catalogue",
-  "Drag to reorder, lock to pin in place",
-  "Block settings, such as randomised order",
+// 2.5 The same four levels in the admin (admin-system.webp, 2560×1440). box: [left, top, width, height] in percent;
+// Block lights two areas, the selected block and its settings.
+const adminSteps: WalkthroughStep[] = [
+  {
+    title: "Menu",
+    note: "Manage each area independently.",
+    box: [0.9, 46.4, 15.5, 11.91],
+  },
+  {
+    title: "Tab",
+    note: "Organise how members browse.",
+    box: [21.4, 23.29, 47.0, 6.93],
+  },
+  {
+    title: "Block",
+    note: "Build reusable content groups.",
+    box: [
+      [22.2, 58.67, 18.9, 8.36],
+      [45.25, 35.56, 51.5, 18.84],
+    ],
+  },
+  {
+    title: "Item",
+    note: "Update content without code.",
+    box: [45.6, 58.84, 50.8, 40.6],
+  },
 ];
 
-// How the Mega Menu ends: what was delivered, not what it might have done.
+// 2.6 Results, shown like the checkout's (1.4): the figure and its title. text is kept for reference, not shown.
+// PLACEHOLDER: these figures are illustrative, not measured. Replace them with real analytics once measured, then set
+// OUTCOMES_ARE_PLACEHOLDER to false to remove the on-page note.
+const OUTCOMES_ARE_PLACEHOLDER = true;
 const outcomes = [
-  { title: "Shipped to production", text: "Live on licklibrary.com on desktop and mobile, built inside the existing platform." },
-  { title: "Built for the content team", text: "Menus, tabs, blocks and items are managed in the admin. No hard-coded frontend changes." },
-  { title: "Designed to scale", text: "One structure presents lessons, courses, artists, tutors and learning paths in every menu." },
+  { value: "+32%", label: "Menu engagement", text: "More visitors interacting with the navigation to explore the catalogue." },
+  { value: "+24%", label: "Course discovery", text: "More visitors reaching course and lesson pages through the navigation." },
+  { value: "−18%", label: "Navigation exits", text: "Fewer visitors leaving the site after interacting with the menu." },
 ];
 
 /*
@@ -147,11 +165,11 @@ const originalIssues = [
   },
 ] as const;
 
-// 1.2 What the checkout gets right, in three short lines under it.
+// 1.2 Beside the phone: three short points, title and one line each.
 const checkoutObservations = [
-  { title: "Best value, made clear", text: "Annual is marked as best value, with the saving shown." },
-  { title: "One primary action", text: "Every step ends in a single, clear button." },
-  { title: "Consistent progress", text: "The same three-step progress bar throughout, with Back to revisit." },
+  { title: "Value upfront", text: "Annual savings visible alongside the price." },
+  { title: "One clear action", text: "A single primary action at every step." },
+  { title: "Progress throughout", text: "Three consistent steps, with the ability to go back." },
 ];
 
 // 1.2 The checkout, Plan → Account → Payment → You’re in, captured at 1440×900. Titles only: the screens tell the story.
@@ -182,26 +200,58 @@ const checkoutSteps: ShowcaseStep[] = [
   },
 ];
 
-// 1.3 Where onboarding leads: preferences are captured today; recommendations built on them are the next step.
-const learningFlow = [
-  { title: "Member preferences", line: "Level, music and goals", built: true },
-  { title: "Recommendation logic", line: "Matched to the catalogue", built: false },
-  { title: "Personalised learning", line: "Lessons, courses and paths", built: false },
+// 1.3 After payment: the personalise questions, captured at 1440×900.
+const personaliseSteps: ShowcaseStep[] = [
+  {
+    title: "Level",
+    note: "",
+    src: `${LL}/personalise-level.webp`,
+    alt: "Personalise, step 1 of 4: “Where are you with your guitar playing?” with five levels, Confident player looking to improve selected",
+  },
+  {
+    title: "Music",
+    note: "",
+    src: `${LL}/personalise-music.webp`,
+    alt: "Personalise, step 2 of 4: “What music do you love?” with Rock, Blues and Classic Rock chosen, ranked 1 to 3",
+  },
+  {
+    title: "Goals",
+    note: "",
+    src: `${LL}/personalise-goals.webp`,
+    alt: "Personalise, step 3 of 4: “What would you love to achieve?” with goals for a confident player, Learn my favourite songs and Join a band chosen",
+  },
+  {
+    title: "1-to-1",
+    note: "",
+    src: `${LL}/personalise-support.webp`,
+    alt: "Personalise, step 4 of 4: “Want to improve even faster?” offering a free 1-to-1 video session, with Book your free 1-to-1 and Finish setup",
+  },
+  {
+    title: "Ready",
+    note: "",
+    src: `${LL}/personalise-done.webp`,
+    alt: "“You're all set!”: the personalised experience is ready, with Start learning",
+  },
 ];
 
-// 1.4 What the redesign achieved, as outcomes rather than numbers. No analytics yet, so no metrics.
+// 1.4 Results.
+// PLACEHOLDER: these figures are illustrative, not measured. Replace them with real post-launch analytics before
+// publishing, then set IMPACT_IS_PLACEHOLDER to false to remove the on-page note.
+const IMPACT_IS_PLACEHOLDER = true;
 const impact = [
-  { title: "Simpler checkout", text: "One lengthy form replaced with three focused steps." },
-  { title: "Clearer decisions", text: "Improved hierarchy around membership plans, account creation and payment." },
-  { title: "Connected experience", text: "Optional onboarding creates a foundation for more relevant learning recommendations." },
+  { value: "+18%", label: "Checkout conversion" },
+  { value: "−25%", label: "Checkout abandonment" },
+  { value: "72%", label: "Onboarding completion" },
 ];
 
-// 1.5 Designed, built and integrated: the three parts of the work.
+// 1.5 Designed, built, integrated and tested: the four parts of the work.
 const ownership = [
-  { label: "Designed", text: "End-to-end UX/UI and responsive interfaces." },
-  { label: "Built", text: "Frontend implementation using Blade and Alpine.js." },
-  { label: "Integrated", text: "Existing authentication, membership pricing, email validation, Stripe payment elements and 1-to-1 booking." },
+  { label: "Designed", text: "End-to-end UX/UI across all devices." },
+  { label: "Built", text: "Frontend development with Blade and Alpine.js." },
+  { label: "Integrated", text: "Authentication, payments and onboarding." },
+  { label: "Tested", text: "Responsive layouts, validation and checkout flows." },
 ];
+
 
 // The overview hero: a quick flick through the strongest LickLibrary screens, dark and light in turn. All 16:10, so none
 // is letterboxed: all five are 2880×1800 captures (1440×900 at 2x).
@@ -237,7 +287,7 @@ export default function LickLibraryCaseStudy() {
           facts={project}
         >
           {/* A quick flick through the best screens from the LickLibrary work, in one browser frame. */}
-          <BrowserFrame url="licklibrary.com" scheme="dark">
+          <BrowserFrame scheme="dark" bar={false}>
             <div className={styles.heroScreens}>
               <ScreenRotator screens={heroScreens} interval={2000} fade={500} width={2400} height={1500} />
             </div>
@@ -288,7 +338,7 @@ export default function LickLibraryCaseStudy() {
           title="One decision at a time."
           intro={<p>I replaced the lengthy sign-up form with three focused steps, giving members a clearer sense of progress.</p>}
         >
-          <StepShowcase url="licklibrary.com" steps={checkoutSteps} width={2400} height={1500} stepMs={2600} label="Checkout steps" compact />
+          <StepShowcase bar={false} steps={checkoutSteps} width={2400} height={1500} stepMs={2600} label="Checkout steps" compact />
           {/* The same flow on a phone, continuing the desktop showcase: the phone leads, the observations follow. */}
           <div className={styles.checkoutDetail}>
             <Phone
@@ -301,7 +351,6 @@ export default function LickLibraryCaseStudy() {
               className={styles.checkoutPhone}
             />
             <div className={styles.checkoutNotes}>
-              <p className={styles.metaLabel}>The same flow on mobile</p>
               <ul className={styles.observations}>
                 {checkoutObservations.map((item) => (
                   <li key={item.title}>
@@ -314,81 +363,71 @@ export default function LickLibraryCaseStudy() {
           </div>
         </ChapterSection>
 
-        {/* 1.3 Beyond Checkout: the real onboarding screen leads; one flow line beneath shows where it goes next. */}
+        {/* 1.3 Beyond Checkout: the onboarding, step by step. */}
         <ChapterSection
           chapter={ch["checkout-personalise"]}
-          title="The experience doesn’t end at payment."
+          title="Personalisation starts before the first lesson."
           intro={
             <p>
-              Optional onboarding captures each member&rsquo;s playing level, musical interests and goals, laying the groundwork for a
-              more personalised learning experience.
+              Optional onboarding captures each member&rsquo;s playing level, musical interests and goals, creating the foundation for a
+              more relevant learning experience.
             </p>
           }
         >
-          <figure className={styles.onboarding}>
-            <BrowserFrame url="licklibrary.com" scheme="dark">
-              <Image
-                src={`${LL}/personalise-music.webp`}
-                alt="Onboarding, step 2 of 4: “What music do you love?” with Rock, Blues and Classic Rock chosen, ranked 1 to 3"
-                width={2400}
-                height={1500}
-                unoptimized
-              />
-            </BrowserFrame>
-          </figure>
-          <ol className={styles.flow} aria-label="Member preferences, then recommendation logic, then personalised learning">
-            {learningFlow.map((stage) => (
-              <li key={stage.title} data-next={!stage.built || undefined}>
-                <span className={styles.flowStatus}>{stage.built ? "Built" : "Next step"}</span>
-                <strong>{stage.title}</strong>
-                <span className={styles.flowLine}>{stage.line}</span>
-              </li>
-            ))}
-          </ol>
+          <StepShowcase bar={false} steps={personaliseSteps} width={2400} height={1500} stepMs={2000} label="Personalise steps" compact />
         </ChapterSection>
 
         {/* 1.4 Impact: three outcomes, stated plainly. No unverified metrics. */}
         <ChapterSection
           chapter={ch["checkout-impact"]}
-          title="A simpler path from sign-up to learning."
+          title="A smoother path from sign-up to learning."
         >
-          <ol className={styles.impact}>
-            {impact.map((item, i) => (
-              <li key={item.title}>
-                <span className={styles.impactIndex}>{String(i + 1).padStart(2, "0")}</span>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </li>
+          <dl className={styles.impact}>
+            {impact.map((item) => (
+              <div key={item.label}>
+                <dt>{item.label}</dt>
+                {/* The figure leads visually (CSS order); the label comes first for assistive tech. */}
+                <dd className={styles.impactValue}>{item.value}</dd>
+              </div>
             ))}
-          </ol>
+          </dl>
+          <p className={styles.impactSummary}>
+            A redesigned checkout that reduces friction, simplifies decisions and lays the groundwork for personalised learning.
+          </p>
+          {IMPACT_IS_PLACEHOLDER ? <p className={styles.impactNote}>Illustrative placeholder figures, not measured results.</p> : null}
         </ChapterSection>
 
         {/* 1.5 Ownership: the conclusion. A lead statement, then the three parts of the work. */}
         <ChapterSection chapter={ch["checkout-outcome"]} title="Designed beyond the handoff.">
-          {/* The statement, and beside it the pull request that shipped the work (opens larger on click). */}
+          {/* The statement, and beside it the pull request that brought the work into the codebase (opens larger on click). */}
           <div className={styles.ownershipIntro}>
-            <p className={styles.ownershipLead}>
-              I didn&rsquo;t just design the screens. I owned the UX/UI and the frontend implementation, bringing the new journey into
-              LickLibrary&rsquo;s existing Laravel platform.
-            </p>
-            <Lightbox
-              src={`${LL}/checkout-pull-request.webp`}
-              width={2870}
-              height={1694}
-              alt="The pull request for the membership checkout redesign on LickLibrary's repository: what changed, the implementation and its status"
-              label="Open the pull request screenshot"
-              className={styles.ownershipShot}
-            />
+            <div className={styles.ownershipText}>
+              <p className={styles.ownershipLead}>
+                From UX/UI design to frontend implementation, I took ownership of the checkout experience within LickLibrary&rsquo;s
+                existing platform.
+              </p>
+              <dl className={styles.ownershipCols}>
+                {ownership.map((item, i) => (
+                  <div key={item.label}>
+                    <dt>
+                      <span>{String(i + 1).padStart(2, "0")} /</span> {item.label}
+                    </dt>
+                    <dd>{item.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            <figure className={styles.ownershipEvidence}>
+              <Lightbox
+                src={`${LL}/checkout-pull-request-crop.webp`}
+                width={1800}
+                height={1140}
+                alt="Pull request #353, feature/membership-checkout-redesign: 162 commits, what changed and the Blade and Alpine.js implementation"
+                label="Open the pull request screenshot"
+              />
+              <figcaption>PR #353 · 162 commits · Laravel</figcaption>
+            </figure>
           </div>
-          <dl className={styles.ownershipCols}>
-            {ownership.map((item) => (
-              <div key={item.label}>
-                <dt>{item.label}</dt>
-                <dd>{item.text}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className={styles.stack}>Laravel · Blade · Alpine.js · Stripe Elements</p>
         </ChapterSection>
 
         {/* ───────── 02 Mega Menu, opening on the problem ───────── */}
@@ -396,19 +435,16 @@ export default function LickLibraryCaseStudy() {
           chapter={ch["mega-menu"]}
           title="Making thousands of guitar lessons easier to discover."
           intro={
-            <>
-              <p>
-                As LickLibrary grew, its navigation became a dense, text-heavy list of links. Finding relevant lessons and courses
-                was difficult, with little visual hierarchy to guide discovery.
-              </p>
-              <p>The brief: a more visual way to browse the catalogue, taking its cue from the best ecommerce navigation.</p>
-            </>
+            <p>
+              As LickLibrary&rsquo;s catalogue grew, its text-heavy navigation made lessons harder to discover. The goal was to create a
+              clearer, more visual browsing experience.
+            </p>
           }
         >
           {/* 2.1 Problem: the old navigation. */}
           <div id="problem" className={styles.problem}>
             <figure className={styles.beforeExamples}>
-              <Img {...shot(`${LL}/mega-menu-before.webp`, "LickLibrary's old desktop navigation, with dense columns of text links for guitar lessons", 1585, 992)} />
+              <Img {...shot(`${LL}/mega-menu-before.webp`, "LickLibrary's old desktop navigation, with dense columns of text links for guitar lessons", 1527, 956)} />
               <Img {...shot(`${LL}/mobile-menu-before.webp`, "LickLibrary's old mobile navigation showing stacked expandable text categories", 852, 1846)} />
               <figcaption className={styles.beforeCaption}>Before: the previous desktop and mobile navigation. Text only, every link at the same weight.</figcaption>
             </figure>
@@ -418,20 +454,25 @@ export default function LickLibraryCaseStudy() {
         {/* ───────── 2.2 Desktop: the redesign, straight after the before shots ───────── */}
         <ChapterSection
           chapter={ch.experience}
-          title="Browse without leaving the page."
+          title="Discover more, without navigating away."
           intro={
             <p>
-              The redesign replaces the lists with a visual catalogue. Tabs surface courses, artists, tutors and lessons before anyone
-              commits to a page.
+              A more intuitive way to explore thousands of lessons. Hover to discover top-level categories, then click between tabs to
+              browse lessons, courses, artists and tutors.
             </p>
           }
         >
-          <Figure caption="The Guitar Lessons mega menu, live on licklibrary.com." className={styles.wide}>
-            <Browser
-              url="licklibrary.com"
-              video={{ src: "/licklibrary/mega-menu.mp4", webmSrc: "/licklibrary/mega-menu.webm", poster: "/licklibrary/mega-menu-poster.webp", width: 1920, height: 1080 }}
-              className={styles.megaMenuVideo}
-            />
+          <Figure className={styles.wide}>
+            {/* The recording on its own: it already shows LickLibrary's header, so no browser frame around it. */}
+            <div className={styles.megaMenuVideo}>
+              <ShowcaseVideo
+                src="/licklibrary/mega-menu.mp4"
+                webmSrc="/licklibrary/mega-menu.webm"
+                poster="/licklibrary/mega-menu-poster.webp"
+                width={1920}
+                height={1080}
+              />
+            </div>
           </Figure>
         </ChapterSection>
 
@@ -439,36 +480,35 @@ export default function LickLibraryCaseStudy() {
         <ChapterSection
           chapter={ch.mobile}
           title="Rethinking it for mobile."
-          intro={
-            <p>
-              Mobile isn&rsquo;t a smaller desktop menu. It&rsquo;s a three-level drawer built for touch: from the five areas, to one
-              area, to the content inside it.
-            </p>
-          }
         >
-          <ol className={`${styles.tiers} ${styles.wide}`} aria-label="Mobile navigation: Menu, Section, Category">
-            {tiers.map((tier, i) => (
-              <li key={tier.step}>
-                <p className={styles.tierLabel}>
-                  <span>{i + 1}</span>
-                  <strong>{tier.step}</strong>
-                  <em>{tier.line}</em>
-                </p>
-                <div className={styles.phone}>
-                  {tier.video ? (
-                    <ShowcaseVideo src={tier.video} poster={tier.src ?? `${LL}/live-mobile-menu.webp`} width={900} height={1948} />
-                  ) : tier.src ? (
-                    <Img {...shot(tier.src, tier.alt ?? `${tier.step}: ${tier.line.toLowerCase()}`, 738, 1600)} aspect="9 / 19.5" position="top" />
-                  ) : (
-                    <Placeholder label={tier.step} note={tier.note} aspect="9 / 19.5" className={styles.phonePlaceholder} />
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-          <p className={styles.swipeHint} aria-hidden="true">
-            Swipe through the three levels
-          </p>
+          {/* The recording on its own, centred. Files in public/licklibrary/: mobile-menu-hevc.mp4 (the original HEVC capture,
+              for Safari), mobile-menu.mp4 (an H.264 copy for other browsers) and mobile-menu-poster.webp. */}
+          <div className={styles.mobileDetail}>
+            <PhoneVideo
+              sources={[
+                { src: "/licklibrary/mobile-menu-hevc.mp4", type: 'video/mp4; codecs="hvc1"' },
+                { src: "/licklibrary/mobile-menu.mp4", type: "video/mp4" },
+              ]}
+              poster="/licklibrary/mobile-menu-poster.webp"
+              width={1290}
+              height={2796}
+              label="Screen recording of the LickLibrary mobile menu: opening the drawer, choosing an area, then browsing a category"
+              caption="Mobile navigation in action."
+              className={styles.mobileRecording}
+            />
+            {/* The three principles behind it, beside the recording. */}
+            <ol className={styles.mobilePoints}>
+              {mobilePrinciples.map((item, i) => (
+                <li key={item.label}>
+                  <p className={styles.mobilePointLabel}>
+                    <span>{String(i + 1).padStart(2, "0")} /</span> {item.label}
+                  </p>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </ChapterSection>
 
         {/* ───────── 2.4 System: the one structure behind desktop and mobile ───────── */}
@@ -485,12 +525,12 @@ export default function LickLibraryCaseStudy() {
         >
           {/* The live menu, with Menu → Tab → Block → Item highlighted in turn. */}
           <Walkthrough
-            src={`${LL}/system-featured.webp`}
-            width={2446}
-            height={1200}
-            alt="The live Guitar Lessons mega menu, Featured tab, with Browse, Popular Lessons, Popular Artists and What's Hot"
+            src={`${LL}/system-menu.webp`}
+            width={1510}
+            height={862}
+            alt="The live Guitar Lessons mega menu, New tab: Browse and Skill Level links on the left, a Featured block of eight lessons with artwork on the right"
             steps={systemSteps}
-            className={styles.wide}
+            className={styles.systemWalk}
           />
         </ChapterSection>
 
@@ -500,68 +540,41 @@ export default function LickLibraryCaseStudy() {
           title="The same system, run by the content team."
           intro={
             <p>
-              The more flexible the menus became, the more the team needed to control them without a developer. The editor mirrors
-              the menu itself, Menu → Tab → Block → Item, so a change in the admin is a change on the site.
+              The same Menu → Tab → Block → Item structure powers the admin, giving the content team full control over what appears
+              in the navigation, without needing a developer.
             </p>
           }
         >
-          <Figure className={styles.wide}>
-            <p className={styles.panelStep}>
-              <span>01</span>Edit: What&rsquo;s Hot in the admin
-            </p>
-            <Img
-              src={`${LL}/admin-editor.webp`}
-              alt="The LickLibrary admin editing the Guitar Lessons mega menu: Featured tab, What's Hot block with draggable, lockable lesson items and a lesson search"
-              width={2560}
-              height={1440}
-              className={styles.adminShot}
-            />
-          </Figure>
-
-          <div className={`${styles.adminResult} ${styles.wide}`}>
-            <Figure>
-              <p className={styles.panelStep}>
-                <span>02</span>Live: the same block on licklibrary.com
-              </p>
-              <Img
-                src={`${LL}/live-whats-hot.webp`}
-                alt="The What's Hot block in the live Guitar Lessons menu, showing Surfing With The Alien by Joe Satriani"
-                width={810}
-                height={600}
-                className={styles.liveShot}
-              />
-            </Figure>
-            <div className={styles.adminNotes}>
-              <p className={styles.metaLabel}>What the team controls</p>
-              <ul className={styles.controlList}>
-                {adminControls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <p className={styles.ownership}>
-                I designed the editor and the menus it controls, built the frontend for both, and worked with LickLibrary&rsquo;s
-                backend developer to connect them to the Laravel platform, test against real catalogue data and ship to production.
-              </p>
-              <p className={styles.stack}>Vue · Tailwind · Laravel</p>
-            </div>
-          </div>
+          {/* The System walkthrough again, on the admin: the same four steps, highlighted where they live in the editor. */}
+          <Walkthrough
+            src={`${LL}/admin-system.webp`}
+            width={2560}
+            height={1440}
+            alt="The LickLibrary admin editing the Guitar Lessons mega menu: Mega Menu in the sidebar, the tabs (New selected), the New tab's blocks with Featured selected, its settings and its eight draggable, lockable lesson items"
+            steps={adminSteps}
+            className={styles.systemWalk}
+          />
         </ChapterSection>
 
         {/* ───────── 2.6 Outcome: what was delivered ───────── */}
         <ChapterSection
           chapter={ch.delivery}
           title="From navigation to discovery."
-          intro={<p>A responsive discovery system across desktop and mobile, run by the team that owns the content.</p>}
         >
-          <ul className={styles.outcomes}>
-            {outcomes.map((item, i) => (
-              <li key={item.title}>
-                <span className={styles.outcomeIndex}>{String(i + 1).padStart(2, "0")}</span>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </li>
+          {/* The same layout as the checkout's results (1.4). */}
+          <dl className={styles.impact}>
+            {outcomes.map((item) => (
+              <div key={item.label}>
+                <dt>{item.label}</dt>
+                <dd className={styles.impactValue}>{item.value}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
+          <p className={styles.impactSummary}>
+            Turning a text-heavy navigation into a visual discovery experience, helping members explore more content while giving the
+            team complete control over what appears.
+          </p>
+          {OUTCOMES_ARE_PLACEHOLDER ? <p className={styles.impactNote}>Illustrative placeholder figures, not measured results.</p> : null}
         </ChapterSection>
 
         {/* ───────── 03 Homepage: coming soon ───────── */}
@@ -581,6 +594,7 @@ export default function LickLibraryCaseStudy() {
         href="/work/crumble-and-co"
         line="Taking a new dog-accessories brand from a logo to a launched Shopify store."
         tone={crumble}
+        compact
         media={<Browser url="crumbleandco.club" scheme="light" shot={shot("/case/crumble/home-desktop.webp", "Crumble & Co homepage")} />}
       />
     </CasePage>

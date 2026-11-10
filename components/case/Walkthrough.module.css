@@ -1,5 +1,7 @@
 .walk {
   --accent-line: var(--accent, #ee7267);
+  --walk-radius: clamp(4px, 0.5vw, 8px);
+  --walk-dim: rgb(8 8 8 / 0.4);
   container: walk / inline-size;
 }
 /* Zero specificity, so a className passed in (e.g. a wider margin) always wins over this reset. */
@@ -21,17 +23,35 @@
 }
 .stage img { display: block; width: 100%; height: auto; }
 
-/* One box that glides between areas; its outsized shadow dims everything around it. */
-.highlight {
+/* The dim over everything but the lit areas (holes cut by the mask set in Walkthrough.tsx); light enough to keep the
+   interface readable. The holes glide with the outlines. */
+.dim {
+  position: absolute;
+  inset: 0;
+  background: var(--walk-dim);
+  mask-repeat: no-repeat;
+  mask-composite: exclude;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-composite: xor;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    mask-position 700ms var(--case-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    mask-size 700ms var(--case-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    -webkit-mask-position 700ms var(--case-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    -webkit-mask-size 700ms var(--case-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity 500ms ease;
+}
+.dim[data-on] { opacity: 1; }
+
+/* An outline per lit area, gliding between areas. */
+.highlight,
+.corners {
   position: absolute;
   top: var(--t);
   left: var(--l);
   width: var(--w);
   height: var(--h);
-  border: 2px solid var(--accent-line);
-  border-radius: clamp(4px, 0.5vw, 8px);
-  /* Just the outline and the dim around it; the dim is light enough to keep the interface readable. */
-  box-shadow: 0 0 0 200vmax rgb(8 8 8 / 0.4);
   opacity: 0;
   pointer-events: none;
   transition:
@@ -41,7 +61,23 @@
     height 700ms var(--case-ease, cubic-bezier(0.22, 1, 0.36, 1)),
     opacity 500ms ease;
 }
-.highlight[data-on] { opacity: 1; }
+.highlight {
+  box-sizing: border-box;
+  border: 2px solid var(--accent-line);
+  border-radius: var(--walk-radius);
+}
+.highlight[data-on],
+.corners[data-on] { opacity: 1; }
+/* The dim's holes are square; this fills their corners with the same dim, outside the outline's curve, so the lit
+   area is rounded to match the outline. */
+.corners { overflow: hidden; }
+.corners::after {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--walk-radius);
+  box-shadow: 0 0 0 24px var(--walk-dim);
+  content: "";
+}
 
 /* ---------- Step controls ---------- */
 
@@ -116,8 +152,8 @@
 @container walk (min-width: 760px) {
   .inner {
     grid-template-areas: "controls stage";
-    /* About 25 / 75: room for the steps and their progress tracks, the screenshot gets the rest. */
-    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    /* About 20 / 80: just enough for the steps and their progress tracks, the screenshot gets the rest. */
+    grid-template-columns: minmax(170px, 1fr) minmax(0, 4fr);
     gap: clamp(20px, 2.4vw, 36px);
     align-items: stretch;
   }
@@ -158,6 +194,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .highlight,
+  .corners,
+  .dim,
   .steps button { transition: none; }
 }
 

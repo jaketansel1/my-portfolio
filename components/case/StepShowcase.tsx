@@ -18,6 +18,7 @@ const RESUME_AFTER_MS = 6000;
  */
 export default function StepShowcase({
   url,
+  bar = true,
   steps,
   width,
   height,
@@ -28,7 +29,10 @@ export default function StepShowcase({
   controlRef,
   className,
 }: {
-  url: string;
+  /** Address shown in the browser bar. Optional: leave it out for a plain bar. */
+  url?: string;
+  /** The browser frame's top bar; false for just the rounded screen. */
+  bar?: boolean;
   steps: ShowcaseStep[];
   width: number;
   height: number;
@@ -116,7 +120,7 @@ export default function StepShowcase({
       onFocus={(e) => (e.target as HTMLElement).matches(":focus-visible") && setFocused(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setFocused(false)}
     >
-      <Browser url={url} scheme="dark">
+      <Browser url={url} bar={bar} scheme="dark">
         <div className={styles.stage} style={{ aspectRatio: `${width} / ${height}` }}>
           {steps.map((s, i) => (
             <Image

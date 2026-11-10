@@ -9,7 +9,8 @@ export type ScrollShotMarker = { label: string; x: number; y: number };
 /**
  * A long full-page screenshot in a fixed frame that the visitor scrolls themselves (wheel, trackpad, touch, keyboard or
  * the thin scrollbar). Nothing moves on its own. A "Scroll to explore" cue and a soft fade at the bottom say there's
- * more; the cue fades once they scroll and returns at the top, and the fade goes at the bottom. Markers sit in the
+ * more; the cue fades once they scroll, returns at the top, and comes back at the bottom with its arrow pointing up; the
+ * fade goes at the bottom. Markers sit in the
  * scrolled content (x/y in percent of the full image), so they travel with what they point at. There's no scroll
  * locking: at either end, the page carries on scrolling as normal.
  */
@@ -77,7 +78,8 @@ export default function ScrollShot({
       </div>
       {/* Overlays: fixed to the frame, never in the way of scrolling. */}
       <span className={styles.fade} data-hidden={atBottom || undefined} aria-hidden="true" />
-      <span className={styles.cue} data-hidden={!atTop || undefined} aria-hidden="true">
+      {/* At the top it points down; at the bottom the same cue returns pointing back up. */}
+      <span className={styles.cue} data-hidden={(!atTop && !atBottom) || undefined} data-up={(atBottom && !atTop) || undefined} aria-hidden="true">
         {cue}
         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 5v14M6 13l6 6 6-6" />

@@ -54,6 +54,8 @@
 }
 .cue svg { animation: nudge 1.6s ease-in-out infinite; }
 .cue[data-hidden] { opacity: 0; translate: -50% 6px; }
+/* At the bottom: the arrow flips to point back up. */
+.cue[data-up] svg { rotate: 180deg; }
 @keyframes nudge {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(2px); }

@@ -105,7 +105,7 @@ export const sides: Side[] = [
     key: "people",
     title: "People",
     line: "Friends, family and the good stuff.",
-    photo: { src: "/about/people-friends.jpg", width: 1600, height: 1200, alt: "Jake and a group of friends crowded together, laughing, on a night out", position: "center 45%" },
+    photo: { src: "/about/people-wedding-party.webp", width: 1571, height: 1117, alt: "Jake in his wedding suit on a beach with two groomsmen and two bridesmaids, all laughing and pointing at the camera", position: "center 55%" },
     heading: "Friends, family and the good stuff.",
     text: "Time with the people who matter, ideally somewhere warm with not much of a plan.",
     tone: { bg: "#1f2430", fg: "#eceef2" },
