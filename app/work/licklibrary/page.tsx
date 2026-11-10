@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Browser, CasePage, Figure, Img, NextProject, Phone, Placeholder, type Tone } from "../../../components/case/Case";
 import { ChapterHero, ChapterLayout, ChapterOpener, ChapterSection, type Chapter, type Fact } from "../../../components/case/Chapters";
-import ScreenToggle from "../../../components/case/ScreenToggle";
+import Lightbox from "../../../components/case/Lightbox";
 import ScrollShot from "../../../components/case/ScrollShot";
 import StepShowcase, { type ShowcaseStep } from "../../../components/case/StepShowcase";
 import ScreenRotator from "../../../components/ScreenRotator";
@@ -38,7 +38,8 @@ const chapters: Chapter[] = [
   { id: "checkout-problem", number: "1.1", title: "Problem", sub: true },
   { id: "checkout-direction", number: "1.2", title: "Direction", sub: true },
   { id: "checkout-personalise", number: "1.3", title: "Beyond checkout", sub: true },
-  { id: "checkout-outcome", number: "1.4", title: "Ownership", sub: true },
+  { id: "checkout-impact", number: "1.4", title: "Impact", sub: true },
+  { id: "checkout-outcome", number: "1.5", title: "Ownership", sub: true },
 
   { id: "mega-menu", number: "02", title: "Mega Menu" },
   { id: "problem", number: "2.1", title: "Problem", sub: true },
@@ -126,10 +127,24 @@ const outcomes = [
 // 1.1 The original sign-up: three problems, each marked on the full page (checkout-old-long.webp: everything below the old
 // site's navigation down to Agree and Subscribe; 1360×1803 of the 1440-wide capture). at: [x%, y%] of that page.
 // The navigation (checkout-old-nav-crop.webp) is pinned above it; visitors scroll the rest themselves.
+// Each marker sits on what its observation is about: 1 where plan selection runs straight into the account form, 2 between
+// pricing and benefits, 3 on the dated membership header.
 const originalIssues = [
-  { title: "Everything at once", text: "Plan, account and payment all compete on one page.", at: [20.5, 15.4] },
-  { title: "Weak hierarchy", text: "Benefits, pricing and fields share the same weight.", at: [60.9, 20.1] },
-  { title: "No sense of progress", text: "No steps, and no idea how much is left.", at: [25, 27.9] },
+  {
+    title: "Too much at once",
+    text: "Plan selection, account creation and payment were stacked into one long scrolling experience, with no clear sense of progress.",
+    at: [25, 27.9],
+  },
+  {
+    title: "Competing visual hierarchy",
+    text: "Pricing, benefits and form fields competed for attention, with little distinction between essential information and supporting details.",
+    at: [60.9, 20.1],
+  },
+  {
+    title: "An outdated, inflexible layout",
+    text: "The visual design lacked polish, and the layout didn’t make effective use of larger screens.",
+    at: [56.5, 7.3],
+  },
 ] as const;
 
 // 1.2 What the checkout gets right, in three short lines under it.
@@ -167,45 +182,25 @@ const checkoutSteps: ShowcaseStep[] = [
   },
 ];
 
-// 1.3 After payment: the personalise questions, captured at 1440×900.
-const personaliseSteps: ShowcaseStep[] = [
-  {
-    title: "Level",
-    note: "Where they are with their playing",
-    src: `${LL}/personalise-level.webp`,
-    alt: "Personalise, step 1 of 4: “Where are you with your guitar playing?” with five levels, Confident player looking to improve selected",
-  },
-  {
-    title: "Music",
-    note: "Up to three genres, favourite first",
-    src: `${LL}/personalise-music.webp`,
-    alt: "Personalise, step 2 of 4: “What music do you love?” with Rock, Blues and Classic Rock chosen, ranked 1 to 3",
-  },
-  {
-    title: "Goals",
-    note: "Goals that fit their level",
-    src: `${LL}/personalise-goals.webp`,
-    alt: "Personalise, step 3 of 4: “What would you love to achieve?” with goals for a confident player, Learn my favourite songs and Join a band chosen",
-  },
-  {
-    title: "1-to-1 Coaching",
-    note: "A free video session with a LickLibrary pro",
-    src: `${LL}/personalise-support.webp`,
-    alt: "Personalise, step 4 of 4: “Want to improve even faster?” offering a free 1-to-1 video session, with Book your free 1-to-1 and Finish setup",
-  },
-  {
-    title: "Ready",
-    note: "Straight into learning",
-    src: `${LL}/personalise-done.webp`,
-    alt: "“You're all set!”: the personalised experience is ready, with Start learning",
-  },
+// 1.3 Where onboarding leads: preferences are captured today; recommendations built on them are the next step.
+const learningFlow = [
+  { title: "Member preferences", line: "Level, music and goals", built: true },
+  { title: "Recommendation logic", line: "Matched to the catalogue", built: false },
+  { title: "Personalised learning", line: "Lessons, courses and paths", built: false },
 ];
 
-// 1.4 Designed, built and integrated: one line each.
+// 1.4 What the redesign achieved, as outcomes rather than numbers. No analytics yet, so no metrics.
+const impact = [
+  { title: "Simpler checkout", text: "One lengthy form replaced with three focused steps." },
+  { title: "Clearer decisions", text: "Improved hierarchy around membership plans, account creation and payment." },
+  { title: "Connected experience", text: "Optional onboarding creates a foundation for more relevant learning recommendations." },
+];
+
+// 1.5 Designed, built and integrated: the three parts of the work.
 const ownership = [
-  { label: "Designed", text: "The end-to-end journey and every screen, for desktop and mobile." },
-  { label: "Built", text: "The frontend in Blade and Alpine.js, inside the existing Laravel platform." },
-  { label: "Integrated", text: "Existing sign-in, pricing, email validation, a Stripe card field and 1-to-1 booking." },
+  { label: "Designed", text: "End-to-end UX/UI and responsive interfaces." },
+  { label: "Built", text: "Frontend implementation using Blade and Alpine.js." },
+  { label: "Integrated", text: "Existing authentication, membership pricing, email validation, Stripe payment elements and 1-to-1 booking." },
 ];
 
 // The overview hero: a quick flick through the strongest LickLibrary screens, dark and light in turn. All 16:10, so none
@@ -258,7 +253,7 @@ export default function LickLibraryCaseStudy() {
         <ChapterSection
           chapter={{ ...ch["checkout-problem"], number: "01", title: "Sign Up & Checkout" }}
           title="A checkout that asked too much, too soon."
-          intro={<p>The original sign-up combined plan selection, account creation and payment into one lengthy page.</p>}
+          intro={<p>The original checkout felt dated, presented too much at once and lacked a clear visual hierarchy to guide new members.</p>}
         >
           <figure className={styles.original}>
             {/* The whole original page, scrolled by the visitor (no autoplay); the markers travel with it. */}
@@ -294,15 +289,8 @@ export default function LickLibraryCaseStudy() {
           intro={<p>I replaced the lengthy sign-up form with three focused steps, giving members a clearer sense of progress.</p>}
         >
           <StepShowcase url="licklibrary.com" steps={checkoutSteps} width={2400} height={1500} stepMs={2600} label="Checkout steps" compact />
+          {/* The same flow on a phone, continuing the desktop showcase: the phone leads, the observations follow. */}
           <div className={styles.checkoutDetail}>
-            <ul className={styles.observations}>
-              {checkoutObservations.map((item) => (
-                <li key={item.title}>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </li>
-              ))}
-            </ul>
             <Phone
               shot={shot(
                 `${LL}/checkout-new-mobile-plan.webp`,
@@ -312,55 +300,87 @@ export default function LickLibraryCaseStudy() {
               )}
               className={styles.checkoutPhone}
             />
+            <div className={styles.checkoutNotes}>
+              <p className={styles.metaLabel}>The same flow on mobile</p>
+              <ul className={styles.observations}>
+                {checkoutObservations.map((item) => (
+                  <li key={item.title}>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </ChapterSection>
 
-        {/* 1.3 Beyond Checkout: personalised onboarding, and the one decision worth showing. */}
+        {/* 1.3 Beyond Checkout: the real onboarding screen leads; one flow line beneath shows where it goes next. */}
         <ChapterSection
           chapter={ch["checkout-personalise"]}
           title="The experience doesn’t end at payment."
           intro={
             <p>
-              After payment, four optional questions shape each member&rsquo;s recommendations and lead straight into learning: a first
-              meaningful step, not just a completed purchase.
+              Optional onboarding captures each member&rsquo;s playing level, musical interests and goals, laying the groundwork for a
+              more personalised learning experience.
             </p>
           }
         >
-          <StepShowcase url="licklibrary.com" steps={personaliseSteps} width={2400} height={1500} stepMs={2000} label="Personalise steps" />
-          <div className={styles.adaptive}>
-            <div className={styles.adaptiveText}>
-              <p className={styles.metaLabel}>One decision in detail</p>
-              <h3>Goals adapt to the member&rsquo;s level.</h3>
-              <p>Learning goals adapt to the member&rsquo;s experience, so confident players aren&rsquo;t shown beginner-only options.</p>
-            </div>
-            <ScreenToggle
-              label="Playing level"
-              width={1000}
-              height={926}
-              className={styles.adaptiveToggle}
-              options={[
-                {
-                  label: "Just starting out",
-                  src: `${LL}/personalise-goals-beginner.webp`,
-                  alt: "Goals for a beginner: Learn my first chords and Learn scales first, then eight more goals",
-                },
-                {
-                  label: "Confident player",
-                  src: `${LL}/personalise-goals-confident.webp`,
-                  alt: "Goals for a confident player: the same list without Learn my first chords and Learn scales",
-                },
-              ]}
-            />
-          </div>
+          <figure className={styles.onboarding}>
+            <BrowserFrame url="licklibrary.com" scheme="dark">
+              <Image
+                src={`${LL}/personalise-music.webp`}
+                alt="Onboarding, step 2 of 4: “What music do you love?” with Rock, Blues and Classic Rock chosen, ranked 1 to 3"
+                width={2400}
+                height={1500}
+                unoptimized
+              />
+            </BrowserFrame>
+          </figure>
+          <ol className={styles.flow} aria-label="Member preferences, then recommendation logic, then personalised learning">
+            {learningFlow.map((stage) => (
+              <li key={stage.title} data-next={!stage.built || undefined}>
+                <span className={styles.flowStatus}>{stage.built ? "Built" : "Next step"}</span>
+                <strong>{stage.title}</strong>
+                <span className={styles.flowLine}>{stage.line}</span>
+              </li>
+            ))}
+          </ol>
         </ChapterSection>
 
-        {/* 1.4 Ownership & Outcome: designed, built and integrated. */}
+        {/* 1.4 Impact: three outcomes, stated plainly. No unverified metrics. */}
         <ChapterSection
-          chapter={ch["checkout-outcome"]}
-          title="Designed, built and integrated."
-          intro={<p>A single long sign-up page became a guided three-step checkout, with optional onboarding after purchase.</p>}
+          chapter={ch["checkout-impact"]}
+          title="A simpler path from sign-up to learning."
         >
-          <dl className={styles.ownershipRows}>
+          <ol className={styles.impact}>
+            {impact.map((item, i) => (
+              <li key={item.title}>
+                <span className={styles.impactIndex}>{String(i + 1).padStart(2, "0")}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </li>
+            ))}
+          </ol>
+        </ChapterSection>
+
+        {/* 1.5 Ownership: the conclusion. A lead statement, then the three parts of the work. */}
+        <ChapterSection chapter={ch["checkout-outcome"]} title="Designed beyond the handoff.">
+          {/* The statement, and beside it the pull request that shipped the work (opens larger on click). */}
+          <div className={styles.ownershipIntro}>
+            <p className={styles.ownershipLead}>
+              I didn&rsquo;t just design the screens. I owned the UX/UI and the frontend implementation, bringing the new journey into
+              LickLibrary&rsquo;s existing Laravel platform.
+            </p>
+            <Lightbox
+              src={`${LL}/checkout-pull-request.webp`}
+              width={2870}
+              height={1694}
+              alt="The pull request for the membership checkout redesign on LickLibrary's repository: what changed, the implementation and its status"
+              label="Open the pull request screenshot"
+              className={styles.ownershipShot}
+            />
+          </div>
+          <dl className={styles.ownershipCols}>
             {ownership.map((item) => (
               <div key={item.label}>
                 <dt>{item.label}</dt>
