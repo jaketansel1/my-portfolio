@@ -1,12 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
 import styles from "./Walkthrough.module.css";
 
 /** A highlighted area, in percent of the image: [left, top, width, height]. */
 export type Box = [number, number, number, number];
-export type WalkthroughStep = { title: string; note: string; box: Box };
+/** A step highlights one area, or several at once (e.g. a block's selector and its settings). */
+export type WalkthroughStep = { title: string; note: string; box: Box | Box[] };
+
+const boxesOf = (s: WalkthroughStep): Box[] => (typeof s.box[0] === "number" ? [s.box as Box] : (s.box as Box[]));
 
 const INTRO_MS = 1000;
 const STEP_MS = 2500;
@@ -41,6 +44,8 @@ export default function Walkthrough({
   const [hidden, setHidden] = useState(false);
   // Keyboard focus inside the steps holds the autoplay, so it never moves on under someone reading a step.
   const [focused, setFocused] = useState(false);
+  // Bumped on every choice (and every restart), so a step's fill restarts from the top even if it was already active.
+  const [run, setRun] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -51,7 +56,18 @@ export default function Walkthrough({
       if (motion.matches) setStep((s) => (s < 0 ? 0 : s));
     };
     const onVisibility = () => setHidden(document.hidden);
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.35 });
+    // Leaving the screen rewinds it: coming back always starts again from the plain screenshot (or step one, with reduced
+    // motion), never mid-way.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        if (!entry.isIntersecting) {
+          setStep(motion.matches ? 0 : -1);
+          setRun((r) => r + 1);
+        }
+      },
+      { threshold: 0.35 },
+    );
     observer.observe(el);
     motion.addEventListener("change", onMotion);
     document.addEventListener("visibilitychange", onVisibility);
@@ -63,8 +79,8 @@ export default function Walkthrough({
     };
   }, []);
 
-  // Autoplay always runs (unless reduced motion); hovering or picking a step doesn't stop it. It holds, without
-  // losing its place, off screen or in a hidden tab.
+  // Autoplay always runs (unless reduced motion); hovering or picking a step doesn't stop it. It holds in a hidden tab,
+  // and starts again from the beginning after being scrolled away (see the observer above).
   const autoplay = !reduced;
   const holding = hidden || !inView || focused;
 
@@ -76,12 +92,26 @@ export default function Walkthrough({
     return () => window.clearTimeout(id);
   }, [autoplay, holding, step]);
 
-  // Bumped on every choice, so a chosen step's fill restarts from the top even if it was already active.
-  const [run, setRun] = useState(0);
-
-  // Before the first step, the highlight waits (invisible) on step one, so it fades in rather than flying in.
-  const [l, t, w, h] = steps[Math.max(step, 0)].box;
-  const box = { "--l": `${l}%`, "--t": `${t}%`, "--w": `${w}%`, "--h": `${h}%` } as CSSProperties;
+  // Before the first step, the highlights wait (invisible) on step one, so they fade in rather than fly in.
+  // There's one outline per area, as many as the busiest step needs; a step with fewer parks the spares on its first
+  // area, faded out, so they glide from there when needed.
+  const slots = Math.max(...steps.map((s) => boxesOf(s).length));
+  const current = boxesOf(steps[Math.max(step, 0)]);
+  const areas = Array.from({ length: slots }, (_, k) => ({ box: current[k] ?? current[0], used: k < current.length }));
+  // The dim: one layer with a hole cut for each area (mask layers combined with exclude), so several areas can be lit at
+  // once. A mask layer's % position is relative to the space left over, hence left / (100 − width). Spares are 0 × 0.
+  const layers = areas.map(({ box: [l, t, w, h], used }) => ({
+    size: used ? `${w}% ${h}%` : "0% 0%",
+    pos: `${used && w < 100 ? (l / (100 - w)) * 100 : l}% ${used && h < 100 ? (t / (100 - h)) * 100 : t}%`,
+  }));
+  const dimStyle = {
+    maskImage: [...layers.map(() => "linear-gradient(#000 0 0)"), "linear-gradient(#000 0 0)"].join(", "),
+    maskSize: [...layers.map((x) => x.size), "100% 100%"].join(", "),
+    maskPosition: [...layers.map((x) => x.pos), "0% 0%"].join(", "),
+    WebkitMaskImage: [...layers.map(() => "linear-gradient(#000 0 0)"), "linear-gradient(#000 0 0)"].join(", "),
+    WebkitMaskSize: [...layers.map((x) => x.size), "100% 100%"].join(", "),
+    WebkitMaskPosition: [...layers.map((x) => x.pos), "0% 0%"].join(", "),
+  } as CSSProperties;
   const active = step >= 0 ? steps[step] : null;
 
   // Choosing a step jumps there and restarts its fill from the top; autoplay carries on from that step.
@@ -100,7 +130,17 @@ export default function Walkthrough({
       <div className={styles.inner}>
         <div className={styles.stage} style={{ aspectRatio: `${width} / ${height}` }}>
           <Image src={src} alt={alt} width={width} height={height} unoptimized />
-          <span className={styles.highlight} style={box} data-on={step >= 0 || undefined} aria-hidden="true" />
+          <span className={styles.dim} style={dimStyle} data-on={step >= 0 || undefined} aria-hidden="true" />
+          {areas.map(({ box: [l, t, w, h], used }, k) => {
+            const place = { "--l": `${l}%`, "--t": `${t}%`, "--w": `${w}%`, "--h": `${h}%` } as CSSProperties;
+            const on = (step >= 0 && used) || undefined;
+            return (
+              <Fragment key={k}>
+                <span className={styles.corners} style={place} data-on={on} aria-hidden="true" />
+                <span className={styles.highlight} style={place} data-on={on} aria-hidden="true" />
+              </Fragment>
+            );
+          })}
         </div>
         <div
           className={styles.controls}

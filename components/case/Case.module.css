@@ -310,6 +310,30 @@
 .nextLink:hover .nextMedia { translate: 0 -10px; }
 .nextLink:focus-visible { outline: 2px solid var(--fg); outline-offset: -8px; }
 
+/* Compact: a short two-column row, the text beside a smaller preview, rather than another hero. */
+.next[data-compact] .nextLink { min-height: 0; padding-block: clamp(48px, 5vw, 80px); }
+.nextCompact {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+.next[data-compact] .introKicker { margin-bottom: clamp(14px, 1.4vw, 20px); }
+.page .next[data-compact] .nextTitle { font-size: clamp(36px, 3.8vw, 60px); line-height: 0.95; letter-spacing: -0.045em; }
+.next[data-compact] .nextLine { margin-top: 16px; font-size: clamp(16px, 1.2vw, 19px); }
+.next[data-compact] .nextMedia { width: 100%; max-width: 600px; margin: 0; justify-self: end; }
+.next[data-compact] .nextLink:hover .nextMedia { translate: 0 -6px; }
+@media (max-width: 800px) {
+  .nextCompact { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .next[data-compact] .nextMedia { max-width: none; justify-self: stretch; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .next[data-compact] .nextArrow,
+  .next[data-compact] .nextMedia { transition: none; }
+  .next[data-compact] .nextLink:hover .nextArrow,
+  .next[data-compact] .nextLink:hover .nextMedia { translate: none; }
+}
+
 /* Gentle reveal for media as it scrolls in (supporting browsers only, never with reduced motion). */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {

@@ -12,11 +12,14 @@ import styles from "./Device.module.css";
 export function Browser({
   url,
   scheme = "light",
+  bar = true,
   className,
   children,
 }: {
   /** Address shown in the bar. Optional: small frames can leave it out. */
   url?: string;
+  /** The top bar with its three dots. Pass false for just the rounded screen. */
+  bar?: boolean;
   scheme?: "light" | "dark";
   className?: string;
   /** The screen: an image, a video box, a cropped Img… */
@@ -24,14 +27,16 @@ export function Browser({
 }) {
   return (
     <div className={`${styles.browser} ${className ?? ""}`} data-scheme={scheme}>
-      <div className={styles.bar} aria-hidden="true">
-        <span className={styles.dots}>
-          <span />
-          <span />
-          <span />
-        </span>
-        {url ? <span className={styles.url}>{url}</span> : null}
-      </div>
+      {bar ? (
+        <div className={styles.bar} aria-hidden="true">
+          <span className={styles.dots}>
+            <span />
+            <span />
+            <span />
+          </span>
+          {url ? <span className={styles.url}>{url}</span> : null}
+        </div>
+      ) : null}
       <div className={styles.screen}>{children}</div>
     </div>
   );

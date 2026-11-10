@@ -416,6 +416,7 @@ export function NextProject({
   tone,
   media,
   label = "Next project",
+  compact = false,
 }: {
   number?: string;
   title: string;
@@ -424,7 +425,33 @@ export function NextProject({
   tone: Tone;
   media?: ReactNode;
   label?: string;
+  /** A compact two-column row (text beside a smaller preview) instead of the full-height closing section. */
+  compact?: boolean;
 }) {
+  if (compact) {
+    return (
+      <section className={styles.next} style={toneStyle(tone)} data-compact="">
+        <Link href={href} className={styles.nextLink}>
+          <Wrap className={styles.nextCompact}>
+            <div>
+              <p className={styles.introKicker}>
+                {number ? <span>{number}</span> : null}
+                <span>{label}</span>
+              </p>
+              <p className={styles.nextTitle}>
+                {title}
+                <span className={styles.nextArrow} aria-hidden="true">
+                  &rarr;
+                </span>
+              </p>
+              {line ? <p className={styles.nextLine}>{line}</p> : null}
+            </div>
+            {media ? <div className={styles.nextMedia}>{media}</div> : null}
+          </Wrap>
+        </Link>
+      </section>
+    );
+  }
   return (
     <section className={styles.next} style={toneStyle(tone)}>
       <Link href={href} className={styles.nextLink}>

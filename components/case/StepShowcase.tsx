@@ -1,29 +1,38 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useImperativeHandle, useRef, useState, type CSSProperties, type RefObject } from "react";
 import { Browser } from "../ui/Device";
 import styles from "./StepShowcase.module.css";
 
 export type ShowcaseStep = { title: string; note: string; src: string; alt: string };
 
+const RESUME_AFTER_MS = 6000;
+
 /**
  * A product flow shown in one browser frame: real screens, one per step, moving on by themselves while in view.
  * Each new screen slides in over the last (the way the product itself moves between steps). The active step's
- * progress fill is the clock: when it ends, the next screen comes in. Hovering pauses it; choosing a step jumps
- * there and carries on. Reduced motion: no autoplay or slide, the first screen shown, steps still selectable.
+ * progress fill is the clock: when it ends, the next screen comes in. Hovering does not pause it. Clicking a step shows
+ * it and holds, then autoplay resumes a few seconds later; keyboard focus on the steps holds it too.
+ * Reduced motion: no autoplay or fade, the first screen shown, steps still selectable.
  */
 export default function StepShowcase({
   url,
+  bar = true,
   steps,
   width,
   height,
   stepMs = 3500,
   label,
   compact = false,
+  onStepChange,
+  controlRef,
   className,
 }: {
-  url: string;
+  /** Address shown in the browser bar. Optional: leave it out for a plain bar. */
+  url?: string;
+  /** The browser frame's top bar; false for just the rounded screen. */
+  bar?: boolean;
   steps: ShowcaseStep[];
   width: number;
   height: number;
@@ -32,13 +41,20 @@ export default function StepShowcase({
   label: string;
   /** Step titles only, no notes: for when the page around it already explains the steps. */
   compact?: boolean;
+  /** Told whenever the showing step changes, so something beside the showcase can follow it. */
+  onStepChange?: (step: number) => void;
+  /** Lets something beside the showcase choose a step, exactly as clicking its own labels does (it then holds). */
+  controlRef?: RefObject<{ choose: (step: number) => void } | null>;
   className?: string;
 }) {
   const ref = useRef<HTMLElement>(null);
   const [step, setStep] = useState(0);
   const [run, setRun] = useState(0);
   const [inView, setInView] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  // Keyboard focus on the steps holds it. A mouse click focuses a button too, but that counts as a choice (below).
+  const [focused, setFocused] = useState(false);
+  // A chosen step holds until the visitor has left it alone for a while.
+  const [chosen, setChosen] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [hidden, setHidden] = useState(false);
 
@@ -48,7 +64,18 @@ export default function StepShowcase({
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const onMotion = () => setReduced(motion.matches);
     const onVisibility = () => setHidden(document.hidden);
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.4 });
+    // Leaving the screen rewinds it: coming back always starts again from the first step, with any choice forgotten.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        if (!entry.isIntersecting) {
+          setStep(0);
+          setRun((r) => r + 1);
+          setChosen(false);
+        }
+      },
+      { threshold: 0.4 },
+    );
     observer.observe(el);
     motion.addEventListener("change", onMotion);
     document.addEventListener("visibilitychange", onVisibility);
@@ -60,13 +87,29 @@ export default function StepShowcase({
     };
   }, []);
 
-  const autoplay = !reduced;
-  const holding = hovered || hidden || !inView;
+  // Once the pointer and focus have both left, a chosen step hands back to autoplay after a short wait.
+  useEffect(() => {
+    if (!chosen || focused) return;
+    const id = window.setTimeout(() => setChosen(false), RESUME_AFTER_MS);
+    return () => window.clearTimeout(id);
+  }, [chosen, focused]);
 
+  const autoplay = !reduced;
+  // Hovering does not pause it; clicking a step does, and so does keyboard focus.
+  const holding = focused || chosen || hidden || !inView;
+
+  // Choosing a step shows it and holds there; its progress restarts from empty for when autoplay resumes.
   const choose = (i: number) => {
     setStep(i);
     setRun((r) => r + 1);
+    setChosen(true);
   };
+
+  // Outside control and outside following share this one state: there is only ever one step.
+  useImperativeHandle(controlRef, () => ({ choose }));
+  useEffect(() => {
+    onStepChange?.(step);
+  }, [step, onStepChange]);
 
   return (
     <figure
@@ -74,10 +117,10 @@ export default function StepShowcase({
       className={`${styles.showcase} ${className ?? ""}`}
       data-compact={compact || undefined}
       style={{ "--step-ms": `${stepMs}ms` } as CSSProperties}
-      onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
-      onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
+      onFocus={(e) => (e.target as HTMLElement).matches(":focus-visible") && setFocused(true)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setFocused(false)}
     >
-      <Browser url={url} scheme="dark">
+      <Browser url={url} bar={bar} scheme="dark">
         <div className={styles.stage} style={{ aspectRatio: `${width} / ${height}` }}>
           {steps.map((s, i) => (
             <Image
