@@ -3,17 +3,57 @@
  * this file holds the project's own compositions.
  */
 
+/* The sticky site header is solid espresso here: light screenshots would show through the usual frosted bar. */
+.page { --nav-opacity: 100%; }
+
 .photo { border-radius: 6px; }
 
-/* Brief: the range, staggered. */
-.productGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--col-gap);
+/* Brief: the two colourways in matching wide tiles. The product shots share one studio background, so each sits
+   whole (contain, not cropped) on that same colour. */
+.colourways .colourway[data-crop] {
+  border-radius: 6px;
+  background: #fbf1e9;
 }
-.productGrid figure:nth-child(2),
-.productGrid figure:nth-child(4) { margin-top: clamp(24px, 3.5vw, 64px); }
-.productGrid :global(img) { border-radius: 6px; }
+.colourways .colourway[data-crop] img { object-fit: contain; }
+/* Stay side by side on phones too: two small tiles read as a pair and keep the section short. */
+@media (max-width: 760px) {
+  div.colourways { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+}
+
+/* Direction: the Base44 prototype, full width, scrolled by the visitor; a quiet label and link beneath. */
+.prototype { margin: 0; }
+.prototypeMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+.prototypeLabel {
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.prototypeLink {
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
+  transition: color 200ms ease, text-decoration-color 200ms ease;
+}
+.prototypeLink:hover,
+.prototypeLink:focus-visible { color: var(--fg); text-decoration-color: currentColor; }
+/* On a phone a 16:10 window is a sliver; give the page more room to be explored. */
+@media (max-width: 640px) {
+  .prototypeFrame { aspect-ratio: 4 / 5 !important; }
+}
 
 /* Storefront: collection page with two phones beside it. */
 .storeRow {
@@ -87,7 +127,6 @@
 .nextFanzine { border-radius: 4px; }
 
 @media (max-width: 1000px) {
-  .productGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .storeRow { grid-template-columns: minmax(0, 1fr); }
   .timeline { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 36px; }
 }

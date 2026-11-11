@@ -5,7 +5,6 @@ import {
   ChapterHero,
   ChapterLayout,
   ChapterSection,
-  Insight,
   Numbers,
   Pair,
   Panel,
@@ -14,6 +13,8 @@ import {
   Subhead,
   type Chapter,
 } from "../../../components/case/Chapters";
+import ScrollShot from "../../../components/case/ScrollShot";
+import { Browser as BrowserFrame } from "../../../components/ui/Device";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -22,11 +23,20 @@ export const metadata: Metadata = {
     "Taking a new dog-accessories brand from a name and a logo to a launched Shopify store, including a custom Build Your Set experience.",
 };
 
-// Warm / tactile / photographic: one cream tone, espresso type, caramel accent.
-const cream: Tone = { bg: "#f1e7da", fg: "#3d2314", muted: "rgb(61 35 20 / 0.68)", rule: "rgb(61 35 20 / 0.14)" };
+/*
+ * The page's colour, in one place: dark and editorial, an espresso ground, cream headings, beige body, copper details.
+ * Everything in the case study (header, rail, chapters, panels, captions) reads these through CSS variables; browser
+ * frames keep their own light chrome, so the screenshots stand out.
+ */
+const espresso: Tone = { bg: "#352219", fg: "#f3e8dc", muted: "#cbb8a6", rule: "rgb(243 232 220 / 0.14)" };
+const accent = "#d4946a";
+const panel = "#3f2a20";
+const fill = "rgb(243 232 220 / 0.06)";
+
 const navy: Tone = { bg: "#070a10", fg: "#eef2f8", muted: "rgb(238 242 248 / 0.62)" };
 
 const C = "/case/crumble";
+const PROTOTYPE_URL = "https://crumble-canine-collective.base44.app/";
 const desk = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, width: 2400, height: 1500 });
 const mobile = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, width: 900, height: 1948 });
 const photo = (file: string, alt: string) => ({ src: `${C}/photo-${file}.webp`, alt, width: 1600, height: 1600 });
@@ -63,20 +73,21 @@ const theme = [
 
 export default function CrumbleCaseStudy() {
   return (
-    <CasePage tone={cream} maxWidth="1240px">
-      <ChapterLayout chapters={chapters} accent="#a4562b" panel="#faf6f0" fill="rgb(61 35 20 / 0.06)">
+    <CasePage tone={espresso} maxWidth="1240px" className={styles.page}>
+      <ChapterLayout chapters={chapters} accent={accent} panel={panel} fill={fill}>
         {/* ───────── 00 Overview ───────── */}
         <ChapterHero
           chapter={overview}
           brand="Crumble & Co"
           label="Overview"
-          title="A shop as considered as the products."
-          about="Crumble & Co makes premium dog accessories: harnesses, collars, leads, bow ties and poo bag holders in two colourways, Biscuit and Espresso."
-          role="I owned the website, from an open brief to launch: the direction, the design and a custom Shopify build, including a Build Your Set experience."
+          title="From brand to storefront."
+          about="Crumble & Co is a premium dog accessories brand. Starting with a name, logo and product range, the challenge was to create its entire online shopping experience."
+          role="I designed and built the Shopify storefront, from the visual direction and responsive layouts to custom shopping features, including Build Your Set."
           facts={[
-            { label: "Role", value: "Website direction, design and Shopify build" },
-            { label: "Scope", value: "Direction · Custom theme · Build Your Set · Launch" },
-            { label: "Status", value: "Live on crumbleandco.club", live: true },
+            { label: "Role", value: "Design & Development" },
+            { label: "Platform", value: "Shopify · Liquid · JavaScript" },
+            { label: "Timeline", value: "September – October 2026" },
+            { label: "Status", value: "Live — crumbleandco.club", live: true },
           ]}
         >
           <Figure caption="crumbleandco.club, live.">
@@ -91,42 +102,54 @@ export default function CrumbleCaseStudy() {
         {/* ───────── 01 Brief ───────── */}
         <ChapterSection
           chapter={brief}
-          title="A name, a logo and a range. The shop didn’t exist yet."
-          intro={<p>Everything digital was still to do. The brief was open; the aim was a shop that felt as considered as the products.</p>}
+          title="Starting from scratch."
+          intro={<p>With the brand identity and product range established, the next step was creating the online shopping experience.</p>}
         >
-          <div className={styles.productGrid}>
+          {/* The two colourways, one product shot each: a quiet starting point, not a gallery. */}
+          <Pair className={styles.colourways}>
             <Figure caption="Biscuit">
-              <Img {...photo("biscuit-harness-6", "Biscuit harness")} />
+              <Img {...photo("biscuit-harness-6", "The Biscuit harness in cream")} aspect="3 / 2" className={styles.colourway} />
             </Figure>
-            <Figure caption="Espresso, the complete set">
-              <Img {...photo("espresso-harness-complete-set", "The Espresso complete set")} />
+            <Figure caption="Espresso">
+              <Img {...photo("espresso-harness-set", "The Espresso harness, lead and pouch in brown")} aspect="3 / 2" className={styles.colourway} />
             </Figure>
-            <Figure caption="Buckle detail">
-              <Img {...photo("espresso-harness-buckle-detail", "Gold buckle detail on the Espresso harness")} />
-            </Figure>
-            <Figure caption="Stitched logo patch">
-              <Img {...photo("espresso-harness-logo-detail", "The Crumble & Co logo patch")} />
-            </Figure>
-          </div>
+          </Pair>
         </ChapterSection>
 
         {/* ───────── 02 Direction ───────── */}
         <ChapterSection
           chapter={direction}
-          title="Getting to something real, fast."
+          title="From prototype to production."
           intro={
             <p>
-              I looked at how established dog-accessory brands sell: photography, sizing, bundles. Then, instead of static
-              mockups, I built quick prototypes in Base44 and Lovable so the client could react to something that felt like a
-              real shop.
+              Before development, I used AI-assisted prototyping to quickly explore the storefront&rsquo;s visual direction and
+              shopping experience. The concept helped communicate the direction to the client before I translated it into a
+              custom Shopify theme.
             </p>
           }
         >
-          <Pair className={styles.directionPair}>
-            <Placeholder label="Early prototype" note="Base44 or Lovable homepage direction shown to the client." aspect="16 / 11" />
-            <Placeholder label="Reference board" note="Established dog-accessory brands reviewed before designing." aspect="16 / 11" />
-          </Pair>
-          <Insight label="What it settled">Warm neutrals, a classic serif, and product photography doing most of the work.</Insight>
+          {/* The Base44 prototype's whole homepage, scrolled by the visitor under its own pinned header (captured at
+              1440 wide; the builder badge hidden). The finished store follows in the next chapter, so none here. */}
+          <figure className={styles.prototype}>
+            <BrowserFrame url="crumble-canine-collective.base44.app" scheme="light">
+              <ScrollShot
+                src={`${C}/prototype-base44-long.webp`}
+                width={2400}
+                height={13480}
+                aspect="16 / 10"
+                stickyTop={{ src: `${C}/prototype-base44-nav.webp`, width: 2400, height: 173 }}
+                alt="The Base44 prototype homepage, top to bottom: a hero of a golden retriever in a leather harness, best-selling pieces, shop by category, a bundles panel, the brand story, value points, the Crumble Club photo grid, a newsletter signup and the footer."
+                frameClassName={styles.prototypeFrame}
+              />
+            </BrowserFrame>
+            <figcaption className={styles.prototypeMeta}>
+              <span className={styles.prototypeLabel}>Early prototype</span>
+              <a href={PROTOTYPE_URL} target="_blank" rel="noopener noreferrer" className={styles.prototypeLink}>
+                View the original
+                <span aria-hidden="true">↗</span>
+              </a>
+            </figcaption>
+          </figure>
         </ChapterSection>
 
         {/* ───────── 03 Storefront ───────── */}

@@ -19,7 +19,8 @@
 }
 .bar[data-scrolled] {
   border-bottom-color: color-mix(in srgb, var(--nav-rule) 70%, transparent);
-  background-color: color-mix(in srgb, var(--nav-bg) 84%, transparent);
+  /* A page can set --nav-opacity (e.g. 100% for a solid bar over light screenshots on a dark page). */
+  background-color: color-mix(in srgb, var(--nav-bg) var(--nav-opacity, 84%), transparent);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
 }
