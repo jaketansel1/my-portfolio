@@ -8,16 +8,38 @@
 
 .photo { border-radius: 6px; }
 
-/* Brief: the two colourways in matching wide tiles. The product shots share one studio background, so each sits
-   whole (contain, not cropped) on that same colour. */
-.colourways .colourway[data-crop] {
-  border-radius: 6px;
+/* 01 Meet Crumble: Crumble on the left; the two colourways stacked on the right, top and bottom edges level with
+   Crumble's. Crumble (5:6) sets the height and the product tiles share it, each product shown whole (contain) on the
+   shared studio cream. */
+.meet {
+  /* Sized from the viewport height too, so heading, text and all three images fit on one laptop screen: Crumble is
+     --meet-h tall, and the row is as wide as that height allows (Crumble 5:6, columns 1.57 : 1, plus the gap). */
+  --meet-gap: clamp(12px, 1.6vw, 22px);
+  --meet-h: max(380px, calc(100svh - 300px));
+  display: grid;
+  grid-template-columns: minmax(0, 1.57fr) minmax(0, 1fr);
+  gap: var(--meet-gap);
+  max-width: calc(var(--meet-h) * 5 / 6 * 2.57 / 1.57 + var(--meet-gap));
+}
+.meetCrumble :global(img) { object-position: center 32%; }
+.meetPhoto { border-radius: 8px; }
+.meetProducts {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: var(--meet-gap);
+}
+.meet .colourway[data-crop] {
+  border-radius: 8px;
   background: #fbf1e9;
 }
-.colourways .colourway[data-crop] img { object-fit: contain; }
-/* Stay side by side on phones too: two small tiles read as a pair and keep the section short. */
+/* Desktop: the tiles take their height from the row (Crumble's), not a fixed ratio. */
+.meetProducts .colourway[data-crop] { height: 100%; aspect-ratio: auto !important; }
+.meet .colourway[data-crop] img { object-fit: contain; }
+/* Phones: Crumble full width, the colourways side by side beneath as squares. */
 @media (max-width: 760px) {
-  div.colourways { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .meet { grid-template-columns: minmax(0, 1fr); gap: 12px; max-width: none; }
+  .meetProducts { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; gap: 12px; }
+  .meetProducts .colourway[data-crop] { height: auto; aspect-ratio: 1 / 1 !important; }
 }
 
 /* Direction: the Base44 prototype, full width, scrolled by the visitor; a quiet label and link beneath. */
@@ -124,7 +146,7 @@
 .timeline h3 { margin-bottom: 6px; font-size: 16px; font-weight: 500; letter-spacing: -0.02em; }
 .timeline p { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
 
-.nextFanzine { border-radius: 4px; }
+.nextFanzine { border-radius: 8px; box-shadow: 0 30px 60px -36px rgb(11 16 32 / 0.45); }
 
 @media (max-width: 1000px) {
   .storeRow { grid-template-columns: minmax(0, 1fr); }
@@ -137,3 +159,9 @@
   .timeline { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
   .sizePhone { width: 30%; }
 }
+
+/* Overview: the brand wordmark above the headline (wider than the default logo size: it is a long, single-line mark). */
+.page img.brandLogo { width: clamp(150px, 13vw, 200px); }
+
+/* Overview: one intro paragraph, in the same muted colour the first paragraph had (the shared lede lifts a last paragraph to white). */
+.page section[id="overview"] > h1 + div p { color: var(--muted); }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Browser, CasePage, Figure, Img, NextProject, Phone, Placeholder, type Tone } from "../../../components/case/Case";
 import {
   Block,
@@ -33,7 +34,8 @@ const accent = "#d4946a";
 const panel = "#3f2a20";
 const fill = "rgb(243 232 220 / 0.06)";
 
-const navy: Tone = { bg: "#070a10", fg: "#eef2f8", muted: "rgb(238 242 248 / 0.62)" };
+// The next project (Fanzine), as a light band: a cool off-white with Fanzine's deep navy for the type.
+const fanzineLight: Tone = { bg: "#eceef2", fg: "#0b1020", muted: "rgb(11 16 32 / 0.62)" };
 
 const C = "/case/crumble";
 const PROTOTYPE_URL = "https://crumble-canine-collective.base44.app/";
@@ -41,9 +43,18 @@ const desk = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, wi
 const mobile = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, width: 900, height: 1948 });
 const photo = (file: string, alt: string) => ({ src: `${C}/photo-${file}.webp`, alt, width: 1600, height: 1600 });
 
+// 01 Meet Crumble: Crumble, the dog behind the brand (1600×2221, shown at 5:6 with the face kept in frame).
+// Set to null to show a placeholder instead.
+const crumblePortrait: { src: string; width: number; height: number; alt: string } | null = {
+  src: `${C}/crumble-portrait.webp`,
+  width: 1600,
+  height: 2221,
+  alt: "Crumble, a golden cocker spaniel, looking up at the camera from a cream sofa, resting on someone's lap",
+};
+
 const chapters: Chapter[] = [
   { id: "overview", number: "00", title: "Overview" },
-  { id: "brief", number: "01", title: "Brief" },
+  { id: "brief", number: "01", title: "Meet Crumble" },
   { id: "direction", number: "02", title: "Direction" },
   { id: "storefront", number: "03", title: "Storefront" },
   { id: "sizing", number: "04", title: "Sizing" },
@@ -78,11 +89,12 @@ export default function CrumbleCaseStudy() {
         {/* ───────── 00 Overview ───────── */}
         <ChapterHero
           chapter={overview}
-          brand="Crumble & Co"
+          brand={
+            <Image src={`${C}/logo-wordmark.webp`} alt="Crumble & Co" width={800} height={117} preload unoptimized className={styles.brandLogo} />
+          }
           label="Overview"
           title="From brand to storefront."
-          about="Crumble & Co is a premium dog accessories brand. Starting with a name, logo and product range, the challenge was to create its entire online shopping experience."
-          role="I designed and built the Shopify storefront, from the visual direction and responsive layouts to custom shopping features, including Build Your Set."
+          about="Crumble & Co is a premium dog accessories brand. With the brand and products established, I designed and built its Shopify storefront, from responsive layouts to custom shopping features like Build Your Set."
           facts={[
             { label: "Role", value: "Design & Development" },
             { label: "Platform", value: "Shopify · Liquid · JavaScript" },
@@ -99,21 +111,31 @@ export default function CrumbleCaseStudy() {
           </Figure>
         </ChapterHero>
 
-        {/* ───────── 01 Brief ───────── */}
+        {/* ───────── 01 Meet Crumble ───────── */}
         <ChapterSection
           chapter={brief}
-          title="Starting from scratch."
-          intro={<p>With the brand identity and product range established, the next step was creating the online shopping experience.</p>}
+          title="Meet Crumble & Co."
+          intro={
+            <p>
+              They had the dog, the name, the brand and the products. All that was missing was a place to bring it all together
+              online.
+            </p>
+          }
         >
-          {/* The two colourways, one product shot each: a quiet starting point, not a gallery. */}
-          <Pair className={styles.colourways}>
-            <Figure caption="Biscuit">
-              <Img {...photo("biscuit-harness-6", "The Biscuit harness in cream")} aspect="3 / 2" className={styles.colourway} />
-            </Figure>
-            <Figure caption="Espresso">
-              <Img {...photo("espresso-harness-set", "The Espresso harness, lead and pouch in brown")} aspect="3 / 2" className={styles.colourway} />
-            </Figure>
-          </Pair>
+          {/* Crumble leads; the two colourways stack beside, level with Crumble at top and bottom. */}
+          <div className={styles.meet}>
+            <div className={styles.meetCrumble}>
+              {crumblePortrait ? (
+                <Img {...crumblePortrait} aspect="5 / 6" className={styles.meetPhoto} />
+              ) : (
+                <Placeholder label="Crumble" note="A photo of Crumble, the dog behind the brand" aspect="5 / 6" spec="5:6 · 1600×1920 · webp" />
+              )}
+            </div>
+            <div className={styles.meetProducts}>
+              <Img {...photo("biscuit-harness-6", "The Biscuit harness in cream")} aspect="1 / 1" className={styles.colourway} />
+              <Img {...photo("espresso-harness-set", "The Espresso harness, lead and pouch in brown")} aspect="1 / 1" className={styles.colourway} />
+            </div>
+          </div>
         </ChapterSection>
 
         {/* ───────── 02 Direction ───────── */}
@@ -270,8 +292,9 @@ export default function CrumbleCaseStudy() {
         title="Fanzine"
         href="/work/fanzine"
         line="Designing one product system for 50+ football club apps."
-        tone={navy}
-        media={<Img src="/fanzine-homepage.jpg" alt="Fanzine club apps" width={2880} height={1650} aspect="21 / 9" className={styles.nextFanzine} />}
+        tone={fanzineLight}
+        compact
+        media={<Img src="/fanzine-homepage.jpg" alt="Fanzine club apps" width={2880} height={1650} aspect="16 / 10" className={styles.nextFanzine} />}
       />
     </CasePage>
   );

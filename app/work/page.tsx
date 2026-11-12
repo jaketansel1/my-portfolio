@@ -275,7 +275,8 @@ function Visual({ visual, priority }: { visual: Visual; priority?: boolean }): R
 
 function Card({ project, n }: { project: Project; n: number }) {
   const entry = entries[project.title];
-  const external = !!project.link && /^https?:///.test(project.link);
+  // Only a full web address (the live site, when there's no case study) opens in a new tab; case studies never do.
+  const external = !!project.link && /^https?:\/\//.test(project.link);
   const status = project.link ? (entry?.year ?? (external ? "Live site" : undefined)) : project.label ?? "Case study coming soon";
   const body = (
     <>
@@ -331,7 +332,7 @@ const FEATURE = {
 function Feature({ project }: { project: Project }) {
   const entry = entries[project.title];
   const link = project.link;
-  const external = !!link && /^https?:///.test(link);
+  const external = !!link && /^https?:\/\//.test(link);
   const body = (
     <>
       <div className={`${styles.frame} ${styles.featureFrame}`}>{entry ? <Visual visual={entry.visual} /> : null}</div>
