@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Browser, CasePage, Figure, Img, NextProject, Phone, Placeholder, type Tone } from "../../../components/case/Case";
 import {
   Block,
   ChapterHero,
   ChapterLayout,
   ChapterSection,
-  Insight,
   Numbers,
   Pair,
   Panel,
@@ -14,6 +14,8 @@ import {
   Subhead,
   type Chapter,
 } from "../../../components/case/Chapters";
+import ScrollShot from "../../../components/case/ScrollShot";
+import { Browser as BrowserFrame } from "../../../components/ui/Device";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -22,18 +24,37 @@ export const metadata: Metadata = {
     "Taking a new dog-accessories brand from a name and a logo to a launched Shopify store, including a custom Build Your Set experience.",
 };
 
-// Warm / tactile / photographic: one cream tone, espresso type, caramel accent.
-const cream: Tone = { bg: "#f1e7da", fg: "#3d2314", muted: "rgb(61 35 20 / 0.68)", rule: "rgb(61 35 20 / 0.14)" };
-const navy: Tone = { bg: "#070a10", fg: "#eef2f8", muted: "rgb(238 242 248 / 0.62)" };
+/*
+ * The page's colour, in one place: dark and editorial, an espresso ground, cream headings, beige body, copper details.
+ * Everything in the case study (header, rail, chapters, panels, captions) reads these through CSS variables; browser
+ * frames keep their own light chrome, so the screenshots stand out.
+ */
+const espresso: Tone = { bg: "#352219", fg: "#f3e8dc", muted: "#cbb8a6", rule: "rgb(243 232 220 / 0.14)" };
+const accent = "#d4946a";
+const panel = "#3f2a20";
+const fill = "rgb(243 232 220 / 0.06)";
+
+// The next project (Fanzine), as a light band: a cool off-white with Fanzine's deep navy for the type.
+const fanzineLight: Tone = { bg: "#eceef2", fg: "#0b1020", muted: "rgb(11 16 32 / 0.62)" };
 
 const C = "/case/crumble";
+const PROTOTYPE_URL = "https://crumble-canine-collective.base44.app/";
 const desk = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, width: 2400, height: 1500 });
 const mobile = (file: string, alt: string) => ({ src: `${C}/${file}.webp`, alt, width: 900, height: 1948 });
 const photo = (file: string, alt: string) => ({ src: `${C}/photo-${file}.webp`, alt, width: 1600, height: 1600 });
 
+// 01 Meet Crumble: Crumble, the dog behind the brand (1600×2221, shown at 5:6 with the face kept in frame).
+// Set to null to show a placeholder instead.
+const crumblePortrait: { src: string; width: number; height: number; alt: string } | null = {
+  src: `${C}/crumble-portrait.webp`,
+  width: 1600,
+  height: 2221,
+  alt: "Crumble, a golden cocker spaniel, looking up at the camera from a cream sofa, resting on someone's lap",
+};
+
 const chapters: Chapter[] = [
   { id: "overview", number: "00", title: "Overview" },
-  { id: "brief", number: "01", title: "Brief" },
+  { id: "brief", number: "01", title: "Meet Crumble" },
   { id: "direction", number: "02", title: "Direction" },
   { id: "storefront", number: "03", title: "Storefront" },
   { id: "sizing", number: "04", title: "Sizing" },
@@ -63,20 +84,22 @@ const theme = [
 
 export default function CrumbleCaseStudy() {
   return (
-    <CasePage tone={cream} maxWidth="1240px">
-      <ChapterLayout chapters={chapters} accent="#a4562b" panel="#faf6f0" fill="rgb(61 35 20 / 0.06)">
+    <CasePage tone={espresso} maxWidth="1240px" className={styles.page}>
+      <ChapterLayout chapters={chapters} accent={accent} panel={panel} fill={fill}>
         {/* ───────── 00 Overview ───────── */}
         <ChapterHero
           chapter={overview}
-          brand="Crumble & Co"
+          brand={
+            <Image src={`${C}/logo-wordmark.webp`} alt="Crumble & Co" width={800} height={117} preload unoptimized className={styles.brandLogo} />
+          }
           label="Overview"
-          title="A shop as considered as the products."
-          about="Crumble & Co makes premium dog accessories: harnesses, collars, leads, bow ties and poo bag holders in two colourways, Biscuit and Espresso."
-          role="I owned the website, from an open brief to launch: the direction, the design and a custom Shopify build, including a Build Your Set experience."
+          title="From brand to storefront."
+          about="Crumble & Co is a premium dog accessories brand. With the brand and products established, I designed and built its Shopify storefront, from responsive layouts to custom shopping features like Build Your Set."
           facts={[
-            { label: "Role", value: "Website direction, design and Shopify build" },
-            { label: "Scope", value: "Direction · Custom theme · Build Your Set · Launch" },
-            { label: "Status", value: "Live on crumbleandco.club", live: true },
+            { label: "Role", value: "Design & Development" },
+            { label: "Platform", value: "Shopify · Liquid · JavaScript" },
+            { label: "Timeline", value: "September – October 2026" },
+            { label: "Status", value: "Live — crumbleandco.club", live: true },
           ]}
         >
           <Figure caption="crumbleandco.club, live.">
@@ -88,45 +111,67 @@ export default function CrumbleCaseStudy() {
           </Figure>
         </ChapterHero>
 
-        {/* ───────── 01 Brief ───────── */}
+        {/* ───────── 01 Meet Crumble ───────── */}
         <ChapterSection
           chapter={brief}
-          title="A name, a logo and a range. The shop didn’t exist yet."
-          intro={<p>Everything digital was still to do. The brief was open; the aim was a shop that felt as considered as the products.</p>}
+          title="Meet Crumble & Co."
+          intro={
+            <p>
+              They had the dog, the name, the brand and the products. All that was missing was a place to bring it all together
+              online.
+            </p>
+          }
         >
-          <div className={styles.productGrid}>
-            <Figure caption="Biscuit">
-              <Img {...photo("biscuit-harness-6", "Biscuit harness")} />
-            </Figure>
-            <Figure caption="Espresso, the complete set">
-              <Img {...photo("espresso-harness-complete-set", "The Espresso complete set")} />
-            </Figure>
-            <Figure caption="Buckle detail">
-              <Img {...photo("espresso-harness-buckle-detail", "Gold buckle detail on the Espresso harness")} />
-            </Figure>
-            <Figure caption="Stitched logo patch">
-              <Img {...photo("espresso-harness-logo-detail", "The Crumble & Co logo patch")} />
-            </Figure>
+          {/* Crumble leads; the two colourways stack beside, level with Crumble at top and bottom. */}
+          <div className={styles.meet}>
+            <div className={styles.meetCrumble}>
+              {crumblePortrait ? (
+                <Img {...crumblePortrait} aspect="5 / 6" className={styles.meetPhoto} />
+              ) : (
+                <Placeholder label="Crumble" note="A photo of Crumble, the dog behind the brand" aspect="5 / 6" spec="5:6 · 1600×1920 · webp" />
+              )}
+            </div>
+            <div className={styles.meetProducts}>
+              <Img {...photo("biscuit-harness-6", "The Biscuit harness in cream")} aspect="1 / 1" className={styles.colourway} />
+              <Img {...photo("espresso-harness-set", "The Espresso harness, lead and pouch in brown")} aspect="1 / 1" className={styles.colourway} />
+            </div>
           </div>
         </ChapterSection>
 
         {/* ───────── 02 Direction ───────── */}
         <ChapterSection
           chapter={direction}
-          title="Getting to something real, fast."
+          title="From prototype to production."
           intro={
             <p>
-              I looked at how established dog-accessory brands sell: photography, sizing, bundles. Then, instead of static
-              mockups, I built quick prototypes in Base44 and Lovable so the client could react to something that felt like a
-              real shop.
+              Before development, I used AI-assisted prototyping to quickly explore the storefront&rsquo;s visual direction and
+              shopping experience. The concept helped communicate the direction to the client before I translated it into a
+              custom Shopify theme.
             </p>
           }
         >
-          <Pair className={styles.directionPair}>
-            <Placeholder label="Early prototype" note="Base44 or Lovable homepage direction shown to the client." aspect="16 / 11" />
-            <Placeholder label="Reference board" note="Established dog-accessory brands reviewed before designing." aspect="16 / 11" />
-          </Pair>
-          <Insight label="What it settled">Warm neutrals, a classic serif, and product photography doing most of the work.</Insight>
+          {/* The Base44 prototype's whole homepage, scrolled by the visitor under its own pinned header (captured at
+              1440 wide; the builder badge hidden). The finished store follows in the next chapter, so none here. */}
+          <figure className={styles.prototype}>
+            <BrowserFrame url="crumble-canine-collective.base44.app" scheme="light">
+              <ScrollShot
+                src={`${C}/prototype-base44-long.webp`}
+                width={2400}
+                height={13480}
+                aspect="16 / 10"
+                stickyTop={{ src: `${C}/prototype-base44-nav.webp`, width: 2400, height: 173 }}
+                alt="The Base44 prototype homepage, top to bottom: a hero of a golden retriever in a leather harness, best-selling pieces, shop by category, a bundles panel, the brand story, value points, the Crumble Club photo grid, a newsletter signup and the footer."
+                frameClassName={styles.prototypeFrame}
+              />
+            </BrowserFrame>
+            <figcaption className={styles.prototypeMeta}>
+              <span className={styles.prototypeLabel}>Early prototype</span>
+              <a href={PROTOTYPE_URL} target="_blank" rel="noopener noreferrer" className={styles.prototypeLink}>
+                View the original
+                <span aria-hidden="true">↗</span>
+              </a>
+            </figcaption>
+          </figure>
         </ChapterSection>
 
         {/* ───────── 03 Storefront ───────── */}
@@ -247,8 +292,9 @@ export default function CrumbleCaseStudy() {
         title="Fanzine"
         href="/work/fanzine"
         line="Designing one product system for 50+ football club apps."
-        tone={navy}
-        media={<Img src="/fanzine-homepage.jpg" alt="Fanzine club apps" width={2880} height={1650} aspect="21 / 9" className={styles.nextFanzine} />}
+        tone={fanzineLight}
+        compact
+        media={<Img src="/fanzine-homepage.jpg" alt="Fanzine club apps" width={2880} height={1650} aspect="16 / 10" className={styles.nextFanzine} />}
       />
     </CasePage>
   );
