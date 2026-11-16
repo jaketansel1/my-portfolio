@@ -8,7 +8,7 @@
 export type ContactLink = { label: string; href: string | null };
 
 export const contact = {
-  email: "hello@jaketansel.com",
+  email: "jaketansel@yahoo.com",
   linkedin: {
     label: "Jake Tansel",
     // TODO: replace with the full LinkedIn profile URL.
